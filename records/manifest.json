@@ -534,12 +534,13 @@
     },
     {
       "source": "tools/test_battery_audio.py",
-      "published": "tools/test_battery_audio.py",
+      "published": "archive/source/tools/test_battery_audio.public-unused.py.txt",
       "original_sha256": "7570ca1774b6c09872500b05905a84bca17c3caf4e8dc8b1d796cf0e663e1aef",
       "published_sha256": "7570ca1774b6c09872500b05905a84bca17c3caf4e8dc8b1d796cf0e663e1aef",
       "original_bytes": 10702,
       "published_bytes": 10702,
-      "transform": "redacted_utf8"
+      "transform": "redacted_utf8",
+      "note": "Auxiliary test archived; outside the supported motion test suite"
     },
     {
       "source": "tools/test_battery_audio.py",
@@ -552,12 +553,13 @@
     },
     {
       "source": "tools/test_body_home.py",
-      "published": "tools/test_body_home.py",
+      "published": "archive/source/tools/test_body_home.public-unused.py.txt",
       "original_sha256": "68072a1eec3f1142f788f8048591aa7989f2850d82b0875facd4caf99243d764",
       "published_sha256": "68072a1eec3f1142f788f8048591aa7989f2850d82b0875facd4caf99243d764",
       "original_bytes": 2942,
       "published_bytes": 2942,
-      "transform": "redacted_utf8"
+      "transform": "redacted_utf8",
+      "note": "Auxiliary test archived; outside the supported motion test suite"
     },
     {
       "source": "tools/test_body_home.py",
@@ -696,12 +698,13 @@
     },
     {
       "source": "tools/test_dual_arm_five_moves.py",
-      "published": "tools/test_dual_arm_five_moves.py",
+      "published": "archive/source/tools/test_dual_arm_five_moves.public-unused.py.txt",
       "original_sha256": "21881f0b02fc2bf7183627fdd916ff5b12bf6eb248bade9a4b6643fcdf7752ff",
       "published_sha256": "21881f0b02fc2bf7183627fdd916ff5b12bf6eb248bade9a4b6643fcdf7752ff",
       "original_bytes": 20746,
       "published_bytes": 20746,
-      "transform": "redacted_utf8"
+      "transform": "redacted_utf8",
+      "note": "Auxiliary test archived; outside the supported motion test suite"
     },
     {
       "source": "tools/test_dual_arm_five_moves.py",
@@ -732,12 +735,13 @@
     },
     {
       "source": "tools/test_gripper_readonly.py",
-      "published": "tools/test_gripper_readonly.py",
+      "published": "archive/source/tools/test_gripper_readonly.public-unused.py.txt",
       "original_sha256": "5bd9d65201a2d237d4d9fa21f6803b305c8234d8ca3cd19f258c10a1fa5a7455",
       "published_sha256": "5bd9d65201a2d237d4d9fa21f6803b305c8234d8ca3cd19f258c10a1fa5a7455",
       "original_bytes": 13710,
       "published_bytes": 13710,
-      "transform": "redacted_utf8"
+      "transform": "redacted_utf8",
+      "note": "Auxiliary test archived; outside the supported motion test suite"
     },
     {
       "source": "tools/test_gripper_readonly.py",
@@ -750,12 +754,13 @@
     },
     {
       "source": "tools/test_grippers_manual.py",
-      "published": "tools/test_grippers_manual.py",
+      "published": "archive/source/tools/test_grippers_manual.public-unused.py.txt",
       "original_sha256": "7ae13100f017fb2589ff9b1b6357f6fc8244f0290e15d06b280aa3e422d5a023",
       "published_sha256": "7ae13100f017fb2589ff9b1b6357f6fc8244f0290e15d06b280aa3e422d5a023",
       "original_bytes": 2372,
       "published_bytes": 2372,
-      "transform": "redacted_utf8"
+      "transform": "redacted_utf8",
+      "note": "Auxiliary test archived; outside the supported motion test suite"
     },
     {
       "source": "tools/test_grippers_manual.py",
@@ -786,12 +791,13 @@
     },
     {
       "source": "tools/test_loaded_execution_block.py",
-      "published": "tools/test_loaded_execution_block.py",
+      "published": "archive/source/tools/test_loaded_execution_block.public-unused.py.txt",
       "original_sha256": "0790657bd36b65dd031619c38bcb4e10fba752a510cb0b41fb002de65d1d2730",
       "published_sha256": "0790657bd36b65dd031619c38bcb4e10fba752a510cb0b41fb002de65d1d2730",
       "original_bytes": 2167,
       "published_bytes": 2167,
-      "transform": "redacted_utf8"
+      "transform": "redacted_utf8",
+      "note": "Auxiliary test archived; outside the supported motion test suite"
     },
     {
       "source": "tools/test_loaded_execution_block.py",
