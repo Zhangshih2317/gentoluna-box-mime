@@ -15,7 +15,6 @@ import numpy as np
 from box_motion_plan import collision_samples, delta
 from box_mime_taught_plan import build_stages, waypoints
 import box_mime_taught_robot as control
-from stand_up_plan import BodyHeadKinematics, body_transform
 from test_stand_up import FakeRobot
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +59,7 @@ class Tests(unittest.TestCase):
                     self.assertEqual(stage["start"][key], stage["target"][key])
 
     def test_shallow_squat_preserves_orientation_and_reverses(self):
+        from stand_up_plan import BodyHeadKinematics, body_transform
         kin = BodyHeadKinematics()
         stage = self.stages[2]
         origin = body_transform(kin, self.home["body"])

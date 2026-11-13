@@ -485,6 +485,24 @@
  
      def invoke_outer_run(self, execute, reject_positive=False):
          with self.helpers.remote_modules(None, native=True):
+--- 现场脱敏/tools/test_box_mime_taught.py
++++ 公开版/tools/test_box_mime_taught.py
+@@ -15,7 +15,6 @@
+ from box_motion_plan import collision_samples, delta
+ from box_mime_taught_plan import build_stages, waypoints
+ import box_mime_taught_robot as control
+-from stand_up_plan import BodyHeadKinematics, body_transform
+ from test_stand_up import FakeRobot
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+@@ -60,6 +59,7 @@
+                     self.assertEqual(stage["start"][key], stage["target"][key])
+ 
+     def test_shallow_squat_preserves_orientation_and_reverses(self):
++        from stand_up_plan import BodyHeadKinematics, body_transform
+         kin = BodyHeadKinematics()
+         stage = self.stages[2]
+         origin = body_transform(kin, self.home["body"])
 --- 现场脱敏/tools/test_mime_speed_setting.py
 +++ 公开版/tools/test_mime_speed_setting.py
 @@ -163,16 +163,16 @@
@@ -549,3 +567,22 @@
          clock = Clock()
          runner = control.MimeRunner(robot, lambda: None)
          runner.command = copy.deepcopy(self.home)
+--- 现场脱敏/tools/test_stand_up.py
++++ 公开版/tools/test_stand_up.py
+@@ -13,7 +13,6 @@
+ import numpy as np
+ 
+ from box_motion_plan import delta, interpolate
+-from stand_up_plan import BodyHeadKinematics, ROOT, SOURCE, body_transform, build_plan, solve_height
+ import stand_up_robot
+ from stand_up_robot import RiseRunner, verify_plan_structure
+ 
+@@ -68,6 +67,8 @@
+ class Tests(unittest.TestCase):
+     @classmethod
+     def setUpClass(cls):
++        global BodyHeadKinematics, ROOT, SOURCE, body_transform, build_plan, solve_height
++        from stand_up_plan import BodyHeadKinematics, ROOT, SOURCE, body_transform, build_plan, solve_height
+         cls.source = json.loads((ROOT/SOURCE).read_text("utf-8"))
+         cls.plan = build_plan(cls.source)
+         cls.kin = BodyHeadKinematics()

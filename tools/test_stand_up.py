@@ -13,7 +13,6 @@ from unittest.mock import Mock, mock_open, patch
 import numpy as np
 
 from box_motion_plan import delta, interpolate
-from stand_up_plan import BodyHeadKinematics, ROOT, SOURCE, body_transform, build_plan, solve_height
 import stand_up_robot
 from stand_up_robot import RiseRunner, verify_plan_structure
 
@@ -68,6 +67,8 @@ class FakeRobot:
 class Tests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        global BodyHeadKinematics, ROOT, SOURCE, body_transform, build_plan, solve_height
+        from stand_up_plan import BodyHeadKinematics, ROOT, SOURCE, body_transform, build_plan, solve_height
         cls.source = json.loads((ROOT/SOURCE).read_text("utf-8"))
         cls.plan = build_plan(cls.source)
         cls.kin = BodyHeadKinematics()

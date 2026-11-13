@@ -20,3 +20,18 @@ the eight-stage / six-cycle motion logic remain unchanged.
 
 The original successful hardware logs are separate evidence; passing these
 tests does not mean the public deployment copy has been hardware-executed.
+
+Clean-clone verification (no reference/ directory, no local robot config):
+python tools/run_offline_tests.py
+Ran 65 tests in 3.331s
+OK
+
+The clean clone initially exposed an eager calibration import through a
+shared test fixture. Calibration imports were moved into the kinematics
+tests. No production motion behavior changed. After that change, the clean
+clone's 65 tests passed and the 8 focused stand-up tests with the local
+calibration also passed (6.250s).
+
+Entry --help checks passed for both mimes, HOME, and teaching.
+Starting preflight without robot.local.json reports the missing
+configuration before opening a connection.
