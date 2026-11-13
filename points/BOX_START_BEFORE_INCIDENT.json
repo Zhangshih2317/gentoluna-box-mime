@@ -1,0 +1,41 @@
+{
+  "name": "BOX_START_BEFORE_INCIDENT",
+  "source": "initial_feedback from evidence/box-motion-20261111-140353.jsonl",
+  "joint_units": "deg",
+  "pose": {
+    "arm0": [
+      90,
+      -90,
+      -90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -1.653
+    ],
+    "head": [
+      2.108,
+      -15.998,
+      0
+    ]
+  },
+  "is_user_taught_squat": false,
+  "recovery_path_validated": false,
+  "motion_commands_sent": 0
+}

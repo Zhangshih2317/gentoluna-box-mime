@@ -1,0 +1,136 @@
+"""Read complete Luna feedback; optionally save a stationary manually taught pose."""
+
+import argparse
+from datetime import datetime, timedelta, timezone
+import importlib.util
+import json
+import math
+import shlex
+from pathlib import Path
+import sys
+
+from robot_status import DEFAULT_CONNECTOR, ROOT
+from luna_config import load_config, remote_environment, source_environment
+
+REMOTE = r'''
+import fcntl,json,os,sys,time
+sys.path.insert(0,os.environ["LUNA_SDK_ROOT"]+"/PYTHON_SDK")
+from GentoRobot import GentoRobot
+with open("/tmp/gento_sdk_6_6_7_190.lock","a+") as lock:
+    fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+    robot=GentoRobot()
+    try:
+        code=robot.link(*map(int,os.environ["LUNA_CONTROLLER_IP"].split(".")))
+        if not robot._connected or robot.check_link_state()!=1:
+            raise RuntimeError("SDK link unavailable; disconnect teaching client first")
+        for index in range(5):
+            time.sleep(.2)
+            rt,sg=robot.get_rt_dict(),robot.get_sg_dict()
+            print(json.dumps({"event":"sample","index":index,"rt":rt,"sg":sg}),flush=True)
+        diagnostics={}
+        for name,obj in (("arm0",0),("arm1",1),("body",3)):
+            diagnostics[name]={"servo_errors":robot.get_servo_error_codes(obj),
+                               "physical_state":robot.get_ctrl_obj_physical_state(obj)}
+        print(json.dumps({"event":"diagnostics","data":diagnostics}),flush=True)
+    finally:
+        if robot._connected:
+            robot.unlink()
+            print(json.dumps({"event":"disconnected"}),flush=True)
+'''
+
+
+def joint_pose(sample):
+    rt = sample["rt"]
+    return {"arm0": rt["arms"][0]["fb"]["fb_pos"],
+            "arm1": rt["arms"][1]["fb"]["fb_pos"],
+            "body": rt["body"]["fb_pos"], "head": rt["head"]["fb_pos"]}
+
+
+def validate_recording(samples):
+    if len(samples) != 5 or len({s["rt"]["frame_serial"] for s in samples}) != 5:
+        raise ValueError("Five distinct feedback frames are required")
+    poses = [joint_pose(s) for s in samples]
+    for sample, pose in zip(samples, poses):
+        rt, sg = sample["rt"], sample["sg"]
+        for key, width in (("arm0", 7), ("arm1", 7), ("body", 6), ("head", 3)):
+            if len(pose[key]) != width or not all(math.isfinite(v) for v in pose[key]):
+                raise ValueError("Invalid "+key+" position")
+            if max(abs(a-b) for a, b in zip(pose[key], poses[0][key])) > .1:
+                raise ValueError("Robot is not stationary")
+        for i in (0, 1):
+            velocities = rt["arms"][i]["fb"]["fb_vel"]
+            if (rt["arms"][i]["state"]["err"] or sg["arms"][i]["get"]["traj_state"] >= 3
+                    or len(velocities) != 7 or not all(math.isfinite(v) for v in velocities)
+                    or max(map(abs, velocities)) > .5):
+                raise ValueError("Arm is moving or has an error")
+        velocities = rt["body"]["fb_vel"]
+        if (rt["body"]["state"]["err"] or rt["head"]["state"]["err"]
+                or sg["body"]["get"]["traj_state"] >= 3
+                or len(velocities) != 6 or not all(math.isfinite(v) for v in velocities)
+                or max(map(abs, velocities)) > .5):
+            raise ValueError("BODY/HEAD is moving or has an error")
+    return poses[-1]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--record", choices=("STAND_TAUGHT", "SQUAT_TAUGHT"))
+    args = parser.parse_args()
+    config = load_config()
+    stamp = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d-%H%M%S")
+    evidence = ROOT/"evidence"/("teaching-feedback-"+stamp+".json")
+    spec = importlib.util.spec_from_file_location("luna_connector", DEFAULT_CONNECTOR)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    report = {"collected_at_local": datetime.now(timezone(timedelta(hours=8))).isoformat(),
+              "motion_commands_sent": 0, "record_requested": args.record}
+    try:
+        with module.connect() as client:
+            command = "bash -lc "+shlex.quote(source_environment(config)+" && python3 -")
+            stdin, stdout, stderr = client.exec_command(command, timeout=45)
+            source = "import os\nos.environ.update("+repr(remote_environment(config))+")\n"+REMOTE
+            stdin.write(source.encode("utf-8"))
+            stdin.flush()
+            stdin.channel.shutdown_write()
+            report["stdout"] = stdout.read().decode("utf-8", errors="replace")
+            report["stderr"] = stderr.read().decode("utf-8", errors="replace")
+            report["exit_code"] = stdout.channel.recv_exit_status()
+        report["events"] = [json.loads(line) for line in report["stdout"].splitlines()
+                            if line.startswith("{")]
+        samples = [s for s in report["events"] if s["event"] == "sample"]
+        if report["exit_code"] or len(samples) != 5:
+            raise RuntimeError("Read failed; inspect saved evidence")
+        last = samples[-1]
+        print(json.dumps({"pose": joint_pose(last),
+                          "states": {**{"arm%d" % i: last["rt"]["arms"][i]["state"] for i in (0, 1)},
+                                     "body": last["rt"]["body"]["state"],
+                                     "head": last["rt"]["head"]["state"]},
+                          "diagnostics": [e for e in report["events"] if e["event"] == "diagnostics"]},
+                         ensure_ascii=False, indent=2))
+        if args.record:
+            pose = validate_recording(samples)
+            destination = ROOT/"points"/"taught"/(args.record+"-"+stamp+".json")
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with destination.open("x", encoding="utf-8") as output:
+                json.dump({"name": args.record, "source": "user_manual_teaching",
+                           "captured_at_local": report["collected_at_local"], "joint_units": "deg",
+                           "pose": pose, "evidence": str(evidence),
+                           "trajectory_validated": False, "motion_commands_sent": 0},
+                          output, ensure_ascii=False, indent=2)
+            report["saved_point"] = str(destination)
+            print("Saved: "+str(destination))
+    except Exception as exc:
+        report["error"] = str(exc)
+        print("Read/record refused: "+str(exc))
+        return 1
+    finally:
+        evidence.parent.mkdir(exist_ok=True)
+        evidence.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        print("Evidence: "+str(evidence))
+    return 0
+
+
+if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    raise SystemExit(main())

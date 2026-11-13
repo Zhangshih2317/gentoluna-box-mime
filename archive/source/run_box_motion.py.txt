@@ -1,0 +1,58 @@
+"""Empty-handed crouch, embrace, stand, turn, open and automatic HOME."""
+
+from pathlib import Path
+import sys
+
+# Relative B2/B3/B4 changes are +SQUAT/2, -SQUAT, +SQUAT/2.
+SQUAT_DEGREES = 30.0
+# Positive is the model B6 direction, approximately left at the upright pose.
+TURN_DEGREES = 45.0
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT/"tools"))
+from run_box_motion_remote import run
+
+
+def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if sys.argv[1:] == ["--help"]:
+        print("python run_box_motion.py [--preflight]")
+        print("Motion disabled after BODY trajectory incident; manual teaching required.")
+        return 0
+    if sys.argv[1:] != ["--preflight"]:
+        print("此动作已停用：BODY 轨迹执行出现非预期倾斜，等待手动示教及控制接口核查。")
+        print("请勿重新运行旧下蹲动作。")
+        return 2
+    if sys.argv[1:] not in ([], ["--preflight"]):
+        print("Use no arguments, --preflight, or --help.")
+        return 2
+    print(
+        "空载抱箱动作模拟，无箱子、无夹爪。\n"
+        f"下蹲 B2/B3/B4 相对变化：+{SQUAT_DEGREES/2:g}/-{SQUAT_DEGREES:g}/"
+        f"+{SQUAT_DEGREES/2:g} 度；转腰 B6 相对变化：{TURN_DEGREES:+g} 度。\n"
+        "张臂 → 下蹲 → 合抱 → 起身 → 转腰 → 站立张臂 → 双臂 HOME → 身体回起点。\n"
+        "双臂整条路径进行网格碰撞检查，并检查每侧外扩 30mm 的双臂包围盒。\n"
+        "轨迹关节峰值不超过 3 度/秒，控制器速度和加速度倍率均为 5%。\n"
+        "正常完成自动回 HOME；异常中止，不自动强行回 HOME。\n"
+        "请断开 FXPlatform 等控制客户端，并留出身体和双臂的运动空间。\n",
+        flush=True,
+    )
+    code = run("--preflight", SQUAT_DEGREES, TURN_DEGREES)
+    if code or sys.argv[1:] == ["--preflight"]:
+        return code
+    if input("输入 RUN 执行这次空载动作（会启用 BODY 并替换未启动轨迹）：").strip() != "RUN":
+        print("已退出，未启动动作。")
+        return 0
+    code = run("--execute", SQUAT_DEGREES, TURN_DEGREES)
+    print("动作完成，双臂已回 HOME，身体已回动作前姿态。" if not code else
+          "动作未完成，请检查 evidence 日志和现场状态。")
+    return code
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (KeyboardInterrupt, EOFError):
+        print("\n已中断。若未确认机器人停止，请使用现场急停。")
+        raise SystemExit(130)

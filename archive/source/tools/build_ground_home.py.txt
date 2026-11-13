@@ -1,0 +1,221 @@
+"""Solve a ground-referenced HOME offline, then require independent vendor FK."""
+
+import argparse
+import copy
+from datetime import datetime, timedelta, timezone
+import hashlib
+import json
+import math
+from pathlib import Path
+import sys
+
+import numpy as np
+from scipy.optimize import brentq
+from scipy.spatial.transform import Rotation
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "reference/robot_frames"))
+from calibration_transforms.body_head_fk import BodyHeadKinematics
+
+
+def load(path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def results(path):
+    report = load(path)
+    if report["exit_code"] != 0 or report["motion_commands_sent"] != 0:
+        raise ValueError("Expected successful, non-motion FK evidence")
+    if not any(e["kind"] == "handoff" and e["data"]["success"]
+               and not e["data"]["owner_client_id"] for e in report["events"]):
+        raise ValueError("FK lease handoff was not confirmed")
+    output = {}
+    for event in report["events"]:
+        if event["kind"] == "fk":
+            item = event["data"]
+            if not item["response"]["success"]:
+                raise ValueError("Vendor FK failed")
+            matrix = np.array(item["response"]["matrix_row_major"]).reshape(4, 4)
+            rotation = matrix[:3, :3]
+            if (not np.all(np.isfinite(matrix))
+                    or not np.allclose(rotation.T @ rotation, np.eye(3), atol=1e-6)
+                    or not np.isclose(np.linalg.det(rotation), 1, atol=1e-6)):
+                raise ValueError("Invalid vendor FK rotation")
+            output[item["input"]["name"]] = item
+    return output
+
+
+def rotation(item):
+    return np.array(item["response"]["matrix_row_major"]).reshape(4, 4)[:3, :3]
+
+
+def tilt(axis):
+    return math.degrees(math.asin(float(np.clip(abs(axis[2]), 0, 1))))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--feedback", type=Path, required=True)
+    parser.add_argument("--verify-fk", type=Path)
+    args = parser.parse_args()
+    feedback = load(args.feedback)
+    if not feedback.get("success"):
+        raise ValueError("A successful live feedback report is required")
+    live = {e["data"]["component"]: e["data"]["response"]["status"]
+            for e in feedback["events"] if e["kind"] == "sample"}
+    probes_path = ROOT / "evidence/home-ground-probes.json"
+    original_fk_path = ROOT / "evidence/home-fk-checks.json"
+    probes, old = results(probes_path), results(original_fk_path)
+    r0 = rotation(probes["wrist_zero"])
+    # Infer only the two wrist rotation axes from vendor FK, not a robot model.
+    axis6 = Rotation.from_matrix(
+        rotation(probes["wrist_j6_30"]) @ r0.T
+    ).as_rotvec() / math.radians(30)
+    axis7 = Rotation.from_matrix(
+        r0.T @ rotation(probes["wrist_j7_minus30"])
+    ).as_rotvec() / math.radians(-30)
+    if not np.allclose([np.linalg.norm(axis6), np.linalg.norm(axis7)], 1, atol=1e-6):
+        raise ValueError("Wrist samples do not describe unit revolute axes")
+
+    def wrist_rotation(q6, q7):
+        return (Rotation.from_rotvec(axis6 * math.radians(q6)).as_matrix()
+                @ r0 @ Rotation.from_rotvec(axis7 * math.radians(q7)).as_matrix())
+
+    if not np.allclose(wrist_rotation(30, 90),
+                       rotation(probes["wrist_j6_30_j7_90"]), atol=1e-6):
+        raise ValueError("Wrist interpolation failed the independent holdout sample")
+    for side in ("left", "right"):
+        if not np.allclose(wrist_rotation(0, 90), rotation(old[f"{side}_90_candidate"]),
+                           atol=1e-6):
+            raise ValueError("Previous candidate disagrees with the wrist model")
+    if abs(np.dot(axis6, wrist_rotation(0, 90)[:, 2])) < 1 - 1e-6:
+        raise ValueError("Cannot establish J7=90 axis invariance under J6 rotation")
+
+    body = live["body"]["positions_deg"]
+    # This existing library verifies its URDF checksum and BODY axis mapping.
+    body_fk = BodyHeadKinematics()
+    analysis = {
+        "feedback_collected_at": feedback["collected_at"],
+        "body_joints_deg": body,
+        "reference_frame": "Underpan_Base_link",
+        "ground_normal_in_reference_frame_assumed": [0, 0, 1],
+        "physical_ground_alignment_verified": False,
+        "assumption": "Manufacturer chassis XY plane is parallel to the local floor.",
+        "horizontal_axis": "bare SDK endpoint/flange local +Z axis",
+        "palm_roll_constrained": False,
+        "wrist_model_holdout_pass": True,
+        "j7_90_axis_invariant_under_j6": True,
+        "motion_commands_sent": 0,
+        "arms": {},
+    }
+    jobs = []
+    for arm in (0, 1):
+        base = body_fk.T_world_arm_base(body, [0, 0], arm)
+        rbase = base[:3, :3]
+        old_world_axis = rbase @ wrist_rotation(0, 90)[:, 2]
+
+        def error(q7):
+            return float((rbase @ wrist_rotation(0, q7)[:, 2])[2])
+
+        lower, upper = live[f"arm{arm}"]["joint_limits_deg"][6]
+        q7 = brentq(error, lower + 2, upper - 2, xtol=1e-10)
+        target = [90, 90, 90, -90, 90, 0, round(q7, 6)]
+        ground_axis = rbase @ wrist_rotation(0, target[6])[:, 2]
+        margins = [min(q-lo, hi-q) for q, (lo, hi) in
+                   zip(target, live[f"arm{arm}"]["joint_limits_deg"])]
+        if min(margins) < 2 or tilt(ground_axis) > 0.001:
+            raise ValueError("Solved target fails margin or nominal floor alignment")
+        analysis["arms"][f"arm{arm}"] = {
+            "target_joints_deg": target,
+            "T_underpan_arm_base": base.tolist(),
+            "old_target_tilt_from_nominal_floor_deg": tilt(old_world_axis),
+            "flange_z_in_underpan": ground_axis.tolist(),
+            "tilt_from_nominal_floor_deg": tilt(ground_axis),
+            "joint_limit_margin_deg": margins,
+        }
+        jobs.append({"name": f"ground_home_arm{arm}", "arm": arm, "joints_deg": target})
+    write(ROOT / "evidence/home-ground-solution.json", analysis)
+    write(ROOT / "points/home-ground-validation-jobs.json", jobs)
+    print(json.dumps(analysis, ensure_ascii=True, indent=2))
+    if not args.verify_fk:
+        print("Candidate calculated only. HOME.json not changed until vendor FK verification.")
+        return
+
+    verified = results(args.verify_fk)
+    point = load(ROOT / "points/HOME-model-candidate-superseded.json")
+    archive = ROOT / "points/HOME-sdk-frame-only.json"
+    if not archive.exists():
+        write(archive, point)
+    for arm in (0, 1):
+        entry = analysis["arms"][f"arm{arm}"]
+        vendor = verified[f"ground_home_arm{arm}"]
+        if (vendor["input"]["arm"] != arm or
+                vendor["input"]["joints_deg"] != entry["target_joints_deg"]):
+            raise ValueError("Vendor verification is for a different target")
+        matrix = np.array(vendor["response"]["matrix_row_major"]).reshape(4, 4)
+        base = np.array(entry["T_underpan_arm_base"])
+        world_matrix = base @ matrix
+        actual_tilt = tilt(world_matrix[:3, 2])
+        if actual_tilt > 0.001:
+            raise ValueError("Independent vendor FK fails nominal ground alignment")
+        point["arms"][f"arm{arm}"] = {
+            "side": "left" if arm == 0 else "right",
+            **entry,
+            "hard_limits_pass": True,
+            "two_degree_limit_margin_pass": True,
+            "sdk_fk_xyzabc": vendor["response"]["xyzabc"],
+            "sdk_fk_matrix_row_major": vendor["response"]["matrix_row_major"],
+            "T_underpan_tcp": world_matrix.tolist(),
+            "vendor_verified_tilt_from_nominal_floor_deg": actual_tilt,
+            "observed_feedback": copy.deepcopy(live[f"arm{arm}"]),
+            "delta_from_observed_deg": [
+                round(q-start, 6) for q, start in
+                zip(entry["target_joints_deg"], live[f"arm{arm}"]["joints_deg"])
+            ],
+        }
+    point["updated_at"] = datetime.now(timezone(timedelta(hours=8))).isoformat()
+    point["feedback_collected_at"] = feedback["collected_at"]
+    point["execution_enabled"] = False
+    point["status"] = "nominal_floor_horizontal_candidate_physical_validation_pending"
+    point["interpretation"] = {
+        "positive_90_where_compatible_with_floor_horizontal": ["J1", "J2", "J3", "J5"],
+        "J4": "-90 because +90 exceeds its +45 limit",
+        "J6": "0",
+        "J7": "solved separately for each arm; 90 conflicts with floor-horizontal",
+        "horizontal_axis": analysis["horizontal_axis"],
+        "horizontal_plane": "local floor, modelled as Underpan_Base_link XY plane",
+        "ground_alignment_verified": False,
+        "nominal_floor_horizontal_verified_by_vendor_fk": True,
+        "palm_orientation_verified": False,
+    }
+    point["body"] = {
+        "command": None, "observed_feedback": live["body"],
+        "required_for_saved_home_deg": body,
+        "note": "Recompute wrist compensation if BODY posture or chassis tilt changes.",
+    }
+    point["blockers"] = [
+        "Chassis-to-floor normal is assumed from the manufacturer model, not measured.",
+        "Self-collision, environment clearance and approach path are not verified.",
+        "Mounted hand/palm roll is not part of the flange-axis horizontal constraint.",
+    ]
+    point["ground_solution"] = analysis
+    point["sources"] = {
+        name: {"path": str(path.resolve()),
+               "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+        for name, path in (
+            ("feedback", args.feedback), ("vendor_fk", args.verify_fk),
+            ("wrist_probes", probes_path),
+            ("frame_source_manifest", ROOT / "evidence/ground-frame-source-manifest.json"),
+        )
+    }
+    write(ROOT / "points/HOME-model-candidate-superseded.json", point)
+    print("Updated superseded model candidate only; taught HOME.json preserved.")
+
+
+if __name__ == "__main__":
+    main()

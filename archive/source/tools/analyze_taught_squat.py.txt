@@ -1,0 +1,145 @@
+"""Offline FK analysis of observed squat endpoints. No robot/network commands."""
+
+import hashlib
+import json
+import math
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/"reference/robot_frames"))
+
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
+from calibration_transforms.body_head_fk import BODY_JOINTS, BodyHeadKinematics
+
+
+POINTS = (
+    ("Recovered start", "points/RECOVERED_START_20261111.json"),
+    ("Squat 1", "points/taught/SQUAT_TAUGHT_UI-20261111-143323.json"),
+    ("Squat 2", "points/taught/SQUAT_TAUGHT_02_UI-20261111-143743.json"),
+    ("Squat 3", "points/taught/SQUAT_TAUGHT_03_UI-20261111-144906.json"),
+)
+
+
+def main():
+    kin = BodyHeadKinematics()
+    results, profiles = [], []
+    baseline = None
+    for label, relative in POINTS:
+        point = json.loads((ROOT/relative).read_text("utf-8"))
+        q = np.asarray(point["pose"]["body"], dtype=float)
+        angles = kin._angles_rad(q, np.zeros(2))
+        transforms = [kin._chain(BODY_JOINTS[:i], angles) for i in range(1, 7)]
+        torso = transforms[-1]
+        reference = {
+            "pose": q,
+            "torso": torso,
+            "sum": float(sum(q[1:4])),
+        }
+        if baseline is None:
+            baseline = reference
+        axis_sum = float(sum(q[1:4]))
+        # Local URDF has two 300 mm links and parallel positive B2-B4 axes.
+        q2, q3 = np.radians(q[1:3])
+        height_planar = 265+300*math.cos(q2)+300*math.cos(q2+q3)
+        x_planar = -300*(math.sin(q2)+math.sin(q2+q3))
+        up = torso[:3, 2]
+        relative_rotation = baseline["torso"][:3, :3].T @ torso[:3, :3]
+        relative_angle = math.degrees(math.acos(float(np.clip(
+            (np.trace(relative_rotation)-1)/2, -1, 1))))
+        results.append({
+            "label": label, "point": relative, "body_deg": q.tolist(),
+            "delta_from_start_deg": (q-baseline["pose"]).round(6).tolist(),
+            "b2_b3_b4_sum_deg": round(axis_sum, 6),
+            "sum_change_from_start_deg": round(axis_sum-baseline["sum"], 6),
+            "j6_position_mm": torso[:3, 3].round(6).tolist(),
+            "j6_height_mm": round(float(torso[2, 3]), 6),
+            "j6_drop_from_start_mm": round(float(baseline["torso"][2, 3]-torso[2, 3]), 6),
+            "j6_x_change_from_start_mm": round(float(torso[0, 3]-baseline["torso"][0, 3]), 6),
+            "model_torso_up_tilt_from_world_vertical_deg":
+                round(math.degrees(math.acos(float(np.clip(up[2], -1, 1)))), 6),
+            "model_torso_rotation_from_start_deg": round(relative_angle, 6),
+            "planar_approximation_height_mm": round(height_planar, 6),
+            "planar_approximation_x_mm": round(x_planar, 6),
+            "torso_transform": torso.tolist(),
+        })
+        profiles.append((label, transforms))
+
+        # An equal-and-opposite B4 change must cancel a B2 orientation change.
+        altered = q.copy()
+        altered[1] += .1
+        altered[3] -= .1
+        compensation = kin._chain(BODY_JOINTS, kin._angles_rad(altered, np.zeros(2)))
+        if not np.allclose(compensation[:3, :3], torso[:3, :3], atol=1e-10):
+            raise ValueError("Model does not support the stated orientation compensation")
+        b4_only = q.copy()
+        b4_only[3] += .1
+        moved = kin._chain(BODY_JOINTS, kin._angles_rad(b4_only, np.zeros(2)))
+        if not np.allclose(moved[:3, 3], torso[:3, 3], atol=1e-9):
+            raise ValueError("B4 changed the J6 origin; revise the height interpretation")
+
+    report = {
+        "method": "Offline forward kinematics of observed endpoints, not a motion plan",
+        "urdf": str(kin.urdf_path.relative_to(ROOT)),
+        "urdf_sha256": hashlib.sha256(kin.urdf_path.read_bytes()).hexdigest(),
+        "mapping_source": "archived calibration axis_mapping; not remeasured in this session",
+        "fixed_base_assumption": True,
+        "model_point": "BODY J6 origin, not head height or center of mass",
+        "results": results,
+        "inferred_orientation_relation": "delta_B2 + delta_B3 + delta_B4 = 0 to preserve pitch with B1/B5/B6 fixed",
+        "conditions": [
+            "Exact orientation relation in the archived model, subject to physical model accuracy.",
+            "B2/B3 determine J6 translation; B4 changes orientation at the same modeled origin.",
+            "Joint rotation relative to baseline is not a measured world-vertical torso angle.",
+            "Endpoint geometry does not establish path collision clearance, stability or dynamic safety.",
+            "Editable command values are not proof of accepted or executed commands."
+        ],
+        "offline_checks": {"orientation_compensation": "passed", "b4_j6_origin_invariance": "passed"},
+        "motion_commands_sent": 0,
+    }
+    destination = ROOT/"evidence/squat-taught-analysis-20261111.json"
+    destination.write_text(json.dumps(report, indent=2), encoding="utf-8")
+
+    colors = ["#444444", "#168066", "#2868b2", "#ba4045"]
+    fig, axes = plt.subplots(1, 4, figsize=(13, 5.4), sharex=True, sharey=True)
+    for ax, (label, transforms), row, color in zip(axes, profiles, results, colors):
+        origins = np.array([t[:3, 3] for t in transforms[:4]])
+        ax.plot(origins[:, 0], origins[:, 2], "-o", color=color, lw=4, ms=6)
+        torso = transforms[-1]
+        start = torso[:3, 3]
+        end = start+torso[:3, 2]*180
+        ax.plot([start[0], end[0]], [start[2], end[2]], color="#1c2428", lw=7)
+        for name, position in zip(("B2", "B3", "B4"), origins[1:]):
+            ax.annotate(name, (position[0], position[2]), xytext=(8, 6),
+                        textcoords="offset points", fontsize=9)
+        ax.axhline(results[0]["j6_height_mm"], color="#a4a4a4", ls=":", lw=1)
+        ax.axvline(0, color="#ddd", lw=1)
+        ax.set_title("%s\nJ6 drop: %.0f mm\nB2+B3+B4: %.3f deg" %
+                     (label, row["j6_drop_from_start_mm"], row["b2_b3_b4_sum_deg"]),
+                     fontsize=11, pad=10)
+        ax.set_xlabel("Base X (mm)", fontsize=10)
+        ax.set_xlim(-340, 130)
+        ax.set_ylim(50, 1100)
+        ax.set_aspect("equal", adjustable="box")
+        ax.grid(axis="y", alpha=.17)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+    axes[0].set_ylabel("Base Z (mm)", fontsize=10)
+    fig.suptitle("Observed Luna Squat Poses: Offline Body-Chain Projection", fontsize=15)
+    fig.text(.5, .015,
+             "Model estimates, fixed base. Dark segment indicates torso orientation, not its actual dimensions.",
+             ha="center", fontsize=9)
+    fig.tight_layout(rect=(0, .04, 1, .94))
+    figure = ROOT/"points/taught/SQUAT_ANALYSIS-20261111.png"
+    fig.savefig(figure, dpi=160)
+    plt.close(fig)
+    print(json.dumps({"analysis": str(destination), "figure": str(figure),
+                      "results": [{k: v for k, v in r.items() if k != "torso_transform"}
+                                  for r in results]}, indent=2))
+
+
+if __name__ == "__main__":
+    main()

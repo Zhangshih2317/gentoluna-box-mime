@@ -1,0 +1,15 @@
+{"event": "request", "execute": false, "velocity_percent": 20.0, "acceleration_percent": 5.0, "prepare_cache": false, "full_preflight": false, "motion_style": "continuous"}
+{"event": "process", "pid": 28881}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+{"event": "recovery_failed", "time": "2026-11-11T09:31:36.504079+00:00", "error": "Unexpected state arm0: {'cur': 100, 'cmd': 1, 'err': 110}"}
+{"event": "sdk_disconnected", "time": "2026-11-11T09:31:36.504465+00:00"}
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "<string>", line 39, in <module>
+  File "<string>", line 234, in run
+  File "<string>", line 76, in stationary
+  File "<string>", line 30, in read
+  File "<string>", line 64, in read
+RuntimeError: Unexpected state arm0: {'cur': 100, 'cmd': 1, 'err': 110}
+{"remote_exit_code": 1, "completion_confirmed": false}

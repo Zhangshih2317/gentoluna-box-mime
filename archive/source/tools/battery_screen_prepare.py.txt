@@ -1,0 +1,45 @@
+"""Copy the active physical X display cookie for the unprivileged monitor."""
+
+import json
+import os
+from pathlib import Path
+import pwd
+import shutil
+import subprocess
+
+
+def main():
+    target = Path("/run/luna-battery-screen")
+    user = pwd.getpwnam("nvidia")
+    for process in Path("/proc").iterdir():
+        if not process.name.isdigit():
+            continue
+        try:
+            args = (process / "cmdline").read_bytes().decode().split("\0")
+        except (OSError, UnicodeError):
+            continue
+        if not args or Path(args[0]).name != "Xorg" or "-auth" not in args:
+            continue
+        auth = args[args.index("-auth") + 1]
+        for number in range(4):
+            display = f":{number}"
+            env = dict(os.environ, DISPLAY=display, XAUTHORITY=auth)
+            result = subprocess.run(["xrandr", "--current"], env=env,
+                                    capture_output=True, text=True, timeout=3)
+            if result.returncode or " connected" not in result.stdout:
+                continue
+            cookie = target / "Xauthority"
+            shutil.copyfile(auth, cookie)
+            os.chown(cookie, user.pw_uid, user.pw_gid)
+            cookie.chmod(0o600)
+            config = target / "display.json"
+            config.write_text(json.dumps({"DISPLAY": display, "XAUTHORITY": str(cookie)}))
+            os.chown(config, user.pw_uid, user.pw_gid)
+            config.chmod(0o600)
+            print(f"Physical battery display ready on {display}", flush=True)
+            return
+    raise RuntimeError("Physical X display not ready")
+
+
+if __name__ == "__main__":
+    main()

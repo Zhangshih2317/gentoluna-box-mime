@@ -1,0 +1,74 @@
+2026-11-12T16:30:49+08:00
+Bus 002 Device 006: ID 2dee:4d22 MEIG LTE-A Module
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 002: ID 8087:0032 Intel Corp. AX210 Bluetooth
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 006 Device 002: ID 05e3:0626 Genesys Logic, Inc. USB3.1 Hub
+Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 005 Device 005: ID 1a86:7523 QinHeng Electronics CH340 serial converter
+Bus 005 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
+Bus 005 Device 002: ID 05e3:0610 Genesys Logic, Inc. Hub
+Bus 005 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 002: ID 8086:0b07 Intel Corp. RealSense D435
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 004: ID 8888:8888 XF AIUI-USB-MC
+Bus 003 Device 002: ID 5958:dddd YXStar YXStar DEV HTD
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+lrwxrwxrwx 1 root root 7 Nov 12 16:30 /dev/luna-gripper-ch340 -> ttyUSB5
+lrwxrwxrwx 1 root root 7 Nov 12 16:25 /dev/luna-gripper-ftdi -> ttyUSB4
+inactive
+Nov 12 16:25:48 vision kernel: usb 5-1.1: Detected FT232RL
+Nov 12 16:25:48 vision kernel: usb 5-1.1: FTDI USB Serial Device converter now attached to ttyUSB4
+Nov 12 16:25:48 vision kernel: ch341 5-1.4:1.0: ch341-uart converter detected
+Nov 12 16:25:48 vision kernel: usb 5-1.4: ch341-uart converter now attached to ttyUSB5
+Nov 12 16:28:02 vision kernel: usb 5-1.4: failed to send control message: -110
+Nov 12 16:28:03 vision kernel: usb 5-1.4: failed to send control message: -110
+Nov 12 16:28:04 vision kernel: usb 5-1.4: failed to receive control message: -110
+Nov 12 16:28:04 vision kernel: ch341-uart ttyUSB5: failed to read modem status: -110
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:35 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).
+Nov 12 16:28:52 vision kernel: ch341-uart ttyUSB5: ch341-uart converter now disconnected from ttyUSB5
+Nov 12 16:28:52 vision kernel: ch341 5-1.4:1.0: device disconnected
+Nov 12 16:28:53 vision kernel: usb 5-1.4: reset full-speed USB device number 4 using xhci_hcd
+Nov 12 16:29:08 vision kernel: usb 5-1.4: device descriptor read/64, error -110
+Nov 12 16:29:24 vision kernel: usb 5-1.4: device descriptor read/64, error -110
+Nov 12 16:29:24 vision kernel: usb 5-1.4: reset full-speed USB device number 4 using xhci_hcd
+Nov 12 16:29:39 vision kernel: usb 5-1.4: device descriptor read/64, error -110
+Nov 12 16:29:55 vision kernel: usb 5-1.4: device descriptor read/64, error -110
+Nov 12 16:29:55 vision kernel: usb 5-1.4: reset full-speed USB device number 4 using xhci_hcd
+Nov 12 16:30:00 vision kernel: xhci_hcd 0000:01:00.0: Timeout while waiting for setup device command
+Nov 12 16:30:06 vision kernel: xhci_hcd 0000:01:00.0: Timeout while waiting for setup device command
+Nov 12 16:30:06 vision kernel: usb 5-1.4: device not accepting address 4, error -62
+Nov 12 16:30:06 vision kernel: usb 5-1.4: reset full-speed USB device number 4 using xhci_hcd
+Nov 12 16:30:11 vision kernel: xhci_hcd 0000:01:00.0: Timeout while waiting for setup device command
+Nov 12 16:30:16 vision kernel: xhci_hcd 0000:01:00.0: Timeout while waiting for setup device command
+Nov 12 16:30:16 vision kernel: usb 5-1.4: device not accepting address 4, error -62
+Nov 12 16:30:16 vision kernel: usb 5-1.4: USB disconnect, device number 4
+Nov 12 16:30:17 vision kernel: usb 5-1.4: new full-speed USB device number 5 using xhci_hcd
+Nov 12 16:30:17 vision kernel: ftdi_sio ttyUSB4: ftdi_set_termios FAILED to set databits/stopbits/parity
+Nov 12 16:30:18 vision kernel: ftdi_sio ttyUSB4: ftdi_set_termios urb failed to set baudrate
+Nov 12 16:30:23 vision kernel: ftdi_sio ttyUSB4: failed to set flow control: -110
+Nov 12 16:30:24 vision kernel: ch341 5-1.4:1.0: ch341-uart converter detected
+Nov 12 16:30:24 vision kernel: usb 5-1.4: ch341-uart converter now attached to ttyUSB5
+/sys/bus/usb/devices/5-1.1/power:
+total 0
+-r--r--r-- 1 root root 4096 Nov 12 16:30 active_duration
+-rw-r--r-- 1 root root 4096 Nov 12 16:30 autosuspend
+-rw-r--r-- 1 root root 4096 Nov 12 16:30 autosuspend_delay_ms
+-r--r--r-- 1 root root 4096 Nov 12 16:30 connected_duration
+-rw-r--r-- 1 root root 4096 Nov 12 16:30 control
+-rw-r--r-- 1 root root 4096 Nov 12 16:30 level
+-rw-r--r-- 1 root root 4096 Nov 12 16:30 persist
+-r--r--r-- 1 root root 4096 Nov 12 16:30 runtime_active_time
+-r--r--r-- 1 root root 4096 Nov 12 16:30 runtime_status
+-r--r--r-- 1 root root 4096 Nov 12 16:30 runtime_suspended_time
+-rw-r--r-- 1 root root 4096 Nov 12 16:30 wakeup
+-r--r--r-- 1 root root 4096 Nov 12 16:30 wakeup_abort_count
+-r--r--r-- 1 root root 4096 Nov 12 16:30 wakeup_active

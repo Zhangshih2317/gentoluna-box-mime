@@ -1,0 +1,240 @@
+"""Offline, nonblocking Mandarin battery alerts. Never controls the robot."""
+
+import json
+import math
+from pathlib import Path
+import subprocess
+
+
+REPEAT_SECONDS = {1: 300, 2: 60}
+SINK = "alsa_output.platform-sound.analog-stereo"
+
+
+def alert_level(item, fresh):
+    if (not fresh or not item or not item.get("is_connected")
+            or not item.get("is_in_place") or item.get("is_charging")
+            or item.get("error_code", 0)):
+        return 0
+    energy = item.get("energy")
+    if not isinstance(energy, (int, float)) or not math.isfinite(energy) or not 0 <= energy <= 100:
+        return 0
+    return 2 if energy <= 10 else 1 if energy <= 20 else 0
+
+
+def charging_state(entries, fresh):
+    if not fresh:
+        return None
+    states = []
+    for number in (1, 2):
+        item = entries.get(number)
+        if (not item or not item.get("is_connected") or not item.get("is_in_place")
+                or item.get("error_code", 0) or not isinstance(item.get("is_charging"), bool)):
+            return None
+        states.append(item["is_charging"])
+    return any(states)
+
+
+class ChargingAlertPolicy:
+    def __init__(self):
+        self.confirmed = None
+        self.candidate = None
+        self.count = 0
+        self.since = 0
+        self.last_frame = None
+        self.pending = None
+        self.retry_after = 0
+
+    def observe(self, entries, fresh, stamp, now):
+        state = charging_state(entries, fresh)
+        if state is None:
+            self.candidate = None
+            self.count = 0
+            self.pending = None
+            self.last_frame = None
+            return
+        if state != self.pending:
+            self.pending = None
+        if stamp == self.last_frame:
+            return
+        self.last_frame = stamp
+        if state != self.candidate:
+            self.candidate, self.count, self.since = state, 1, now
+        else:
+            self.count += 1
+        if self.count < 5 or now - self.since < 5:
+            return
+        if self.confirmed is None:
+            # Establish a baseline without inventing an event at startup.
+            self.confirmed = state
+        elif state != self.confirmed:
+            self.confirmed = state
+            self.pending = state
+            self.retry_after = 0
+
+    def next_event(self, entries, fresh, now):
+        if (self.pending is not None and now >= self.retry_after
+                and charging_state(entries, fresh) == self.pending):
+            return self.pending
+        return None
+
+    def started(self):
+        self.pending = None
+
+    def failed(self, state, now):
+        self.pending = state
+        self.retry_after = now + 30
+
+
+class BatteryAlertPolicy:
+    def __init__(self):
+        self.last_frame = None
+        self.candidates = {}
+        self.notified = {}
+        self.retry_after = {}
+
+    def observe(self, entries, fresh, stamp):
+        if not fresh:
+            self.candidates.clear()
+            self.last_frame = None
+            return
+        if stamp == self.last_frame:
+            return
+        self.last_frame = stamp
+        for number in (1, 2):
+            item = entries.get(number)
+            level = alert_level(item, fresh)
+            old_level, count = self.candidates.get(number, (0, 0))
+            self.candidates[number] = (level, count + 1 if level == old_level else 1)
+            energy = item.get("energy") if item else None
+            numeric = isinstance(energy, (int, float)) and math.isfinite(energy)
+            # Rearm with a margin so a fluctuating percentage does not spam.
+            if item and (item.get("is_charging") or (
+                    numeric and energy >= 23)):
+                self.notified.pop(number, None)
+                self.retry_after.pop(number, None)
+            elif numeric and energy >= 13 and number in self.notified:
+                previous, when = self.notified[number]
+                self.notified[number] = (min(previous, 1), when)
+
+    def next_alert(self, entries, fresh, now):
+        ready = []
+        for number, (level, count) in self.candidates.items():
+            if not level or count < 3 or alert_level(entries.get(number), fresh) != level:
+                continue
+            if now < self.retry_after.get(number, 0):
+                continue
+            previous, when = self.notified.get(number, (0, float("-inf")))
+            if level > previous or now - when >= REPEAT_SECONDS[level]:
+                ready.append((number, level))
+        return min(ready, key=lambda item: (-item[1], item[0])) if ready else None
+
+    def started(self, number, level, now):
+        self.notified[number] = (level, now)
+
+    def failed(self, number, now):
+        self.notified.pop(number, None)
+        self.retry_after[number] = now + 30
+
+    def cancelled(self, number):
+        self.notified.pop(number, None)
+
+
+class BatteryAudio:
+    def __init__(self, audio_dir=None):
+        self.audio_dir = Path(audio_dir) if audio_dir else Path(__file__).parent / "audio"
+        self.policy = BatteryAlertPolicy()
+        self.charging = ChargingAlertPolicy()
+        self.process = None
+        self.active = None
+        self.started_at = 0
+        self.last_event = "ready"
+        self.last_error = None
+
+    def log(self, event, **fields):
+        self.last_event = event
+        print(json.dumps({"event": "battery_audio_" + event, **fields}), flush=True)
+
+    def update(self, entries, fresh, stamp, now):
+        self.policy.observe(entries, fresh, stamp)
+        self.charging.observe(entries, fresh, stamp, now)
+        if self.process is not None:
+            code = self.process.poll()
+            if self.active["kind"] == "battery":
+                current = alert_level(entries.get(self.active["battery"]), fresh)
+                cancelled = current == 0 or current > self.active["level"]
+            else:
+                cancelled = charging_state(entries, fresh) != self.active["charging"]
+            if code is None and (cancelled or now - self.started_at > 20):
+                self.process.kill()
+                self.process.wait(timeout=1)
+                code = self.process.returncode
+                if cancelled:
+                    if self.active["kind"] == "battery":
+                        self.policy.cancelled(self.active["battery"])
+                    self.log("cancelled", **self.active)
+                else:
+                    self.failed("Playback timed out", now)
+            elif code is None:
+                return
+            elif code:
+                self.failed(f"paplay exited with code {code}", now)
+            else:
+                self.last_error = None
+                self.log("finished", **self.active)
+            self.process = None
+            self.active = None
+        candidate = self.policy.next_alert(entries, fresh, now)
+        charge_event = self.charging.next_event(entries, fresh, now)
+        if candidate is not None and candidate[1] == 2:
+            self.active = dict(kind="battery", battery=candidate[0], level=candidate[1])
+        elif charge_event is not None:
+            self.active = dict(kind="charging", charging=charge_event)
+        elif candidate is not None:
+            self.active = dict(kind="battery", battery=candidate[0], level=candidate[1])
+        else:
+            return
+        if self.active["kind"] == "battery":
+            number, level = self.active["battery"], self.active["level"]
+            clip = self.audio_dir / f"battery-{number}-{'critical' if level == 2 else 'low'}.wav"
+        else:
+            clip = self.audio_dir / (
+                "charging-started.wav" if self.active["charging"] else "charging-stopped.wav"
+            )
+        try:
+            if not clip.is_file():
+                raise FileNotFoundError(str(clip))
+            self.process = subprocess.Popen(
+                ["paplay", "--server=unix:/run/user/1000/pulse/native",
+                 "--device=" + SINK, "--volume=65536", str(clip)],
+                stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            )
+        except OSError as exc:
+            self.failed(str(exc), now)
+            self.active = None
+            return
+        self.started_at = now
+        if self.active["kind"] == "battery":
+            self.policy.started(number, level, now)
+        else:
+            self.charging.started()
+        self.log("started", **self.active)
+
+    def failed(self, error, now):
+        self.last_error = error
+        if self.active["kind"] == "battery":
+            self.policy.failed(self.active["battery"], now)
+        else:
+            self.charging.failed(self.active["charging"], now)
+        self.log("failed", **self.active, error=error)
+
+    def status(self):
+        return {
+            "enabled": True,
+            "state": self.last_event,
+            "playing": self.active,
+            "last_error": self.last_error,
+            "language": "zh-CN",
+            "volume_percent": 100,
+            "charging_notifications": True,
+            "confirmed_charging": self.charging.confirmed,
+        }

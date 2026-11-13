@@ -1,0 +1,5 @@
+{"event": "remote_process", "time": "2026-11-13T02:43:29.151763+00:00", "pid": 9257, "run_id": "[REDACTED]"}
+{"event": "device_identity", "time": "2026-11-13T02:43:29.206468+00:00", "port": "/dev/luna-gripper-ch340", "resolved": "/dev/ttyUSB4", "identity": {"ID_VENDOR_ID": "1a86", "ID_MODEL_ID": "7523", "ID_PATH": "platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0"}}
+{"event": "device_failed", "time": "2026-11-13T02:43:32.259421+00:00", "port": "/dev/luna-gripper-ch340", "error": "SerialException: [Errno 5] could not open port /dev/luna-gripper-ch340: [Errno 5] Input/output error: '/dev/luna-gripper-ch340'"}
+{"event": "inspection_complete", "time": "2026-11-13T02:43:32.259673+00:00", "all_selected_responded": false, "selected_ports": ["/dev/luna-gripper-ch340"], "write_register_commands": 0}
+{"remote_exit_code": 1}

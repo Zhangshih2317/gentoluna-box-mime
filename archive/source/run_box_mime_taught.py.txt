@@ -1,0 +1,324 @@
+"""Continuous empty-handed box mime. Default: preflight; --execute moves once."""
+
+import argparse
+from datetime import datetime
+import hashlib
+import importlib.util
+import json
+import math
+from pathlib import Path
+import re
+import shlex
+import sys
+import threading
+import uuid
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT/"tools"))
+from robot_status import DEFAULT_CONNECTOR
+from box_mime_taught_plan import validate_speed_percent
+from position_acceptance import (POSITION_TOLERANCE_DEG, ARRIVAL_SAMPLE_INTERVAL_SECONDS,
+                                 ARRIVAL_WINDOW_SECONDS)
+
+# ===== 双臂独立调速：范围 1~100，100. 表示 100% =====
+# 原整体调速入口已停用。下面两项同时作用于 ARM0 和 ARM1，不影响 BODY。
+# 双臂正式动作整点下发，运动由厂家 Position 控制器处理；不再用慢速流式轨迹。
+# 100% 是控制器倍率，短行程的实测峰值仍取决于加减速和负载。
+ARM_SPEED_PERCENT = 100.
+ARM_ACCELERATION_PERCENT = 50.
+# 默认搬箱流程的全身位置容差为 2°，到位取两次不同反馈，间隔 0.1~1 秒。
+# 规则在 tools/position_acceptance.py；正常结束保持 Position 模式。
+# 独立回 HOME 和 --stepped 兼容入口仍保留各自原来的恢复检查。
+
+# BODY 调速参数暂不改动，维持之前 10% 速度、5% 控制器加速度。
+# 这里保留的是 BODY 参数；本搬箱流程仍包含下蹲、站起和转腰。
+BODY_SPEED_PERCENT = 100.
+BODY_ACCELERATION_PERCENT = 50.
+# 仅改百分比无需重建几何缓存。
+
+# 独立回 HOME 调速：同时作用于双臂和 BODY，不改变搬箱流程参数。
+HOME_SPEED_PERCENT = 30.
+HOME_ACCELERATION_PERCENT = 10.
+
+# 下蹲高度：相对 HOME 的躯干垂直下降量，单位 cm；30. 表示下降 30 厘米。
+# B2/B3/B4 自动配合保持原躯干姿态。高度范围 (0, 30]。
+# 改高度会改变路径，需要重新 --prepare-cache；当前 30 cm 缓存随程序更新。
+SQUAT_DEPTH_CM = 30.
+
+MODULES = ("box_motion_plan", "coordinated_joint_timing", "box_motion_robot", "recover_box_start_robot",
+           "stand_up_robot", "box_mime_taught_plan", "feedback_observation", "position_acceptance",
+           "native_arm_motion", "box_mime_cache",
+           "motion_wait_policy", "box_mime_taught_robot")
+CACHE = ROOT/"points/BOX_MIME_GEOMETRY_CACHE.json"
+
+
+def preflight_message(event):
+    if event.get("event") != "preflight_progress":
+        return None
+    if event["phase"] == "load_model":
+        return "正在核对模型和启动状态，此阶段机器人不会动作。"
+    if event["phase"] == "vendor_fk":
+        return "正在核对厂家运动学参数，随后检查完整碰撞路径。"
+    checked, total = event["samples_checked"], event["samples_total"]
+    return f"碰撞预检：{checked}/{total} 点（{100*checked/total:.0f}%），尚未启动运动。"
+
+
+def source_for(execute, continuous=True, prepare_cache=False, full_preflight=False, home_only=False,
+               cache_head=None):
+    ratios = configured_ratios(home_only)
+    if cache_head is not None and (not prepare_cache or execute or home_only):
+        raise ValueError("Cache HEAD override is only available for offline cache preparation")
+    home = json.loads((ROOT/"points/BOX_START_BEFORE_INCIDENT.json").read_text("utf-8"))["pose"]
+    if cache_head is not None:
+        values = [float(value) for value in cache_head]
+        if (len(values) != 3 or any(not math.isfinite(value) for value in values)
+                or max(abs(a-b) for a, b in zip(values, home["head"])) > .05):
+            raise ValueError("Cache HEAD must be three finite angles within 0.05 degrees of HOME")
+        # Only the offline model's held HEAD changes; saved HOME stays intact.
+        home["head"] = values
+    squat = json.loads((ROOT/"points/taught/SQUAT_TAUGHT-20261111-150201.json").read_text("utf-8"))["pose"]
+    waist = json.loads((ROOT/"points/taught/WAIST_TAUGHT_01_UI-20261111-153805.json").read_text("utf-8"))["pose"]
+    squat_profile = None
+    if not home_only:
+        from mime_squat_height import solve_squat_depth
+        squat_profile = solve_squat_depth(home, squat, SQUAT_DEPTH_CM)
+    source = "import os,sys,types,json,signal,threading,time\n"
+    source += "print(json.dumps({'event':'process','pid':os.getpid()}),flush=True)\n"
+    source += (
+        "last_ping=time.monotonic()\n"
+        "input_alive=True\n"
+        "def receive_pings():\n"
+        "    global last_ping,input_alive\n"
+        "    try:\n"
+        "        for line in sys.stdin:\n"
+        "            if line.strip()=='PING': last_ping=time.monotonic()\n"
+        "    finally: input_alive=False\n"
+        "threading.Thread(target=receive_pings,daemon=True).start()\n"
+        "def heartbeat():\n"
+        "    if not input_alive or time.monotonic()-last_ping>2.:\n"
+        "        raise RuntimeError('Operator connection heartbeat lost')\n"
+        "def interrupted(signum,frame): raise RuntimeError('Mime interrupted')\n"
+        "for sig in (signal.SIGTERM,signal.SIGINT,signal.SIGHUP):\n"
+        "    signal.signal(sig,interrupted)\n"
+    )
+    texts = {name: (ROOT/"tools"/(name+".py")).read_text("utf-8") for name in MODULES}
+    code_id = hashlib.sha256(json.dumps(texts, sort_keys=True).encode()).hexdigest()
+    for name, text in texts.items():
+        source += f"module=types.ModuleType({name!r})\nsys.modules[{name!r}]=module\n"
+        source += f"exec({text!r},module.__dict__)\n"
+        if name == "box_mime_taught_plan":
+            # Configure before consumers import the plan's derived constants.
+            if home_only:
+                source += (f"module.configure_speed({ratios['body']['speed_percent']!r},"
+                           f"{ratios['body']['acceleration_percent']!r})\n")
+            else:
+                source += (f"module.configure_groups({ratios['arm0']['speed_percent']!r},"
+                           f"{ratios['arm0']['acceleration_percent']!r},"
+                           f"{ratios['body']['speed_percent']!r},"
+                           f"{ratios['body']['acceleration_percent']!r})\n")
+                if continuous:
+                    source += "module.configure_native_arm_position()\n"
+            if squat_profile is not None:
+                source += (f"module.configure_squat({squat_profile['knee_delta_deg']!r},"
+                           f"{squat_profile['depth_mm']!r})\n")
+    if home_only:
+        text = (ROOT/"tools/return_home_robot.py").read_text("utf-8")
+        recovery_reference = json.loads(
+            (ROOT/"points/HOME_RECOVERY_PREFLIGHT_REFERENCE.json").read_text("utf-8"))
+        source += "module=types.ModuleType('return_home_robot')\nsys.modules['return_home_robot']=module\n"
+        source += f"exec({text!r},module.__dict__)\n"
+        source += (f"module.run({home!r},{execute!r},heartbeat,"
+                   f"recovery_reference={recovery_reference!r})\n")
+    elif prepare_cache:
+        events = [json.loads(line) for line in
+                  (ROOT/"evidence/box-mime-taught-20261111-162613.jsonl").read_text("utf-8").splitlines()
+                  if line.startswith("{")]
+        parameters = next(e["frame_parameters"] for e in events if e.get("event") == "vendor_fk_verified")
+        source += f"sys.modules['box_mime_cache'].prepare({home!r},{squat!r},{waist!r},{parameters!r},{code_id!r})\n"
+    else:
+        certificate = json.loads(CACHE.read_text("utf-8")) if CACHE.exists() else None
+        source += (f"sys.modules['box_mime_taught_robot'].run({home!r},{squat!r},{waist!r},"
+                   f"{execute!r},heartbeat,continuous={continuous!r},certificate={certificate!r},"
+                   f"code_id={code_id!r},full_preflight={full_preflight!r})\n")
+    return source
+
+
+def configured_ratios(home_only=False):
+    """Validate every user setting before opening an SSH or SDK connection."""
+    arm_speed, arm_accel, body_speed, body_accel = (
+        (HOME_SPEED_PERCENT, HOME_ACCELERATION_PERCENT, HOME_SPEED_PERCENT, HOME_ACCELERATION_PERCENT)
+        if home_only else
+        (ARM_SPEED_PERCENT, ARM_ACCELERATION_PERCENT, BODY_SPEED_PERCENT, BODY_ACCELERATION_PERCENT))
+    arm_speed, arm_accel, body_speed, body_accel = map(
+        validate_speed_percent, (arm_speed, arm_accel, body_speed, body_accel))
+    return {
+        "arm0": {"speed_percent": arm_speed, "acceleration_percent": arm_accel},
+        "arm1": {"speed_percent": arm_speed, "acceleration_percent": arm_accel},
+        "body": {"speed_percent": body_speed, "acceleration_percent": body_accel},
+    }
+
+
+def main(home_only=False):
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--execute", action="store_true")
+    mode.add_argument("--preflight", action="store_true")
+    mode.add_argument("--prepare-cache", action="store_true",
+                      help="Prepare the fixed model path offline without connecting to the robot")
+    parser.add_argument("--cache-head", nargs=3, type=float, metavar=("YAW", "PITCH", "ROLL"),
+                        help="Observed held HEAD angles for --prepare-cache only, in degrees")
+    parser.add_argument("--full-preflight", action="store_true",
+                        help="Explicitly recompute the complete model path")
+    parser.add_argument("--stepped", action="store_true",
+                        help="Use the previously verified stop-at-small-waypoint timing")
+    args = parser.parse_args()
+    if args.cache_head is not None and (not args.prepare_cache or home_only):
+        parser.error("--cache-head requires --prepare-cache and is unavailable for HOME recovery")
+    # Validate and bind the source before establishing even the SSH connection.
+    try:
+        source = source_for(args.execute, not args.stepped, args.prepare_cache,
+                            args.full_preflight, home_only, cache_head=args.cache_head)
+    except ValueError as error:
+        parser.error(str(error))
+    if home_only and args.execute:
+        print(f"回 HOME：速度 {HOME_SPEED_PERCENT:g}% / 加速度 {HOME_ACCELERATION_PERCENT:g}%。",
+              flush=True)
+        print("回 HOME 执行已放开：沿裸臂自碰撞预检通过的路径回位。"
+              "外部障碍不在该模型内。", flush=True)
+    elif args.execute:
+        print(f"双臂：速度 {ARM_SPEED_PERCENT:g}% / 加速度 {ARM_ACCELERATION_PERCENT:g}%；"
+              f"BODY：速度 {BODY_SPEED_PERCENT:g}% / 加速度 {BODY_ACCELERATION_PERCENT:g}%。",
+              flush=True)
+        print(f"下蹲高度：相对 HOME 下降 {SQUAT_DEPTH_CM:g} cm。", flush=True)
+        print("双臂使用厂家 Position 整点执行，到位后继续；BODY 保留原协调轨迹。"
+              if not args.stepped else "分步兼容模式：保留原慢速小段轨迹。",
+              flush=True)
+        if not args.stepped:
+            print(f"全身到位容差 {POSITION_TOLERANCE_DEG:g}°：两次不同反馈，"
+                  f"间隔 {ARRIVAL_SAMPLE_INTERVAL_SECONDS:g}~{ARRIVAL_WINDOW_SECONDS:g} 秒。"
+                  "正常结束保持 Position。", flush=True)
+        print("搬箱执行已放开：沿裸臂自碰撞预检通过的示教路径运动。"
+              "外部障碍不在该模型内。旧 run_box_motion.py 仍禁用。", flush=True)
+    elif not args.prepare_cache:
+        print("仅诊断原裸臂模型；结果不能证明已安装夹爪的运动或停止安全。", flush=True)
+    if home_only and (args.prepare_cache or args.stepped or args.full_preflight):
+        parser.error("HOME supports only --preflight or --execute")
+    spec = importlib.util.spec_from_file_location("mime_connector", DEFAULT_CONNECTOR)
+    connector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(connector)
+    token, pid = uuid.uuid4().hex, None
+    bootstrap = "import ast,sys; exec(ast.literal_eval(sys.stdin.readline()))"
+    remote = ("source /home/nvidia/gento-test-baseline/gento-test-env.sh"
+              " && exec env LUNA_MIME_RUN="+token+" python3 -u -c "+shlex.quote(bootstrap)+" 2>&1")
+    command = "bash -lc "+shlex.quote(remote)
+    prefix = "return-home-" if home_only else "box-mime-taught-"
+    path = ROOT/"evidence"/(prefix+datetime.now().strftime("%Y%m%d-%H%M%S")+".jsonl")
+    path.parent.mkdir(exist_ok=True)
+    print("Evidence: "+str(path), flush=True)
+    done = threading.Event()
+    with connector.connect() as client, path.open("x", encoding="utf-8") as log:
+        log.write(json.dumps({"event": "request", "execute": args.execute,
+                              "velocity_percent": HOME_SPEED_PERCENT if home_only else None,
+                              "acceleration_percent": HOME_ACCELERATION_PERCENT if home_only else None,
+                              "controller_ratios": configured_ratios(home_only),
+                              "squat_depth_cm": None if home_only else SQUAT_DEPTH_CM,
+                              "prepare_cache": args.prepare_cache, "full_preflight": args.full_preflight,
+                              "cache_head_deg": args.cache_head,
+                              "position_tolerance_deg": (
+                                  POSITION_TOLERANCE_DEG if not home_only and not args.stepped else None),
+                              "motion_style": "stepped" if args.stepped else "continuous"})+"\n")
+        stdin, stdout, stderr = client.exec_command(command, timeout=30)
+        complete = False
+        response_trace = None
+        ping_thread = None
+        try:
+            stdin.write((repr(source)+"\n").encode())
+            stdin.flush()
+
+            def ping():
+                while not done.is_set():
+                    try:
+                        stdin.write(b"PING\n")
+                        stdin.flush()
+                    except Exception:
+                        return
+                    done.wait(.25)
+
+            ping_thread = threading.Thread(target=ping, daemon=True)
+            ping_thread.start()
+            for line in stdout:
+                log.write(line)
+                log.flush()
+                print(line, end="", flush=True)
+                if line.startswith("{"):
+                    event = json.loads(line)
+                    message = preflight_message(event)
+                    if message:
+                        print(message, flush=True)
+                    if event.get("event") == "process":
+                        pid = int(event["pid"])
+                    if event.get("event") == "response_trace_saved":
+                        candidate = event.get("path", "")
+                        if re.fullmatch(r"/tmp/luna-mime-response-[a-zA-Z0-9_-]+\.jsonl", candidate):
+                            response_trace = candidate
+                    if args.prepare_cache and event.get("event") == "geometry_cache_prepared":
+                        CACHE.write_text(json.dumps(event["certificate"], indent=2), encoding="utf-8")
+                        complete = True
+                        print("已保存路径验证缓存："+str(CACHE), flush=True)
+                    if event.get("event") == "geometry_cache_reused":
+                        print("已复用完整路径验证；仅核查当前回 HOME 小段。", flush=True)
+                    completion_event = "home_complete" if home_only else "mime_complete"
+                    if not args.prepare_cache and event.get("event") == (
+                            completion_event if args.execute else "preflight_complete"):
+                        complete = True
+            code = stdout.channel.recv_exit_status()
+            log.write(json.dumps({"remote_exit_code": code, "completion_confirmed": complete})+"\n")
+            if response_trace:
+                local_trace = path.with_name(path.stem+"-response.jsonl")
+                try:
+                    with client.open_sftp() as sftp:
+                        sftp.get(response_trace, str(local_trace))
+                    print("逐周期反馈记录："+str(local_trace), flush=True)
+                except Exception as error:
+                    print("反馈记录下载失败，远端文件保留在 "+response_trace+": "+str(error), flush=True)
+            return code if code else (0 if complete else 1)
+        except BaseException:
+            done.set()
+            if pid is not None:
+                stop = (
+                    "import os,signal\n"
+                    f"pid={pid!r}\ntoken={('LUNA_MIME_RUN='+token).encode()!r}\n"
+                    "try:\n"
+                    "    with open('/proc/%d/environ'%pid,'rb') as f: env=f.read().split(b'\\0')\n"
+                    "    if token not in env: raise RuntimeError('Process token mismatch')\n"
+                    "    os.kill(pid,signal.SIGTERM)\n"
+                    "except FileNotFoundError: pass\n"
+                )
+                try:
+                    with connector.connect() as stop_client:
+                        si, so, se = stop_client.exec_command("python3 -", timeout=15)
+                        si.write(stop.encode())
+                        si.flush()
+                        si.channel.shutdown_write()
+                        so.read()
+                        if so.channel.recv_exit_status():
+                            raise RuntimeError(se.read().decode(errors="replace"))
+                    stdout.channel.settimeout(15)
+                    for line in stdout:
+                        log.write(line)
+                        log.flush()
+                        print(line, end="", flush=True)
+                except Exception as error:
+                    print("STOP UNCONFIRMED; use physical emergency stop: "+str(error), flush=True)
+            raise
+        finally:
+            done.set()
+            if ping_thread:
+                ping_thread.join(timeout=1)
+            stdin.close()
+
+
+if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    raise SystemExit(main())

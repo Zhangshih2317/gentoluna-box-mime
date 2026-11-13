@@ -1,0 +1,3093 @@
+[
+  {
+    "file": "body-home-5percent-20261111-152549.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "body-home-5percent-20261111-152643.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-mime-arrival-recovery-offline-20261111.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-mime-fast-cache-readonly-20261111.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-mime-six-cycles-20261113-163518.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-six-cycles-20261113-164014.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-six-cycles-20261113-164309.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 48,
+    "cycle_completions": 6,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "demo_complete",
+      "time": "2026-11-13T08:59:49.583228+00:00",
+      "completed_cycles": 6,
+      "results": [
+        {
+          "cycle": 1,
+          "turn_relative_deg": -45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              -0.0,
+              -0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.655
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.770861760000116
+        },
+        {
+          "cycle": 2,
+          "turn_relative_deg": 45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.651
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.761560639999516
+        },
+        {
+          "cycle": 3,
+          "turn_relative_deg": -45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.655
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 30.31344096000248
+        },
+        {
+          "cycle": 4,
+          "turn_relative_deg": 45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.651
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.738599968000926
+        },
+        {
+          "cycle": 5,
+          "turn_relative_deg": -45,
+          "maximum_home_error_deg": 0.0009999999999998899,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              -0.0,
+              0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.654
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 30.591452543998457
+        },
+        {
+          "cycle": 6,
+          "turn_relative_deg": 45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.651
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.74695247999989
+        }
+      ],
+      "returned_home": true,
+      "retained_position_mode": true,
+      "maximum_home_error_deg": 0.0020000000000000018
+    },
+    "cycle_seconds": [
+      27.770861760000116,
+      27.761560639999516,
+      30.31344096000248,
+      27.738599968000926,
+      30.591452543998457,
+      27.74695247999989
+    ],
+    "sum_cycle_seconds": 171.9228683520014,
+    "response_samples": 8404,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261111-155257.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-160530.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-160754.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-11T08:33:50.652152+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          -0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.653
+        ],
+        "head": [
+          2.108,
+          -15.998,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0
+    }
+  },
+  {
+    "file": "box-mime-taught-20261111-162613.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-163307.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-163707.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 1,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T08:51:41.263959+00:00",
+        "error": "Position command echo mismatch: arm1"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-11T08:51:41.264344+00:00",
+        "returned_mask": 11
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261111-165606.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-165845.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-170201.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T09:15:14.709239+00:00",
+        "error": "Unexpected state arm0: {'cur': 100, 'cmd': 1, 'err': 110}"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261111-170214.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T09:15:27.029142+00:00",
+        "error": "Unexpected state arm0: {'cur': 100, 'cmd': 1, 'err': 110}"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261111-170222.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T09:15:35.518075+00:00",
+        "error": "Unexpected state arm0: {'cur': 100, 'cmd': 1, 'err': 110}"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261111-170626.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 3,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T09:20:15.653548+00:00",
+        "error": "Command tracking/uncommanded movement: body"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-11T09:20:15.653725+00:00",
+        "returned_mask": 11
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261111-171823.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T09:31:36.504079+00:00",
+        "error": "Unexpected state arm0: {'cur': 100, 'cmd': 1, 'err': 110}"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261111-172032.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261111-172318.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 6,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-11T09:38:34.931513+00:00",
+        "error": "Position command echo mismatch: body"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-11T09:38:34.931628+00:00",
+        "returned_mask": 11
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261112-150158.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261112-150339.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-12T07:17:06.111858+00:00",
+        "error": "Unknown arm pose; manual HOME recovery required"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261112-152350.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261112-152431.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 2,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-12T07:38:29.470445+00:00",
+        "error": "Torso pitch compensation mismatch"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-12T07:38:29.470689+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-12T07:38:31.495015+00:00",
+        "message": "Use physical emergency stop"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261113-125246.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T05:06:26.383236+00:00",
+        "error": "Geometry cache missing or changed; prepare cache offline first"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261113-125427.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T05:08:06.929724+00:00",
+        "error": "Geometry cache missing or changed; prepare cache offline first"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261113-125630.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-125852.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T05:14:35.279263+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0039999999999995595
+    }
+  },
+  {
+    "file": "box-mime-taught-20261113-130441.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T05:20:24.154120+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0039999999999995595
+    }
+  },
+  {
+    "file": "box-mime-taught-20261113-131314.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-131945.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T05:35:07.617823+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0039999999999995595
+    }
+  },
+  {
+    "file": "box-mime-taught-20261113-132647.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-132948.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T05:45:31.201770+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0039999999999995595
+    }
+  },
+  {
+    "file": "box-mime-taught-20261113-133219.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-133244.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T05:48:08.998912+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0039999999999995595
+    }
+  },
+  {
+    "file": "box-mime-taught-20261113-133446.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-133502.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 9,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T05:50:01.526091+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          -0.0,
+          -0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "maximum_home_error_deg": 0.0039999999999995595
+    }
+  },
+  {
+    "file": "box-mime-taught-20261113-140542.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-140826.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 2,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T06:23:20.796933+00:00",
+        "error": "Position stream scheduling gap"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-13T06:23:20.797172+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-13T06:23:22.817810+00:00",
+        "message": "Use physical emergency stop"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false,
+    "response_samples": 3440,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-141220.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-142503.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 4,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T06:40:59.065826+00:00",
+        "error": "Measured joint jump"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-13T06:40:59.065912+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-13T06:41:01.088364+00:00",
+        "message": "Use physical emergency stop"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false,
+    "response_samples": 6498,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-144217.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-144829.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-144931.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 4,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T07:05:26.765684+00:00",
+        "error": "Measured joint jump"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-13T07:05:26.765781+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-13T07:05:28.785843+00:00",
+        "message": "Use physical emergency stop"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false,
+    "response_samples": 6500,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-151610.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T07:32:05.195021+00:00",
+        "error": "Measured joint jump"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-13T07:32:05.195178+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-13T07:32:07.219050+00:00",
+        "message": "Use physical emergency stop"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false,
+    "response_samples": 6499,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-152518.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-154629.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-154954.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-155059.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 1,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T08:04:47.152957+00:00",
+        "error": "Uncommanded native stationary axis: arm0"
+      },
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-13T08:04:47.153160+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-13T08:04:49.176578+00:00",
+        "message": "Use physical emergency stop"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false,
+    "response_samples": 113,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-160352.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-160729.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T08:21:04.325736+00:00",
+        "error": "Unknown arm pose; manual HOME recovery required"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "box-mime-taught-20261113-161240.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 100.0
+      },
+      "body": {
+        "speed_percent": 10.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:29:13.334401+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.653
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0
+    },
+    "response_samples": 8386,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-161637.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-161717.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:32:00.370995+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          -0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.653
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0
+    },
+    "response_samples": 2836,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-161848.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 40.0,
+        "acceleration_percent": 20.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-161904.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 40.0,
+        "acceleration_percent": 20.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:33:33.981818+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.653
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0
+    },
+    "response_samples": 2200,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-162015.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 60.0,
+        "acceleration_percent": 30.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-162035.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 60.0,
+        "acceleration_percent": 30.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:34:54.534195+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0009999999999998899
+    },
+    "response_samples": 1656,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-162135.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 80.0,
+        "acceleration_percent": 40.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-162152.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 80.0,
+        "acceleration_percent": 40.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:36:07.842922+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.655
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0020000000000000018
+    },
+    "response_samples": 1456,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-162321.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "box-mime-taught-20261113-162337.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:37:50.757183+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0009999999999998899
+    },
+    "response_samples": 1358,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-motion-20261111-135031.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-motion-20261111-135152.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T06:05:13.486724+00:00",
+        "error": "RuntimeError: URDF/vendor FK disagree: 185.487 mm, 1.260077 rotation element"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-motion-20261111-135634.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T06:09:55.370315+00:00",
+        "error": "TypeError: 'tuple' object does not support item assignment"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-motion-20261111-135805.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-motion-20261111-140116.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-motion-20261111-140325.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "box-motion-20261111-140353.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 1,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "emergency_stop_requested",
+        "time": "2026-11-11T06:17:43.564783+00:00",
+        "returned_mask": 11
+      },
+      {
+        "event": "stop_unconfirmed",
+        "time": "2026-11-11T06:17:43.564911+00:00",
+        "message": "Use the physical emergency stop"
+      },
+      {
+        "event": "failed",
+        "time": "2026-11-11T06:17:43.595199+00:00",
+        "error": "RuntimeError: Measured joint left validated stage envelope"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-130057.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:14:14.133645+00:00",
+        "error": "RuntimeError: Planned joint speed exceeds conservative 10 deg/s bound"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-130142.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:14:58.751437+00:00",
+        "error": "RuntimeError: Planned joint speed 16.609 exceeds 10 deg/s"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-130216.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-130238.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-130611.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131011.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131021.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:23:38.298265+00:00",
+        "error": "RuntimeError: Trajectory upload failed: -19; no run retry"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131230.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:25:43.373441+00:00",
+        "error": "RuntimeError: Controller has an existing trajectory"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131258.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:26:11.892914+00:00",
+        "error": "RuntimeError: ARM0 has existing trajectory state 1; no automatic clear or restart attempted"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131351.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131538.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131546.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:29:03.007241+00:00",
+        "error": "RuntimeError: ARM0 upload of 240 points failed: -10 (SDK upload error); no run retry"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131609.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "failed",
+        "time": "2026-11-11T05:29:22.691459+00:00",
+        "error": "RuntimeError: ARM0 has existing trajectory state 2; no automatic clear or restart attempted"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131923.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-131941.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-132100.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-132115.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133015.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133029.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133216.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133230.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133652.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133803.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133918.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-133931.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-134012.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-134048.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-134110.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "dual-arm-20261111-134119.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-close-20261113-103513.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-close-20261113-103936.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-diagnose-20261113-090254.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-execute-20261113-102443.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-execute-single-20261113-095841.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-execute-single-20261113-101155.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261112-161432.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261112-161732.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261112-162953.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261112-163105.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-085311.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-085621.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-091003.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-091240.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-091620.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-095035.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-095539.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-095658.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-095923.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-100236.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-100448.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-102430.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-102903.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-102956.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-inspect-20261113-103406.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-install-20261112-161231.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-install-20261112-161419.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-open-20261113-103901.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-rebind-controller-20261113-091608.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-reconnect-usb-20261113-091132.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-recover-empty-20261113-100426.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-repair-20261112-161220.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-repair-20261113-085302.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-repair-20261113-090944.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-reset-ch340-20261112-161527.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-reset-ch340-20261113-103024.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-scan-20261112-161641.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-scan-20261113-085710.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-windows-20261113-092324.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-windows-20261113-092343.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-windows-20261113-094501.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-windows-20261113-095657.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-windows-execute-20261113-101522.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": null,
+    "completion_confirmed": null
+  },
+  {
+    "file": "recovery-20261111-141928.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "recovery-20261111-142111.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 2,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "return-home-20261112-151532.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261112-152109.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-122939.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T04:43:14.707712+00:00",
+        "error": "Standing BODY posture required for wrist recovery"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "return-home-20261113-123235.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-123605.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-124143.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-124217.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-141807.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T06:31:42.764854+00:00",
+        "error": "Current pose differs from BODY-first preflight reference"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "return-home-20261113-142012.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-142157.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-142938.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T06:43:13.220190+00:00",
+        "error": "Current pose differs from BODY-first preflight reference"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "return-home-20261113-143030.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [
+      {
+        "event": "recovery_failed",
+        "time": "2026-11-13T06:44:05.636329+00:00",
+        "error": "Current pose differs from BODY-first preflight reference"
+      }
+    ],
+    "remote_exit_code": 1,
+    "completion_confirmed": false
+  },
+  {
+    "file": "return-home-20261113-143446.jsonl",
+    "execute_requested": false,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-143617.jsonl",
+    "execute_requested": true,
+    "controller_ratios": null,
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-150830.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 20.0,
+        "acceleration_percent": 5.0
+      },
+      "arm1": {
+        "speed_percent": 20.0,
+        "acceleration_percent": 5.0
+      },
+      "body": {
+        "speed_percent": 20.0,
+        "acceleration_percent": 5.0
+      }
+    },
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-152331.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      },
+      "arm1": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      },
+      "body": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      }
+    },
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-160849.jsonl",
+    "execute_requested": false,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      },
+      "arm1": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      },
+      "body": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      }
+    },
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "return-home-20261113-161059.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      },
+      "arm1": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      },
+      "body": {
+        "speed_percent": 30.0,
+        "acceleration_percent": 10.0
+      }
+    },
+    "stage_completions": 5,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true
+  },
+  {
+    "file": "stand-up-100mm-20261111-150605.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "stand-up-100mm-20261111-151451.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "stand-up-100mm-20261111-151611.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  }
+]

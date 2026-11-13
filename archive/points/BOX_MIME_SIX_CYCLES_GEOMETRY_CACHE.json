@@ -1,0 +1,1434 @@
+{
+  "schema": "luna_six_cycle_geometry_v1",
+  "code_id": "eada17170a96d8711bc9015c873de83062acefb9980d01c94fea5ab504d4d78d",
+  "directions": {
+    "-45": {
+      "schema": "luna_mime_geometry_cache_v1",
+      "code_id": "eada17170a96d8711bc9015c873de83062acefb9980d01c94fea5ab504d4d78d",
+      "model_files": {
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/gento_luna_full.urdf": "a38af4e57dfa9742e905c6a43eb1787d7c633d501aae6cc4ebc078a2f5b45253",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L1_Link.STL": "574c3c9fc2eb2b8a88bdd1538874064bce19f2056a01f98a76c50941444d509d",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L2_Link.STL": "dd4b131343427c66df3b5c902bdf9004acd9c9644eaaa41ffd3041aa4dff82c6",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L3_Link.STL": "c6283bbf322eccebc2b4aaa60502735a27f2e7e808881b71166213591d88bab9",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L4_Link.STL": "8a03d423e0111a518e39a03b99163c17bb5ab2172bdb739b0a94c5ab3b0d078e",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L5_Link.STL": "007de5726db1e687ffd56517f07ab0a3dfd0ceded2e1e792f44720b9a3bd45c5",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L6_Link.STL": "0f981df1cbab3e64f3da91884aec76c7d9083dab5d130acf9b92cc3c9003ea58",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L7_Link.STL": "aec10724e0719f6dcd0faeebdc7728f4f39c8bafa0900887621e7b9cf0a46cd7",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R1_Link.STL": "412af8bed0cbd990a5146ac52708313573550513b5de21acd756a9f0c3ec70ab",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R2_Link.STL": "44e7fcc5e0e9dbdcaa301df6da3149d135ac8206d4d6b7d493f81b97484b2c7a",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R3_Link.STL": "0ff2811c90355b418a7601b9e0ffb14f3b31683201c3df9d0c86b1067c8b1530",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R4_Link.STL": "ab24a5f220507b200ced7202732d9939d7d966ab23f9373bb7e202298f500712",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R5_Link.STL": "b084f3b305213716e349dfa880309eff6d90bf57d9b1b56452a8746e3e6e1b1e",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R6_Link.STL": "bd8f028b32430d6aed2c76c1987457cf1ac6b1285d7c58e6bc5c9d59d8bd8c39",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R7_Link.STL": "2bd9abb0d5e886a93ac276bfaa781a4c1d30b9939f9c570601e434dc8d5aedcf",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Head_J1_Link.STL": "ab6223b6925c3e6e40b774c571502eb22daa23bd283b8afb444c26fef6adafc7",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Head_J2_Link.STL": "fa255f99574b6f7b7e920cd728dbf7081d2b1d74e64a7a4e12fd64ab7699109e",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J1_Link.STL": "d1fcc3d776957305ecd6e2745cf91657ccaaf9d2998a434bb9fda0b5fa18552d",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J2_Link.STL": "5971b7c956ff06ef93685b11707a219afadb4c13dfb575af470eed1b28e5cea2",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J3_Link.STL": "25914336d282224b84d8b1ab4ce2f04d0f15e499a81a14a17051c8b219e063f2",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J4_Link.STL": "8898bbeffe7c4e439ff982e7974016406bafd4d6faf768dfe03cf25e556edbf6",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J5_Link.STL": "6adb91d160a7e9b3adb06da3a7736e41c657a170b7ecd6e372d6358316ca4742",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J6_Link.STL": "4b19d074d7d6882e10b734f58c65944220cd69492a9dce2b606da6f5dd59e550",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Underpan_Base_link.STL": "84d2631140d39315b5c370a242571f9994eb5902e6a0701f19b26c1fbd6bbb04",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/__init__.py": "8d1a1f608befead4a2dd624a9c498239f0c27eb67cbdebe565c13bb7c4c6cb3a",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/checker.py": "65e3d27fc27535c21263f1176fede44f4cf787457ceee7e32434fee4a8d788fd",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/cli.py": "d616b20d47dea3736bf412f6a96bcffaf172d72ed5057af10996245b136f33ec",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/config/self_collision.json": "6dd68ecb9a45bc1708390b67eed835c1258638f7fc467c8239d06c4c14f64bc6",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/exact_backend.py": "279ea83328220c63748f3f6b27ae3749352012764bf27b937aa687b9b2a10f79",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/examples/check_json_state.py": "55b50960130a5d07c58de7d8a6ec031253c8f04c71a357c3825fbf6fa6267f6a",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/examples/neutral_state.json": "15b7d529e57de192c15dda3aa9e8b05bafe5e1c9745cc9dee7196668d49eb1ee",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/examples/two_point_trajectory.json": "35632e9e281a7122aa492c5c3135b682297c429b5e0f4e3173739af0da169715",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/geometry.py": "a494587740dd1d99928486815913210ee3bf6be10b524e083ea12e819a8f29d4",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/math3d.py": "14605df76001addcaedebeb63ba7f48f3cef718a9898616fe376ad44c967a0e4",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/model.py": "a36f81d87e7897d77142237720a0c2c8996c17db335e322a4091be4a91259352",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/native/libcollision_guard_exact.so": "a74292a341c3623938da4dcff5fb98ff44e41c91ce5b0e0441baa9b11e78dc2e",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/scripts/verify_exact_backend.py": "bafcdedea8ab4248ca450510e27a7adb7c0c571302940acb6caef555d2a77517",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/tests/test_collision_guard.py": "ffd1450a6b1d4cd6bd70d462020e87d5b1526eb31df531e0ae696186fba40f76"
+      },
+      "stages": [
+        {
+          "name": "open_before_crouch",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "crouch",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "embrace_empty_space",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "stand",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "turn_waist_negative_45",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -46.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "open_arms_standing",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -46.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -46.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "arms_home",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -46.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -46.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "body_home",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -46.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        }
+      ],
+      "report": {
+        "samples": 9128,
+        "maximum_sample_step_deg": 3.0,
+        "streamed_path_step_deg": 0.1,
+        "native_arm_envelope_model": "native_position_independent_joint_grid_v1",
+        "native_arm_envelope_step_deg": 3.0,
+        "native_arm_envelopes_checked": [
+          "open_before_crouch",
+          "embrace_empty_space",
+          "open_arms_standing",
+          "arms_home"
+        ],
+        "minimum_flange_spacing_mm": 275.75392378927734,
+        "predicted_body_drop_mm": 299.9999999999999,
+        "requested_body_drop_mm": 300.0,
+        "opposite_arm_padding_per_arm_mm": 30,
+        "continuous_collision_detection": false,
+        "external_obstacles_checked": false,
+        "hardware_execution_verified": false,
+        "continuous_streaming_seconds": null,
+        "stepped_minimum_streaming_seconds": 820.0,
+        "continuous_peak_joint_speed_deg_s": null,
+        "continuous_peak_joint_acceleration_deg_s2": null,
+        "alignment_stream_speed_limit_deg_s": 18.0,
+        "alignment_stream_acceleration_limit_deg_s2": 4.5,
+        "body_peak_joint_speed_deg_s": 36.0,
+        "body_peak_joint_acceleration_deg_s2": 18.0
+      },
+      "flange_transforms": {
+        "0": [
+          [
+            6.123233995736766e-17,
+            -1.0,
+            0,
+            0.0
+          ],
+          [
+            6.123233995736766e-17,
+            3.749399456654644e-33,
+            -1.0,
+            -87.0
+          ],
+          [
+            1.0,
+            6.123233995736766e-17,
+            6.123233995736766e-17,
+            5.327213576290987e-15
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "1": [
+          [
+            6.123233995736766e-17,
+            -1.0,
+            0,
+            0.0
+          ],
+          [
+            6.123233995736766e-17,
+            3.749399456654644e-33,
+            -1.0,
+            -87.0
+          ],
+          [
+            1.0,
+            6.123233995736766e-17,
+            6.123233995736766e-17,
+            5.327213576290987e-15
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "motion_commands_sent": 0
+    },
+    "45": {
+      "schema": "luna_mime_geometry_cache_v1",
+      "code_id": "eada17170a96d8711bc9015c873de83062acefb9980d01c94fea5ab504d4d78d",
+      "model_files": {
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/gento_luna_full.urdf": "a38af4e57dfa9742e905c6a43eb1787d7c633d501aae6cc4ebc078a2f5b45253",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L1_Link.STL": "574c3c9fc2eb2b8a88bdd1538874064bce19f2056a01f98a76c50941444d509d",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L2_Link.STL": "dd4b131343427c66df3b5c902bdf9004acd9c9644eaaa41ffd3041aa4dff82c6",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L3_Link.STL": "c6283bbf322eccebc2b4aaa60502735a27f2e7e808881b71166213591d88bab9",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L4_Link.STL": "8a03d423e0111a518e39a03b99163c17bb5ab2172bdb739b0a94c5ab3b0d078e",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L5_Link.STL": "007de5726db1e687ffd56517f07ab0a3dfd0ceded2e1e792f44720b9a3bd45c5",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L6_Link.STL": "0f981df1cbab3e64f3da91884aec76c7d9083dab5d130acf9b92cc3c9003ea58",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_L7_Link.STL": "aec10724e0719f6dcd0faeebdc7728f4f39c8bafa0900887621e7b9cf0a46cd7",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R1_Link.STL": "412af8bed0cbd990a5146ac52708313573550513b5de21acd756a9f0c3ec70ab",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R2_Link.STL": "44e7fcc5e0e9dbdcaa301df6da3149d135ac8206d4d6b7d493f81b97484b2c7a",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R3_Link.STL": "0ff2811c90355b418a7601b9e0ffb14f3b31683201c3df9d0c86b1067c8b1530",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R4_Link.STL": "ab24a5f220507b200ced7202732d9939d7d966ab23f9373bb7e202298f500712",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R5_Link.STL": "b084f3b305213716e349dfa880309eff6d90bf57d9b1b56452a8746e3e6e1b1e",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R6_Link.STL": "bd8f028b32430d6aed2c76c1987457cf1ac6b1285d7c58e6bc5c9d59d8bd8c39",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Arm_R7_Link.STL": "2bd9abb0d5e886a93ac276bfaa781a4c1d30b9939f9c570601e434dc8d5aedcf",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Head_J1_Link.STL": "ab6223b6925c3e6e40b774c571502eb22daa23bd283b8afb444c26fef6adafc7",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Head_J2_Link.STL": "fa255f99574b6f7b7e920cd728dbf7081d2b1d74e64a7a4e12fd64ab7699109e",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J1_Link.STL": "d1fcc3d776957305ecd6e2745cf91657ccaaf9d2998a434bb9fda0b5fa18552d",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J2_Link.STL": "5971b7c956ff06ef93685b11707a219afadb4c13dfb575af470eed1b28e5cea2",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J3_Link.STL": "25914336d282224b84d8b1ab4ce2f04d0f15e499a81a14a17051c8b219e063f2",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J4_Link.STL": "8898bbeffe7c4e439ff982e7974016406bafd4d6faf768dfe03cf25e556edbf6",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J5_Link.STL": "6adb91d160a7e9b3adb06da3a7736e41c657a170b7ecd6e372d6358316ca4742",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Leg_J6_Link.STL": "4b19d074d7d6882e10b734f58c65944220cd69492a9dce2b606da6f5dd59e550",
+        "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/meshes/Underpan_Base_link.STL": "84d2631140d39315b5c370a242571f9994eb5902e6a0701f19b26c1fbd6bbb04",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/__init__.py": "8d1a1f608befead4a2dd624a9c498239f0c27eb67cbdebe565c13bb7c4c6cb3a",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/checker.py": "65e3d27fc27535c21263f1176fede44f4cf787457ceee7e32434fee4a8d788fd",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/cli.py": "d616b20d47dea3736bf412f6a96bcffaf172d72ed5057af10996245b136f33ec",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/config/self_collision.json": "6dd68ecb9a45bc1708390b67eed835c1258638f7fc467c8239d06c4c14f64bc6",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/exact_backend.py": "279ea83328220c63748f3f6b27ae3749352012764bf27b937aa687b9b2a10f79",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/examples/check_json_state.py": "55b50960130a5d07c58de7d8a6ec031253c8f04c71a357c3825fbf6fa6267f6a",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/examples/neutral_state.json": "15b7d529e57de192c15dda3aa9e8b05bafe5e1c9745cc9dee7196668d49eb1ee",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/examples/two_point_trajectory.json": "35632e9e281a7122aa492c5c3135b682297c429b5e0f4e3173739af0da169715",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/geometry.py": "a494587740dd1d99928486815913210ee3bf6be10b524e083ea12e819a8f29d4",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/math3d.py": "14605df76001addcaedebeb63ba7f48f3cef718a9898616fe376ad44c967a0e4",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/model.py": "a36f81d87e7897d77142237720a0c2c8996c17db335e322a4091be4a91259352",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/native/libcollision_guard_exact.so": "a74292a341c3623938da4dcff5fb98ff44e41c91ce5b0e0441baa9b11e78dc2e",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/scripts/verify_exact_backend.py": "bafcdedea8ab4248ca450510e27a7adb7c0c571302940acb6caef555d2a77517",
+        "/home/nvidia/tianji-robot-SDK/robot/collision_guard/tests/test_collision_guard.py": "ffd1450a6b1d4cd6bd70d462020e87d5b1526eb31df531e0ae696186fba40f76"
+      },
+      "stages": [
+        {
+          "name": "open_before_crouch",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "crouch",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "embrace_empty_space",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "stand",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              66.82844968323195,
+              -121.13808959271333,
+              51.682639909481374,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "turn_waist_positive_45",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              43.347
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "open_arms_standing",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              78.0,
+              -80.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              43.347
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              43.347
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "arms_home",
+          "moving": [
+            "arm0",
+            "arm1"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              108.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              43.347
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              43.347
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        },
+        {
+          "name": "body_home",
+          "moving": [
+            "body"
+          ],
+          "start": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              43.347
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "target": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          }
+        }
+      ],
+      "report": {
+        "samples": 9128,
+        "maximum_sample_step_deg": 3.0,
+        "streamed_path_step_deg": 0.1,
+        "native_arm_envelope_model": "native_position_independent_joint_grid_v1",
+        "native_arm_envelope_step_deg": 3.0,
+        "native_arm_envelopes_checked": [
+          "open_before_crouch",
+          "embrace_empty_space",
+          "open_arms_standing",
+          "arms_home"
+        ],
+        "minimum_flange_spacing_mm": 275.75392378927745,
+        "predicted_body_drop_mm": 299.9999999999999,
+        "requested_body_drop_mm": 300.0,
+        "opposite_arm_padding_per_arm_mm": 30,
+        "continuous_collision_detection": false,
+        "external_obstacles_checked": false,
+        "hardware_execution_verified": false,
+        "continuous_streaming_seconds": null,
+        "stepped_minimum_streaming_seconds": 820.0,
+        "continuous_peak_joint_speed_deg_s": null,
+        "continuous_peak_joint_acceleration_deg_s2": null,
+        "alignment_stream_speed_limit_deg_s": 18.0,
+        "alignment_stream_acceleration_limit_deg_s2": 4.5,
+        "body_peak_joint_speed_deg_s": 36.0,
+        "body_peak_joint_acceleration_deg_s2": 18.0
+      },
+      "flange_transforms": {
+        "0": [
+          [
+            6.123233995736766e-17,
+            -1.0,
+            0,
+            0.0
+          ],
+          [
+            6.123233995736766e-17,
+            3.749399456654644e-33,
+            -1.0,
+            -87.0
+          ],
+          [
+            1.0,
+            6.123233995736766e-17,
+            6.123233995736766e-17,
+            5.327213576290987e-15
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "1": [
+          [
+            6.123233995736766e-17,
+            -1.0,
+            0,
+            0.0
+          ],
+          [
+            6.123233995736766e-17,
+            3.749399456654644e-33,
+            -1.0,
+            -87.0
+          ],
+          [
+            1.0,
+            6.123233995736766e-17,
+            6.123233995736766e-17,
+            5.327213576290987e-15
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ]
+      },
+      "motion_commands_sent": 0
+    }
+  },
+  "turn_sequence_deg": [
+    -45,
+    45,
+    -45,
+    45,
+    -45,
+    45
+  ],
+  "motion_commands_sent": 0,
+  "unique_checked_poses": 12997
+}

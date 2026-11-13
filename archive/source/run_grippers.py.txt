@@ -1,0 +1,82 @@
+"""在 Windows 上手动控制机器人 USB 上的两只夹爪。"""
+
+import argparse
+from pathlib import Path
+import sys
+
+
+# ===== 在这里修改速度和力矩（百分比）=====
+SPEED_PERCENT = 10  # 速度，当前程序允许 1～50。
+FORCE_PERCENT = 30  # 力矩/电流上限，当前程序允许 1～30；不是牛顿或牛米。
+
+# 用户已确认：0=张开，9000=闭合。两只一起动作，完成后保持。
+# 仅允许已确认的固件误报 B=0x1000，其他故障仍会停止。
+IGNORE_DROP_ALARM = True
+
+ROOT = Path(__file__).resolve().parent
+
+
+def run_action(action, speed, force):
+    # Reuse the tested SSH runner, including its interruption and stop handling.
+    tools = str(ROOT / "tools")
+    if tools not in sys.path:
+        sys.path.insert(0, tools)
+    from run_gripper_remote import main as remote_main
+
+    command = ["inspect" if action == "status" else action,
+               "--speed", str(speed), "--force", str(force)]
+    if action != "status" and IGNORE_DROP_ALARM:
+        command.append("--ignore-drop-alarm")
+    return remote_main(command)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("action", nargs="?", choices=("open", "close", "status"),
+                        help="open=双爪张开，close=双爪闭合，status=只读状态；不填则显示菜单")
+    parser.add_argument("--speed", type=int, default=SPEED_PERCENT, help="速度百分比")
+    parser.add_argument("--force", type=int, default=FORCE_PERCENT, help="力矩百分比")
+    args = parser.parse_args(argv)
+    if not 1 <= args.speed <= 50 or not 1 <= args.force <= 30:
+        parser.error("速度范围 1～50，力矩范围 1～30")
+
+    print(f"双夹爪：速度 {args.speed}% / 力矩 {args.force}%", flush=True)
+    while True:
+        action = args.action
+        if action is None:
+            print("\n1  双爪张开（0）\n2  双爪闭合（9000）\n3  读取状态\n0  退出")
+            choice = input("请选择：").strip()
+            if choice == "0":
+                return 0
+            action = {"1": "open", "2": "close", "3": "status"}.get(choice)
+            if action is None:
+                print("请输入 0、1、2 或 3。")
+                continue
+        label = {"open": "双爪张开", "close": "双爪闭合", "status": "读取状态"}[action]
+        print(f"\n开始：{label}", flush=True)
+        try:
+            code = run_action(action, args.speed, args.force)
+        except KeyboardInterrupt:
+            print("\n已中断。请检查上方停止确认；未确认停止时使用现场急停。", flush=True)
+            return 130
+        except Exception as exc:
+            print(f"\n执行失败：{type(exc).__name__}: {exc}\n请查看现场状态和 evidence 日志。",
+                  flush=True)
+            return 1
+        if code:
+            print("未完成。请查看上方错误和 evidence 日志；程序已退出。", flush=True)
+            return code
+        print("状态读取完成。" if action == "status" else
+              f"{label}到位检查通过，保持当前位置。", flush=True)
+        if args.action is not None:
+            return 0
+
+
+if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    try:
+        raise SystemExit(main())
+    except (EOFError, KeyboardInterrupt):
+        print("\n已退出。", flush=True)
+        raise SystemExit(130)

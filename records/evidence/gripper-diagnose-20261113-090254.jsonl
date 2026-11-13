@@ -1,0 +1,59 @@
+{"event": "remote_process", "time": "2026-11-13T01:16:26.581142+00:00", "pid": 7187, "run_id": "[REDACTED]"}
+{"event": "device_identity", "time": "2026-11-13T01:16:26.633777+00:00", "port": "/dev/luna-gripper-ftdi", "resolved": "/dev/ttyUSB4", "identity": {"ID_VENDOR_ID": "0403", "ID_MODEL_ID": "6001", "ID_SERIAL_SHORT": "BG011JUB"}}
+{"event": "diagnostic_uart", "time": "2026-11-13T01:16:39.140019+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 115200, "slave_id": 1, "format": "8N1", "timeout_seconds": 1, "settings": {"baudrate": 115200, "bytesize": 8, "parity": "N", "stopbits": 1, "xonxoff": false, "dsrdtr": false, "rtscts": false, "timeout": 1, "write_timeout": 1, "inter_byte_timeout": null}, "dtr": true, "rts": true}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 04 01 00 03 55 3B (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. No sleep required before write. Time since previous read: 1250000.33 ms, minimum silent period: 1.75 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:40.142511+00:00", "port": "/dev/luna-gripper-ftdi", "address": 1025, "error": "NoResponseError: No communication with the instrument (no answer)"}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 0A 00 00 03 06 13 (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. Sleeping 0.76 ms before sending. Minimum silent period: 1.75 ms, time since read: 0.99 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:41.145607+00:00", "port": "/dev/luna-gripper-ftdi", "address": 2560, "error": "NoResponseError: No communication with the instrument (no answer)"}
+{"event": "diagnostic_uart", "time": "2026-11-13T01:16:41.178513+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 115200, "slave_id": 1, "format": "8E1", "timeout_seconds": 1, "settings": {"baudrate": 115200, "bytesize": 8, "parity": "E", "stopbits": 1, "xonxoff": false, "dsrdtr": false, "rtscts": false, "timeout": 1, "write_timeout": 1, "inter_byte_timeout": null}, "dtr": true, "rts": true}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 04 01 00 03 55 3B (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. No sleep required before write. Time since previous read: 33.85 ms, minimum silent period: 1.75 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:42.180777+00:00", "port": "/dev/luna-gripper-ftdi", "address": 1025, "error": "NoResponseError: No communication with the instrument (no answer)"}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 0A 00 00 03 06 13 (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. Sleeping 0.78 ms before sending. Minimum silent period: 1.75 ms, time since read: 0.97 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:43.183952+00:00", "port": "/dev/luna-gripper-ftdi", "address": 2560, "error": "NoResponseError: No communication with the instrument (no answer)"}
+{"event": "diagnostic_uart", "time": "2026-11-13T01:16:43.240381+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 115200, "slave_id": 1, "format": "8O1", "timeout_seconds": 1, "settings": {"baudrate": 115200, "bytesize": 8, "parity": "O", "stopbits": 1, "xonxoff": false, "dsrdtr": false, "rtscts": false, "timeout": 1, "write_timeout": 1, "inter_byte_timeout": null}, "dtr": true, "rts": true}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 04 01 00 03 55 3B (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. No sleep required before write. Time since previous read: 57.19 ms, minimum silent period: 1.75 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:44.242407+00:00", "port": "/dev/luna-gripper-ftdi", "address": 1025, "error": "NoResponseError: No communication with the instrument (no answer)"}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 0A 00 00 03 06 13 (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. Sleeping 0.79 ms before sending. Minimum silent period: 1.75 ms, time since read: 0.96 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:45.245583+00:00", "port": "/dev/luna-gripper-ftdi", "address": 2560, "error": "NoResponseError: No communication with the instrument (no answer)"}
+{"event": "diagnostic_uart", "time": "2026-11-13T01:16:45.343991+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 115200, "slave_id": 1, "format": "8N2", "timeout_seconds": 1, "settings": {"baudrate": 115200, "bytesize": 8, "parity": "N", "stopbits": 2, "xonxoff": false, "dsrdtr": false, "rtscts": false, "timeout": 1, "write_timeout": 1, "inter_byte_timeout": null}, "dtr": true, "rts": true}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 04 01 00 03 55 3B (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. No sleep required before write. Time since previous read: 99.12 ms, minimum silent period: 1.75 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:46.345897+00:00", "port": "/dev/luna-gripper-ftdi", "address": 1025, "error": "NoResponseError: No communication with the instrument (no answer)"}
+MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 0A 00 00 03 06 13 (8 bytes)
+MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi
+MinimalModbus debug mode. Sleeping 0.79 ms before sending. Minimum silent period: 1.75 ms, time since read: 0.96 ms.
+MinimalModbus debug mode. Response from instrument:  (0 bytes), roundtrip time: 1.0 ms. Timeout for reading: 0.0 ms.
+
+{"event": "diagnostic_no_valid_response", "time": "2026-11-13T01:16:47.349064+00:00", "port": "/dev/luna-gripper-ftdi", "address": 2560, "error": "NoResponseError: No communication with the instrument (no answer)"}
+{"event": "diagnostic_complete", "time": "2026-11-13T01:16:47.349230+00:00", "port": "/dev/luna-gripper-ftdi", "valid_responses": [], "write_register_commands": 0}
+{"event": "device_identity", "time": "2026-11-13T01:16:47.458609+00:00", "port": "/dev/luna-gripper-ch340", "resolved": "/dev/ttyUSB5", "identity": {"ID_VENDOR_ID": "1a86", "ID_MODEL_ID": "7523", "ID_PATH": "platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.4:1.0"}}
+{"event": "device_failed", "time": "2026-11-13T01:16:50.515254+00:00", "port": "/dev/luna-gripper-ch340", "error": "SerialException: [Errno 5] could not open port /dev/luna-gripper-ch340: [Errno 5] Input/output error: '/dev/luna-gripper-ch340'"}
+{"event": "inspection_complete", "time": "2026-11-13T01:16:50.515480+00:00", "both_responded": false, "write_register_commands": 0}
+{"remote_exit_code": 1}

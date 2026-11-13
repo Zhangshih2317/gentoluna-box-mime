@@ -1,0 +1,10 @@
+{"event": "remote_process", "pid": 1812252, "run_id": "[REDACTED]"}
+{"event": "plan", "time": "2026-11-11T05:25:43.104351+00:00", "home": [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]], "targets": [[[90, -90, -90, -90, 25, 20, 25], [-90, -90, 90, -90, -25, 20, -25]], [[90, -90, -90, -90, -5, -10, -5], [-90, -90, 90, -90, 5, -10, 5]], [[90, -90, -90, -90, 20, 15, 30], [-90, -90, 90, -90, -20, 15, -30]], [[90, -90, -90, -90, -10, -15, 0], [-90, -90, 90, -90, 10, -15, 0]], [[90, -90, -90, -90, 15, 10, -25], [-90, -90, 90, -90, -15, 10, 25]], [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]]], "speed_percent": 5.0, "acceleration_percent": 5.0, "execute": false}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+[INFO][L1] FX_L1_System_GetSDKVersion: SDK version is 0x00040402
+[INFO][L1] FX_L1_System_GetControllerVersion: Controller version is 0x00040404
+{"event": "connected", "time": "2026-11-11T05:25:43.220638+00:00", "sdk": "00040402", "controller": "00040404"}
+{"event": "sdk_disconnected", "time": "2026-11-11T05:25:43.373259+00:00"}
+{"event": "failed", "time": "2026-11-11T05:25:43.373441+00:00", "error": "RuntimeError: Controller has an existing trajectory"}
+{"remote_exit_code": 1}

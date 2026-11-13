@@ -1,0 +1,129 @@
+"""Deploy gripper tools over the existing SSH connection and preserve evidence."""
+import argparse
+import ast
+from datetime import datetime
+import importlib.util
+import json
+from pathlib import Path
+import shlex
+import sys
+import uuid
+
+from robot_status import DEFAULT_CONNECTOR, ROOT
+
+REMOTE = "/home/nvidia/luna-gripper-check"
+REPAIR_MODES = ("repair", "reset-ch340", "reconnect-usb", "rebind-controller")
+SDK = Path("C:/Users/operator/Downloads/伺服步进使用资料-外发/伺服步进使用资料-外发/sdk/changingtek_p_rtu_Servo.py")
+
+
+def sudo_password(username):
+    tree = ast.parse(DEFAULT_CONNECTOR.read_text(encoding="utf-8"))
+    function = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "connect")
+    for node in ast.walk(function):
+        if isinstance(node, ast.For) and isinstance(node.iter, ast.Tuple):
+            for account, password in ast.literal_eval(node.iter):
+                if account == username:
+                    return password
+    raise RuntimeError("No existing credential available for the connected account")
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("mode", choices=[*REPAIR_MODES, "install", "inspect", "scan", "diagnose", "execute", "execute-single", "recover-empty", "close", "open"])
+    parser.add_argument("--port", choices=["/dev/luna-gripper-ftdi", "/dev/luna-gripper-ch340"])
+    parser.add_argument("--ignore-drop-alarm", action="store_true")
+    parser.add_argument("--speed", type=int, choices=range(1, 51), default=50)
+    parser.add_argument("--force", type=int, choices=range(1, 31), default=25)
+    args = parser.parse_args(argv)
+    run_id = uuid.uuid4().hex
+    pid = None
+    spec = importlib.util.spec_from_file_location("luna_connector", DEFAULT_CONNECTOR)
+    connector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(connector)
+    logpath = ROOT/"evidence"/(
+        "gripper-"+args.mode+"-"+datetime.now().strftime("%Y%m%d-%H%M%S")+".jsonl")
+    print("Evidence: "+str(logpath), flush=True)
+    with connector.connect() as client:
+        with client.open_sftp() as sftp:
+            try:
+                sftp.stat(REMOTE)
+            except FileNotFoundError:
+                sftp.mkdir(REMOTE)
+            sftp.put(str(SDK), REMOTE+"/vendor_gripper_sdk.py")
+            if args.mode in REPAIR_MODES:
+                sftp.put(str(ROOT/"tools/repair_gripper_usb.py"), REMOTE+"/repair_gripper_usb.py")
+            elif args.mode in ("inspect", "scan", "diagnose", "execute", "execute-single", "recover-empty", "close", "open"):
+                sftp.put(str(ROOT/"tools/check_gripper_sdk.py"), REMOTE+"/check_gripper_sdk.py")
+            if args.mode == "install":
+                try:
+                    sftp.stat(REMOTE+"/wheels")
+                except FileNotFoundError:
+                    sftp.mkdir(REMOTE+"/wheels")
+                for wheel in (ROOT/"reference/gripper-wheels").glob("*.whl"):
+                    sftp.put(str(wheel), REMOTE+"/wheels/"+wheel.name)
+        if args.mode in REPAIR_MODES:
+            command = "sudo -S -p '' python3 "+shlex.quote(REMOTE+"/repair_gripper_usb.py")
+            if args.mode != "repair":
+                command += " --"+args.mode
+        elif args.mode == "install":
+            command = ("python3 -m pip install --disable-pip-version-check --no-input "
+                       "--no-index --find-links "+shlex.quote(REMOTE+"/wheels")+
+                       " --target "+shlex.quote(REMOTE+"/deps")+
+                       " minimalmodbus==2.1.1 pyserial==3.5")
+        else:
+            command = ("PYTHONPATH="+shlex.quote(REMOTE+"/deps")+
+                       " LUNA_GRIPPER_RUN_ID="+run_id+
+                       " timeout --signal=TERM --kill-after=5s 150s python3 -u "
+                       +shlex.quote(REMOTE+"/check_gripper_sdk.py")+" --"+args.mode)
+            if args.port:
+                command += " --port "+shlex.quote(args.port)
+            command += " --speed "+str(args.speed)
+            command += " --force "+str(args.force)
+            if args.ignore_drop_alarm:
+                command += " --ignore-drop-alarm"
+        stdin, stdout, stderr = client.exec_command(command+" 2>&1", timeout=180)
+        if args.mode in REPAIR_MODES:
+            stdin.write(sudo_password(client.get_transport().get_username())+"\n")
+            stdin.flush()
+        stdin.channel.shutdown_write()
+        with logpath.open("w", encoding="utf-8") as log:
+            try:
+                for line in stdout:
+                    log.write(line)
+                    log.flush()
+                    if line.startswith("{"):
+                        event = json.loads(line)
+                        if event.get("event") == "remote_process" and event.get("run_id") == run_id:
+                            pid = int(event["pid"])
+                    print(line, end="", flush=True)
+                code = stdout.channel.recv_exit_status()
+            except BaseException:
+                if args.mode in ("execute", "execute-single", "recover-empty", "close", "open") and pid is not None:
+                    stop_source = (
+                        "import os,signal\n"
+                        f"pid={pid}\n"
+                        f"token={('LUNA_GRIPPER_RUN_ID='+run_id).encode()!r}\n"
+                        "with open('/proc/%d/environ'%pid,'rb') as f: env=f.read().split(b'\\0')\n"
+                        "if token not in env: raise RuntimeError('Run identity mismatch')\n"
+                        "os.kill(pid,signal.SIGTERM)\n")
+                    with connector.connect() as stop_client:
+                        si, so, se = stop_client.exec_command("python3 -", timeout=15)
+                        si.write(stop_source.encode())
+                        si.flush()
+                        si.channel.shutdown_write()
+                        if so.channel.recv_exit_status() != 0:
+                            print("Remote stop could not be confirmed: "+se.read().decode(), flush=True)
+                    stdout.channel.settimeout(10)
+                    for line in stdout:
+                        log.write(line)
+                        log.flush()
+                        print(line, end="", flush=True)
+                raise
+            log.write('{"remote_exit_code": '+str(code)+"}\n")
+    return code
+
+
+if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    raise SystemExit(main())

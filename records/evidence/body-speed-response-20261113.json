@@ -1,0 +1,365 @@
+{
+  "schema": "luna_offline_body_response_review_v1",
+  "motion_commands_sent": 0,
+  "calibration_valid": false,
+  "limitations": [
+    "Snapshots occur at transitions or about every five seconds; no per-tick history.",
+    "Joint command times are reconstructed from the recorded quintic v1 timing policy.",
+    "Apparent delays combine controller planning, servo response and observation timing.",
+    "No fixed feedforward delay or motor gain is certified by this analysis.",
+    "Controller firmware internals and per-axis BODY physical limits were not supplied."
+  ],
+  "runs": [
+    {
+      "source": "evidence\\box-mime-taught-20261113-132948.jsonl",
+      "sha256": "884c12acc25f943622bf1eff9f7f815f147ec84860172d79b28979ef3d711ee0",
+      "speed_percent": 30.0,
+      "controller_acceleration_percent": 5.0,
+      "software_BODY_acceleration_limit_deg_s2": 2.7,
+      "returned_home": true,
+      "home_error_deg": 0.0039999999999995595,
+      "stages": [
+        {
+          "stage": "crouch",
+          "joint_delta_B2_B3_B4_deg": [
+            57.54744968323195,
+            -103.77408959271332,
+            46.22663990948137
+          ],
+          "nominal_seconds": 18.01633499873495,
+          "actual_seconds": 18.082498,
+          "nominal_peak_B3_speed_deg_s": 10.8,
+          "midmotion_holds": [],
+          "unpaused_delay_estimates": [
+            {
+              "source_line": 25,
+              "elapsed_motion_seconds": 5.020091391999813,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.3055574346638137,
+                0.3645327834674479,
+                0.290389586470984
+              ],
+              "B3_minus_B2_seconds": 0.0589753488036342,
+              "B3_minus_B4_seconds": 0.07414319699646388,
+              "pitch_sum_error_deg": 0.4209999999999985
+            },
+            {
+              "source_line": 26,
+              "elapsed_motion_seconds": 10.02220959999977,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.3731758283544213,
+                0.49223200006292345,
+                0.34378176220280565
+              ],
+              "B3_minus_B2_seconds": 0.11905617170850213,
+              "B3_minus_B4_seconds": 0.1484502378601178,
+              "pitch_sum_error_deg": 1.4150000000000071
+            },
+            {
+              "source_line": 27,
+              "elapsed_motion_seconds": 15.040115936000802,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.2844664342140284,
+                0.3394004486249713,
+                0.272198027103693
+              ],
+              "B3_minus_B2_seconds": 0.05493401441094292,
+              "B3_minus_B4_seconds": 0.06720242152127831,
+              "pitch_sum_error_deg": 0.23199999999999665
+            }
+          ]
+        },
+        {
+          "stage": "stand",
+          "joint_delta_B2_B3_B4_deg": [
+            -57.54744968323195,
+            103.77408959271332,
+            -46.22663990948137
+          ],
+          "nominal_seconds": 18.01633499873495,
+          "actual_seconds": 18.08234,
+          "nominal_peak_B3_speed_deg_s": 10.8,
+          "midmotion_holds": [],
+          "unpaused_delay_estimates": [
+            {
+              "source_line": 41,
+              "elapsed_motion_seconds": 5.020091456000955,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.30710951595711666,
+                0.36577962710933853,
+                0.2915544229887779
+              ],
+              "B3_minus_B2_seconds": 0.05867011115222187,
+              "B3_minus_B4_seconds": 0.07422520412056066,
+              "pitch_sum_error_deg": -0.4199999999999875
+            },
+            {
+              "source_line": 42,
+              "elapsed_motion_seconds": 10.02011235200007,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.37403871201059324,
+                0.4932024441040195,
+                0.34449243006570107
+              ],
+              "B3_minus_B2_seconds": 0.11916373209342623,
+              "B3_minus_B4_seconds": 0.1487100140383184,
+              "pitch_sum_error_deg": -1.416999999999998
+            },
+            {
+              "source_line": 43,
+              "elapsed_motion_seconds": 15.04009872000097,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.28518541596168845,
+                0.34013001448075997,
+                0.27298957177903027
+              ],
+              "B3_minus_B2_seconds": 0.05494459851907152,
+              "B3_minus_B4_seconds": 0.0671404427017297,
+              "pitch_sum_error_deg": -0.23199999999999754
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "evidence\\box-mime-taught-20261113-133244.jsonl",
+      "sha256": "c476f7c92fb9faf2c1582971477a44cda3942562b1ba42ef62dc74e2c5bf326f",
+      "speed_percent": 40.0,
+      "controller_acceleration_percent": 5.0,
+      "software_BODY_acceleration_limit_deg_s2": 3.6,
+      "returned_home": true,
+      "home_error_deg": 0.0039999999999995595,
+      "stages": [
+        {
+          "stage": "crouch",
+          "joint_delta_B2_B3_B4_deg": [
+            57.54744968323195,
+            -103.77408959271332,
+            46.22663990948137
+          ],
+          "nominal_seconds": 13.512251249051213,
+          "actual_seconds": 14.142555,
+          "nominal_peak_B3_speed_deg_s": 14.4,
+          "midmotion_holds": [
+            {
+              "source_line": 26,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0070000000000086,
+              "wait_seconds": 0.258557
+            },
+            {
+              "source_line": 28,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0019999999999953,
+              "wait_seconds": 0.259092
+            }
+          ],
+          "unpaused_delay_estimates": [
+            {
+              "source_line": 25,
+              "elapsed_motion_seconds": 5.0049043520011764,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.37170822140854565,
+                0.4698789065565325,
+                0.34481879951556493
+              ],
+              "B3_minus_B2_seconds": 0.09817068514798688,
+              "B3_minus_B4_seconds": 0.1250601070409676,
+              "pitch_sum_error_deg": 1.2769999999999984
+            },
+            {
+              "source_line": 26,
+              "elapsed_motion_seconds": 6.32010320000154,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.38870939833339335,
+                0.5176855616686966,
+                0.35443122918972314
+              ],
+              "B3_minus_B2_seconds": 0.12897616333530326,
+              "B3_minus_B4_seconds": 0.16325433247897347,
+              "pitch_sum_error_deg": 2.0070000000000023
+            }
+          ]
+        },
+        {
+          "stage": "stand",
+          "joint_delta_B2_B3_B4_deg": [
+            -57.54744968323195,
+            103.77408959271332,
+            -46.22663990948137
+          ],
+          "nominal_seconds": 13.512251249051213,
+          "actual_seconds": 14.121383,
+          "nominal_peak_B3_speed_deg_s": 14.4,
+          "midmotion_holds": [
+            {
+              "source_line": 44,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.000999999999987,
+              "wait_seconds": 0.238692
+            },
+            {
+              "source_line": 46,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.004000000000005,
+              "wait_seconds": 0.259102
+            }
+          ],
+          "unpaused_delay_estimates": [
+            {
+              "source_line": 43,
+              "elapsed_motion_seconds": 5.020082143999389,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.373883931435258,
+                0.47223456576624656,
+                0.34710301515267883
+              ],
+              "B3_minus_B2_seconds": 0.09835063433098856,
+              "B3_minus_B4_seconds": 0.12513155061356773,
+              "pitch_sum_error_deg": -1.2819999999999965
+            },
+            {
+              "source_line": 44,
+              "elapsed_motion_seconds": 6.300100319998819,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.3877605604525929,
+                0.5166334331381552,
+                0.35372959085863975
+              ],
+              "B3_minus_B2_seconds": 0.12887287268556236,
+              "B3_minus_B4_seconds": 0.1629038422795155,
+              "pitch_sum_error_deg": -2.0009999999999977
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "source": "evidence\\box-mime-taught-20261113-133502.jsonl",
+      "sha256": "74f1d0fafb236124cc792b2fd798a223c68d2c48f9513971186e0e52bc078404",
+      "speed_percent": 80.0,
+      "controller_acceleration_percent": 5.0,
+      "software_BODY_acceleration_limit_deg_s2": 7.2,
+      "returned_home": true,
+      "home_error_deg": 0.0039999999999995595,
+      "stages": [
+        {
+          "stage": "crouch",
+          "joint_delta_B2_B3_B4_deg": [
+            57.54744968323195,
+            -103.77408959271332,
+            46.22663990948137
+          ],
+          "nominal_seconds": 9.122164594581749,
+          "actual_seconds": 11.362384,
+          "nominal_peak_B3_speed_deg_s": 21.330070946309075,
+          "midmotion_holds": [
+            {
+              "source_line": 24,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.026000000000007,
+              "wait_seconds": 0.440141
+            },
+            {
+              "source_line": 26,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.026000000000007,
+              "wait_seconds": 0.620268
+            },
+            {
+              "source_line": 28,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0619999999999976,
+              "wait_seconds": 0.620078
+            },
+            {
+              "source_line": 30,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0250000000000057,
+              "wait_seconds": 0.339907
+            }
+          ],
+          "unpaused_delay_estimates": [
+            {
+              "source_line": 24,
+              "elapsed_motion_seconds": 3.4400959679987864,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.3995734389108687,
+                0.5075264844050458,
+                0.3678203297195015
+              ],
+              "B3_minus_B2_seconds": 0.10795304549417706,
+              "B3_minus_B4_seconds": 0.13970615468554426,
+              "pitch_sum_error_deg": 2.0260000000000007
+            }
+          ]
+        },
+        {
+          "stage": "stand",
+          "joint_delta_B2_B3_B4_deg": [
+            -57.54744968323195,
+            103.77408959271332,
+            -46.22663990948137
+          ],
+          "nominal_seconds": 9.122164594581749,
+          "actual_seconds": 11.342315,
+          "nominal_peak_B3_speed_deg_s": 21.330070946309075,
+          "midmotion_holds": [
+            {
+              "source_line": 43,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0020000000000024,
+              "wait_seconds": 0.421701
+            },
+            {
+              "source_line": 45,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0289999999999893,
+              "wait_seconds": 0.60002
+            },
+            {
+              "source_line": 47,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0239999999999974,
+              "wait_seconds": 0.619754
+            },
+            {
+              "source_line": 49,
+              "reason": "torso_sum_deviation",
+              "recorded_error_deg": 2.0289999999999946,
+              "wait_seconds": 0.359376
+            }
+          ],
+          "unpaused_delay_estimates": [
+            {
+              "source_line": 43,
+              "elapsed_motion_seconds": 3.42033750399969,
+              "apparent_delay_B2_B3_B4_seconds": [
+                0.3968283867471851,
+                0.5040681044835065,
+                0.3651642265737447
+              ],
+              "B3_minus_B2_seconds": 0.10723971773632135,
+              "B3_minus_B4_seconds": 0.13890387790976177,
+              "pitch_sum_error_deg": -2.0020000000000024
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sdk_source": "/home/nvidia/tianji-robot-SDK (installed source snapshot, not a firmware dump)",
+  "sdk_snapshot_sha256": {
+    "C_SDK\\Common\\FXType.h": "9e46bdd2acbffd3a480e66ee3fd317e477c6cc7606a906c412a30e9a61e71946",
+    "C_SDK\\Kinematics\\L0KineMotion.cpp": "4130ae4bcf0819ab5378ccca595699aec9ccb38d9adbbe87f8a849997b4c5b12",
+    "C_SDK\\Kinematics\\MotionPlanner\\FXAxisPln.cpp": "af99f79851dc8e35113c44fe0ee961535f6dd09c129e28d671f4bc6cccb42505",
+    "C_SDK\\Kinematics\\MotionPlanner\\FXAxisPln.h": "3fe279b13997d138eff31195ee631715b470db7de8dd3e8d6e442766bf2c21c6",
+    "C_SDK\\Kinematics\\MotionPlanner\\FXMotionPlanner.cpp": "e5e890951208f56d9c00f40c9ac5b344dcfa3930291b4e994fb32d85707eacb4",
+    "C_SDK\\L0Control\\RobotCtrl.cpp": "51ef5327d31bb8261c805a1c99dcee3ce5e5adef9d75cd695adbea219b05ffe4",
+    "C_SDK\\L1Robot\\L1Robot.cpp": "661aea1ec97553cae1494c81a98e153e179ac492c9212dd8722823d78f0cb526",
+    "PYTHON_EXAMPLE\\example_basic_PD.py": "8c30cd05db167d34e763378b281a56afdeae731978cdb2674391ebda6b6443f9",
+    "PYTHON_EXAMPLE\\example_basic_Position.py": "2bce72d2d2d95f2cfdda8305c3b9573ec22c1ff2cc35b77e5b49c381c7b474a7",
+    "PYTHON_SDK\\GentoRobot.py": "90f826a573720aeb7c3f361db91c075d92b776350bab2e270a2ad8c46c4c92e3",
+    "VENDOR_SDK_README.md": "8110ee188ab33ba3f03fe6fdbe9ffa3653e97f176148c01411fa5d3dc6714771"
+  }
+}

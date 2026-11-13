@@ -1,0 +1,14 @@
+"""Create a private authentication cookie for the physical battery display."""
+
+from pathlib import Path
+import secrets
+import subprocess
+
+
+cookie = Path("/run/luna-battery-x11/Xauthority")
+cookie.touch(mode=0o600, exist_ok=True)
+cookie.chmod(0o600)
+subprocess.run(
+    ["xauth", "-f", str(cookie), "add", ":0", ".", secrets.token_hex(16)],
+    capture_output=True, check=True, timeout=5,
+)

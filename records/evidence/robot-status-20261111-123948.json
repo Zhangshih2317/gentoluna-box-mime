@@ -1,0 +1,31 @@
+{
+  "collected_at": "2026-11-11T12:39:48.698329+08:00",
+  "motion_commands_sent": 0,
+  "inspect_only": true,
+  "success": true,
+  "stdout": "{\"kind\": \"before\", \"data\": {\"success\": true, \"connected\": true, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"\"}}\n",
+  "stderr": "",
+  "remote_exit_code": 0,
+  "events": [
+    {
+      "kind": "before",
+      "data": {
+        "success": true,
+        "connected": true,
+        "expires_in": 0.0,
+        "owner_client_id": "",
+        "message": ""
+      }
+    }
+  ],
+  "summary": {
+    "gateway": {
+      "success": true,
+      "connected": true,
+      "expires_in": 0.0,
+      "owner_client_id": "",
+      "message": ""
+    },
+    "motion_commands_sent": 0
+  }
+}

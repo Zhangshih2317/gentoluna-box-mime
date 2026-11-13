@@ -1,0 +1,22 @@
+Public packaging validation, 2026-11-13
+
+python tools/run_offline_tests.py
+Ran 65 tests in 1.640s
+OK
+
+python tools/run_offline_tests.py --with-calibration
+Ran 178 tests in 170.445s
+OK
+
+The second command used the original device's locally supplied calibration
+package in reference/robot_frames/. That package is ignored by Git and is
+NOT distributed. Tests block socket connections and use fake SDK objects.
+These checks did not move or connect to a robot.
+
+Public packaging changes cover configuration, path injection, SSH adapter,
+numeric frame parameter input, read-only deployment utilities, documentation,
+and test fixtures for the latest successful ratios. Motion acceptance and
+the eight-stage / six-cycle motion logic remain unchanged.
+
+The original successful hardware logs are separate evidence; passing these
+tests does not mean the public deployment copy has been hardware-executed.

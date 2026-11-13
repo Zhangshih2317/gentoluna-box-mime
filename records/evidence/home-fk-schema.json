@@ -1,0 +1,22 @@
+{
+  "motion_commands_sent": 0,
+  "exit_code": 0,
+  "events": [
+    {
+      "kind": "schema",
+      "data": {
+        "request": {
+          "arm": "uint8",
+          "joints_deg": "double[7]"
+        },
+        "response": {
+          "success": "boolean",
+          "message": "string",
+          "xyzabc": "double[6]",
+          "matrix_row_major": "double[16]"
+        }
+      }
+    }
+  ],
+  "stderr": ""
+}

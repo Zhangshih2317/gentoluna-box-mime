@@ -1,0 +1,551 @@
+--- 现场脱敏/demos/box_mime_six_cycles/box_mime_six_cycles.py
++++ 公开版/demos/box_mime_six_cycles/box_mime_six_cycles.py
+@@ -136,7 +136,7 @@
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+             validate_bundle(certificate, code_id)
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("SDK unavailable; another client may hold control")
+             runner = MimeRunner(robot, heartbeat)
+--- 现场脱敏/demos/box_mime_six_cycles/box_mime_taught_robot.py
++++ 公开版/demos/box_mime_six_cycles/box_mime_taught_robot.py
+@@ -536,7 +536,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("SDK unavailable; another client may hold control")
+             runner = MimeRunner(robot, heartbeat)
+--- 现场脱敏/demos/box_mime_six_cycles/box_motion_robot.py
++++ 公开版/demos/box_mime_six_cycles/box_motion_robot.py
+@@ -12,8 +12,8 @@
+ from box_motion_plan import (HOME, RATE, FIELDS, build_plan, collision_samples,
+                              delta, pose, validate_pose)
+ 
+-SDK_ROOT = "/home/nvidia/tianji-robot-SDK"
+-MODEL = "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/gento_luna_full.urdf"
++SDK_ROOT = __import__("os").environ.get("LUNA_SDK_ROOT", "/opt/gento-sdk")
++MODEL = __import__("os").environ.get("LUNA_MODEL_PATH", "/opt/gento-model/gento_luna_full.urdf")
+ RATIO = 5.
+ NAMES = ("Arm0", "Arm1", "Body")
+ KEYS = ("arm0", "arm1", "body")
+--- 现场脱敏/demos/box_mime_six_cycles/recover_box_start_robot.py
++++ 公开版/demos/box_mime_six_cycles/recover_box_start_robot.py
+@@ -199,7 +199,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("SDK unavailable")
+             runner = Recovery(robot)
+--- 现场脱敏/demos/box_mime_six_cycles/stand_up_robot.py
++++ 公开版/demos/box_mime_six_cycles/stand_up_robot.py
+@@ -156,7 +156,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("Disconnect the teaching client before running this program")
+             runner = RiseRunner(robot)
+--- 现场脱敏/run_box_mime_six_cycles.py
++++ 公开版/run_box_mime_six_cycles.py
+@@ -18,6 +18,7 @@
+ SNAPSHOT = ROOT/"demos/box_mime_six_cycles"
+ sys.path.insert(0, str(SNAPSHOT))
+ from robot_status import DEFAULT_CONNECTOR
++from luna_config import load_config, remote_environment, source_environment
+ from box_mime_taught_plan import validate_speed_percent
+ from position_acceptance import (POSITION_TOLERANCE_DEG, ARRIVAL_SAMPLE_INTERVAL_SECONDS,
+                                  ARRIVAL_WINDOW_SECONDS)
+@@ -66,7 +67,7 @@
+ 
+ 
+ def source_for(execute, continuous=True, prepare_cache=False, full_preflight=False, home_only=False,
+-               cache_head=None):
++               cache_head=None, runtime_config=None):
+     if home_only or not continuous or full_preflight:
+         raise ValueError("Six-cycle demo supports --preflight, --prepare-cache or --execute")
+     ratios = configured_ratios(home_only)
+@@ -87,6 +88,8 @@
+         from mime_squat_height import solve_squat_depth
+         squat_profile = solve_squat_depth(home, squat, SQUAT_DEPTH_CM)
+     source = "import os,sys,types,json,signal,threading,time\n"
++    if runtime_config is not None:
++        source += f"os.environ.update({remote_environment(runtime_config)!r})\n"
+     source += "print(json.dumps({'event':'process','pid':os.getpid()}),flush=True)\n"
+     source += (
+         "last_ping=time.monotonic()\n"
+@@ -134,10 +137,7 @@
+         source += (f"module.run({home!r},{execute!r},heartbeat,"
+                    f"recovery_reference={recovery_reference!r})\n")
+     elif prepare_cache:
+-        events = [json.loads(line) for line in
+-                  (ROOT/"evidence/box-mime-taught-20261111-162613.jsonl").read_text("utf-8").splitlines()
+-                  if line.startswith("{")]
+-        parameters = next(e["frame_parameters"] for e in events if e.get("event") == "vendor_fk_verified")
++        parameters = json.loads((ROOT/"points/SDK_FRAME_PARAMETERS.json").read_text("utf-8"))
+         source += f"sys.modules['box_mime_six_cycles'].prepare({home!r},{squat!r},{waist!r},{parameters!r},{code_id!r})\n"
+     else:
+         certificate = json.loads(CACHE.read_text("utf-8")) if CACHE.exists() else None
+@@ -179,8 +179,9 @@
+         parser.error("--cache-head requires --prepare-cache and is unavailable for HOME recovery")
+     # Validate and bind the source before establishing even the SSH connection.
+     try:
++        config = load_config()
+         source = source_for(args.execute, not args.stepped, args.prepare_cache,
+-                            args.full_preflight, home_only, cache_head=args.cache_head)
++                            args.full_preflight, home_only, cache_head=args.cache_head, runtime_config=config)
+     except ValueError as error:
+         parser.error(str(error))
+     if home_only and args.execute:
+@@ -213,7 +214,8 @@
+     spec.loader.exec_module(connector)
+     token, pid = uuid.uuid4().hex, None
+     bootstrap = "import ast,sys; exec(ast.literal_eval(sys.stdin.readline()))"
+-    remote = ("source /home/nvidia/gento-test-baseline/gento-test-env.sh"
++    remote = (source_environment(config)
++              +
+               " && exec env LUNA_MIME_RUN="+token+" python3 -u -c "+shlex.quote(bootstrap)+" 2>&1")
+     command = "bash -lc "+shlex.quote(remote)
+     prefix = "box-mime-six-cycles-"
+--- 现场脱敏/run_box_mime_taught.py
++++ 公开版/run_box_mime_taught.py
+@@ -16,6 +16,7 @@
+ ROOT = Path(__file__).resolve().parent
+ sys.path.insert(0, str(ROOT/"tools"))
+ from robot_status import DEFAULT_CONNECTOR
++from luna_config import load_config, remote_environment, source_environment
+ from box_mime_taught_plan import validate_speed_percent
+ from position_acceptance import (POSITION_TOLERANCE_DEG, ARRIVAL_SAMPLE_INTERVAL_SECONDS,
+                                  ARRIVAL_WINDOW_SECONDS)
+@@ -30,7 +31,7 @@
+ # 规则在 tools/position_acceptance.py；正常结束保持 Position 模式。
+ # 独立回 HOME 和 --stepped 兼容入口仍保留各自原来的恢复检查。
+ 
+-# BODY 调速参数暂不改动，维持之前 10% 速度、5% 控制器加速度。
++# 沿用 2026-11-13 最近成功运行：BODY 速度 100%、加速度 50%。
+ # 这里保留的是 BODY 参数；本搬箱流程仍包含下蹲、站起和转腰。
+ BODY_SPEED_PERCENT = 100.
+ BODY_ACCELERATION_PERCENT = 50.
+@@ -64,7 +65,7 @@
+ 
+ 
+ def source_for(execute, continuous=True, prepare_cache=False, full_preflight=False, home_only=False,
+-               cache_head=None):
++               cache_head=None, runtime_config=None):
+     ratios = configured_ratios(home_only)
+     if cache_head is not None and (not prepare_cache or execute or home_only):
+         raise ValueError("Cache HEAD override is only available for offline cache preparation")
+@@ -83,6 +84,8 @@
+         from mime_squat_height import solve_squat_depth
+         squat_profile = solve_squat_depth(home, squat, SQUAT_DEPTH_CM)
+     source = "import os,sys,types,json,signal,threading,time\n"
++    if runtime_config is not None:
++        source += f"os.environ.update({remote_environment(runtime_config)!r})\n"
+     source += "print(json.dumps({'event':'process','pid':os.getpid()}),flush=True)\n"
+     source += (
+         "last_ping=time.monotonic()\n"
+@@ -130,10 +133,7 @@
+         source += (f"module.run({home!r},{execute!r},heartbeat,"
+                    f"recovery_reference={recovery_reference!r})\n")
+     elif prepare_cache:
+-        events = [json.loads(line) for line in
+-                  (ROOT/"evidence/box-mime-taught-20261111-162613.jsonl").read_text("utf-8").splitlines()
+-                  if line.startswith("{")]
+-        parameters = next(e["frame_parameters"] for e in events if e.get("event") == "vendor_fk_verified")
++        parameters = json.loads((ROOT/"points/SDK_FRAME_PARAMETERS.json").read_text("utf-8"))
+         source += f"sys.modules['box_mime_cache'].prepare({home!r},{squat!r},{waist!r},{parameters!r},{code_id!r})\n"
+     else:
+         certificate = json.loads(CACHE.read_text("utf-8")) if CACHE.exists() else None
+@@ -176,8 +176,9 @@
+         parser.error("--cache-head requires --prepare-cache and is unavailable for HOME recovery")
+     # Validate and bind the source before establishing even the SSH connection.
+     try:
++        config = load_config()
+         source = source_for(args.execute, not args.stepped, args.prepare_cache,
+-                            args.full_preflight, home_only, cache_head=args.cache_head)
++                            args.full_preflight, home_only, cache_head=args.cache_head, runtime_config=config)
+     except ValueError as error:
+         parser.error(str(error))
+     if home_only and args.execute:
+@@ -208,7 +209,8 @@
+     spec.loader.exec_module(connector)
+     token, pid = uuid.uuid4().hex, None
+     bootstrap = "import ast,sys; exec(ast.literal_eval(sys.stdin.readline()))"
+-    remote = ("source /home/nvidia/gento-test-baseline/gento-test-env.sh"
++    remote = (source_environment(config)
++              +
+               " && exec env LUNA_MIME_RUN="+token+" python3 -u -c "+shlex.quote(bootstrap)+" 2>&1")
+     command = "bash -lc "+shlex.quote(remote)
+     prefix = "return-home-" if home_only else "box-mime-taught-"
+--- 现场脱敏/tools/box_mime_taught_robot.py
++++ 公开版/tools/box_mime_taught_robot.py
+@@ -530,7 +530,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("SDK unavailable; another client may hold control")
+             runner = MimeRunner(robot, heartbeat)
+--- 现场脱敏/tools/box_motion_robot.py
++++ 公开版/tools/box_motion_robot.py
+@@ -12,8 +12,8 @@
+ from box_motion_plan import (HOME, RATE, FIELDS, build_plan, collision_samples,
+                              delta, pose, validate_pose)
+ 
+-SDK_ROOT = "/home/nvidia/tianji-robot-SDK"
+-MODEL = "/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/gento_luna_full.urdf"
++SDK_ROOT = __import__("os").environ.get("LUNA_SDK_ROOT", "/opt/gento-sdk")
++MODEL = __import__("os").environ.get("LUNA_MODEL_PATH", "/opt/gento-model/gento_luna_full.urdf")
+ RATIO = 5.
+ NAMES = ("Arm0", "Arm1", "Body")
+ KEYS = ("arm0", "arm1", "body")
+--- 现场脱敏/tools/fetch_frame_reference.py
++++ 公开版/tools/fetch_frame_reference.py
+@@ -5,6 +5,7 @@
+ import json
+ 
+ from robot_status import DEFAULT_CONNECTOR, ROOT
++from luna_config import load_config
+ 
+ 
+ FILES = (
+@@ -12,10 +13,11 @@
+     "transforms.py", "hook_approach.py", "calibration_data/calibration_matrices.json",
+     "calibration_data/gento_luna_body_head.urdf",
+ )
+-REMOTE_ROOT = "/home/nvidia/tianji-robot-SDK/robot/calibration_transforms"
++# Source paths come from the user-owned robot installation.
+ 
+ 
+ def main():
++    remote_root = load_config()["sdk_root"].rstrip("/") + "/robot/calibration_transforms"
+     spec = importlib.util.spec_from_file_location("luna_connector", DEFAULT_CONNECTOR)
+     module = importlib.util.module_from_spec(spec)
+     spec.loader.exec_module(module)
+@@ -25,12 +27,13 @@
+         for name in FILES:
+             target = local_root / name
+             target.parent.mkdir(parents=True, exist_ok=True)
+-            sftp.get(REMOTE_ROOT + "/" + name, str(target))
++            sftp.get(remote_root + "/" + name, str(target))
+             manifest.append({
+-                "source": REMOTE_ROOT + "/" + name,
++                "source": remote_root + "/" + name,
+                 "local": str(target),
+                 "sha256": hashlib.sha256(target.read_bytes()).hexdigest(),
+             })
++    (ROOT / "evidence").mkdir(exist_ok=True)
+     (ROOT / "evidence/ground-frame-source-manifest.json").write_text(
+         json.dumps(manifest, indent=2), encoding="utf-8"
+     )
+--- 现场脱敏/tools/recover_box_start_robot.py
++++ 公开版/tools/recover_box_start_robot.py
+@@ -199,7 +199,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("SDK unavailable")
+             runner = Recovery(robot)
+--- 现场脱敏/tools/return_home_robot.py
++++ 公开版/tools/return_home_robot.py
+@@ -90,7 +90,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("SDK unavailable; disconnect other control clients")
+             runner = HomeRunner(robot, heartbeat)
+--- 现场脱敏/tools/robot_status.py
++++ 公开版/tools/robot_status.py
+@@ -1,132 +1,11 @@
+-"""Read Luna feedback through the existing ROS gateway without motion commands."""
++"""Shared project paths; direct invocation uses the portable read-only sampler."""
+ 
+-import argparse
+-import importlib.util
+-import json
+-import os
+-from datetime import datetime, timedelta, timezone
+ from pathlib import Path
+-import sys
+-
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-DEFAULT_CONNECTOR = (
+-    Path.home()
+-    / "Documents/Codex/2026-11-03/he/work/inspect_luna_robot.py"
+-)
+-REMOTE_COMMAND = (
+-    "bash -lc 'source /home/nvidia/gento-test-baseline/gento-test-env.sh"
+-    " && PYTHONIOENCODING=utf-8 python3"
+-    " /home/nvidia/gento-test-baseline/robot_status_check.py"
+-)
+-
+-
+-def parse_events(text):
+-    return [
+-        json.loads(line)
+-        for line in text.splitlines()
+-        if line.strip().startswith("{")
+-    ]
+-
+-
+-def summarize(events, inspect_only=False):
+-    failures = [
+-        event for event in events
+-        if event["kind"] in ("error", "release_error")
+-    ]
+-    if failures:
+-        raise RuntimeError(json.dumps(failures, ensure_ascii=False))
+-    before = next((e["data"] for e in events if e["kind"] == "before"), None)
+-    if not before or not before.get("success") or not before.get("connected"):
+-        raise RuntimeError("Gateway did not confirm an established SDK connection")
+-    summary = {"gateway": before, "motion_commands_sent": 0}
+-    if inspect_only:
+-        return summary
+-    latest, counts = {}, {}
+-    for event in events:
+-        if event["kind"] != "sample":
+-            continue
+-        data = event["data"]
+-        response = data["response"]
+-        if not response.get("success"):
+-            raise RuntimeError("Gateway rejected a status query")
+-        state = response["status"]
+-        name = data["component"]
+-        counts[name] = counts.get(name, 0) + 1
+-        latest[name] = {
+-            key: state[key]
+-            for key in (
+-                "state", "error", "joints_deg", "positions_deg",
+-                "velocities_deg_s", "velocity_ratio", "acceleration_ratio",
+-                "joint_limits_deg",
+-            )
+-            if key in state
+-        }
+-    if any(counts.get(name, 0) < 2 for name in ("arm0", "arm1", "body")):
+-        raise RuntimeError("Incomplete feedback: expected two samples per component")
+-    handoff = next((e["data"] for e in events if e["kind"] == "handoff"), None)
+-    if (
+-        not handoff or not handoff.get("success")
+-        or not handoff.get("connected") or handoff.get("owner_client_id")
+-    ):
+-        raise RuntimeError("Lease handoff with retained SDK connection was not confirmed")
+-    summary.update(components=latest, handoff=handoff)
+-    return summary
+-
+-
+-def main():
+-    parser = argparse.ArgumentParser(description=__doc__)
+-    parser.add_argument("--inspect-only", action="store_true",
+-                        help="Inspect the connection and lease without acquiring it")
+-    parser.add_argument("--connector", type=Path, default=DEFAULT_CONNECTOR,
+-                        help="Existing local SSH connector exposing connect()")
+-    parser.add_argument("--output", type=Path,
+-                        help="Save raw feedback and a local collection timestamp")
+-    args = parser.parse_args()
+-    stamp = datetime.now(timezone(timedelta(hours=8)))
+-    output = args.output or ROOT / "evidence" / (
+-        "robot-status-" + stamp.strftime("%Y%m%d-%H%M%S") + ".json"
+-    )
+-    report = {
+-        "collected_at": stamp.isoformat(),
+-        "motion_commands_sent": 0,
+-        "inspect_only": args.inspect_only,
+-        "success": False,
+-    }
+-    try:
+-        if not args.connector.is_file():
+-            raise RuntimeError(
+-                "Local SSH connector missing; supply --connector PATH. "
+-                "The colleague's gentoluna SSH alias is not configured on this PC."
+-            )
+-        # Reuse the already verified local authentication setup; copy no credentials.
+-        spec = importlib.util.spec_from_file_location("luna_ssh", args.connector)
+-        module = importlib.util.module_from_spec(spec)
+-        spec.loader.exec_module(module)
+-        command = REMOTE_COMMAND + (" --inspect-only" if args.inspect_only else "") + "'"
+-        with module.connect() as client:
+-            _, stdout, stderr = client.exec_command(command, timeout=90)
+-            report["stdout"] = stdout.read().decode("utf-8", errors="replace")
+-            report["stderr"] = stderr.read().decode("utf-8", errors="replace")
+-            report["remote_exit_code"] = stdout.channel.recv_exit_status()
+-        report["events"] = parse_events(report["stdout"])
+-        if report["remote_exit_code"] != 0:
+-            raise RuntimeError("Remote check failed; see the saved events and stderr")
+-        report["summary"] = summarize(report["events"], args.inspect_only)
+-        report["success"] = True
+-        print(json.dumps(report["summary"], ensure_ascii=False, indent=2))
+-    except Exception as exc:
+-        report["error"] = str(exc)
+-        print("Status check failed: " + str(exc), file=sys.stderr)
+-    finally:
+-        output.parent.mkdir(parents=True, exist_ok=True)
+-        output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+-        print("Evidence: " + str(output.resolve()))
+-    return 0 if report["success"] else 1
++DEFAULT_CONNECTOR = ROOT / "config/ssh_connector.py"
+ 
+ 
+ if __name__ == "__main__":
+-    os.environ["PYTHONIOENCODING"] = "utf-8"
+-    if hasattr(sys.stdout, "reconfigure"):
+-        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
++    from teach_pose import main
+     raise SystemExit(main())
+--- 现场脱敏/tools/stand_up_robot.py
++++ 公开版/tools/stand_up_robot.py
+@@ -156,7 +156,7 @@
+     with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+         try:
+-            robot.link(6, 6, 7, 190)
++            robot.link(*map(int, __import__("os").environ["LUNA_CONTROLLER_IP"].split(".")))
+             if not robot._connected:
+                 raise RuntimeError("Disconnect the teaching client before running this program")
+             runner = RiseRunner(robot)
+--- 现场脱敏/tools/teach_pose.py
++++ 公开版/tools/teach_pose.py
+@@ -5,20 +5,22 @@
+ import importlib.util
+ import json
+ import math
++import shlex
+ from pathlib import Path
+ import sys
+ 
+ from robot_status import DEFAULT_CONNECTOR, ROOT
++from luna_config import load_config, remote_environment, source_environment
+ 
+ REMOTE = r'''
+-import fcntl,json,sys,time
+-sys.path.insert(0,"/home/nvidia/tianji-robot-SDK/PYTHON_SDK")
++import fcntl,json,os,sys,time
++sys.path.insert(0,os.environ["LUNA_SDK_ROOT"]+"/PYTHON_SDK")
+ from GentoRobot import GentoRobot
+ with open("/tmp/gento_sdk_6_6_7_190.lock","a+") as lock:
+     fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+     robot=GentoRobot()
+     try:
+-        code=robot.link(6,6,7,190)
++        code=robot.link(*map(int,os.environ["LUNA_CONTROLLER_IP"].split(".")))
+         if not robot._connected or robot.check_link_state()!=1:
+             raise RuntimeError("SDK link unavailable; disconnect teaching client first")
+         for index in range(5):
+@@ -74,6 +76,7 @@
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument("--record", choices=("STAND_TAUGHT", "SQUAT_TAUGHT"))
+     args = parser.parse_args()
++    config = load_config()
+     stamp = datetime.now(timezone(timedelta(hours=8))).strftime("%Y%m%d-%H%M%S")
+     evidence = ROOT/"evidence"/("teaching-feedback-"+stamp+".json")
+     spec = importlib.util.spec_from_file_location("luna_connector", DEFAULT_CONNECTOR)
+@@ -83,8 +86,10 @@
+               "motion_commands_sent": 0, "record_requested": args.record}
+     try:
+         with module.connect() as client:
+-            stdin, stdout, stderr = client.exec_command("python3 -", timeout=45)
+-            stdin.write(REMOTE.encode("utf-8"))
++            command = "bash -lc "+shlex.quote(source_environment(config)+" && python3 -")
++            stdin, stdout, stderr = client.exec_command(command, timeout=45)
++            source = "import os\nos.environ.update("+repr(remote_environment(config))+")\n"+REMOTE
++            stdin.write(source.encode("utf-8"))
+             stdin.flush()
+             stdin.channel.shutdown_write()
+             report["stdout"] = stdout.read().decode("utf-8", errors="replace")
+--- 现场脱敏/tools/test_box_mime_six_cycles.py
++++ 公开版/tools/test_box_mime_six_cycles.py
+@@ -125,10 +125,11 @@
+     def test_source_generation_does_not_modify_original_launcher_or_cache(self):
+         path = self.entry.ROOT/"run_box_mime_taught.py"
+         cache = self.entry.ROOT/"points/BOX_MIME_GEOMETRY_CACHE.json"
+-        original, certificate = path.read_bytes(), cache.read_bytes()
++        original = path.read_bytes()
++        certificate = cache.read_bytes() if cache.exists() else None
+         self.entry.source_for(False)
+         self.assertEqual(path.read_bytes(), original)
+-        self.assertEqual(cache.read_bytes(), certificate)
++        self.assertEqual(cache.read_bytes() if cache.exists() else None, certificate)
+ 
+     def invoke_outer_run(self, execute, reject_positive=False):
+         with self.helpers.remote_modules(None, native=True):
+--- 现场脱敏/tools/test_mime_speed_setting.py
++++ 公开版/tools/test_mime_speed_setting.py
+@@ -163,16 +163,16 @@
+                 self.assertLess(delta(runner.response_samples[-1]["command_after_tick"],
+                                       stages[-1]["target"]), 1e-9)
+ 
+-    def test_actual_entry_defaults_are_arm_100_100_body_10_5(self):
++    def test_actual_entry_defaults_match_latest_successful_100_50_run(self):
+         self.assertFalse(hasattr(self.entry, "MOTION_SPEED_PERCENT"))
+         with self.remote_modules(None, native=True) as (plan, control, _):
+             self.assertTrue(plan.NATIVE_ARM_POSITION)
+             self.assertEqual(plan.controller_settings(), {
+-                "arm0": {"speed_percent": 100., "acceleration_percent": 100.},
+-                "arm1": {"speed_percent": 100., "acceleration_percent": 100.},
+-                "body": {"speed_percent": 10., "acceleration_percent": 5.}})
++                "arm0": {"speed_percent": 100., "acceleration_percent": 50.},
++                "arm1": {"speed_percent": 100., "acceleration_percent": 50.},
++                "body": {"speed_percent": 100., "acceleration_percent": 50.}})
+             for body_idle in (False, True):
+-                robot = self.robot(100., acceleration=100., body_speed=10.)
++                robot = self.robot(100., acceleration=50., body_speed=100., body_acceleration=50.)
+                 if body_idle:
+                     robot.body_mode = 0
+                     robot.switch_to_position_mode.side_effect = (
+@@ -181,11 +181,11 @@
+                 with patch.object(control.time, "sleep"), patch.object(control, "emit"):
+                     runner.enable_all()
+                 for obj in (0, 1):
+-                    robot.runtime_set_speed_ratio.assert_any_call(obj, 100., 100.)
++                    robot.runtime_set_speed_ratio.assert_any_call(obj, 100., 50.)
+                 if body_idle:
+-                    robot.switch_to_position_mode.assert_called_once_with(3, 2000, 10., 5.)
++                    robot.switch_to_position_mode.assert_called_once_with(3, 2000, 100., 50.)
+                 else:
+-                    robot.runtime_set_speed_ratio.assert_any_call(3, 10., 5.)
++                    robot.runtime_set_speed_ratio.assert_any_call(3, 100., 50.)
+                 robot.runtime_set_joint_pos_cmd.assert_not_called()
+ 
+     def test_arm_speed_and_acceleration_are_independent_of_body_timing(self):
+@@ -215,7 +215,7 @@
+             self.assertLess(new, old)
+ 
+     def test_high_arm_speed_does_not_relax_body_velocity_protection(self):
+-        with self.remote_modules(None) as (plan, control, _):
++        with self.remote_modules(100., acceleration=100., body_speed=10.) as (plan, control, _):
+             robot = self.robot(100., acceleration=100., body_speed=10.)
+             original = robot.get_rt_dict
+             def rt():
+--- 现场脱敏/tools/test_native_arm_motion.py
++++ 公开版/tools/test_native_arm_motion.py
+@@ -95,7 +95,12 @@
+ 
+     def simulate(self, plan, control, delay=0., wrong_echo=False, fault=False, hold_drift=0.,
+                  whole_body_offset=0.):
+-        robot = self.helpers.robot(100., state=self.home, acceleration=100., body_speed=10.)
++        ratios = plan.controller_settings()
++        robot = self.helpers.robot(
++            ratios["arm0"]["speed_percent"], state=self.home,
++            acceleration=ratios["arm0"]["acceleration_percent"],
++            body_speed=ratios["body"]["speed_percent"],
++            body_acceleration=ratios["body"]["acceleration_percent"])
+         clock = Clock()
+         runner = control.MimeRunner(robot, lambda: None)
+         runner.command = copy.deepcopy(self.home)

@@ -1,0 +1,2 @@
+{"event": "process", "pid": 33121}
+{"event": "offline_recovery_geometry_verified", "stages": ["align_body_from_crouch", "align_arms_home"], "samples": 198, "minimum_flange_spacing_mm": 429.19263889381165, "motion_commands_sent": 0, "sdk_connected": false}

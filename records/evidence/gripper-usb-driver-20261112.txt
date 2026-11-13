@@ -1,0 +1,108 @@
+5.15.148-rt-tegra
+ch341                  24576  0
+ftdi_sio               65536  0
+usbserial              57344  4 ftdi_sio,usb_wwan,ch341,option
+filename:       /lib/modules/5.15.148-rt-tegra/kernel/drivers/usb/serial/ch341.ko
+license:        GPL v2
+alias:          usb:v9986p7523d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v4348p5523d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v2184p0057d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v1A86p7523d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v1A86p7522d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v1A86p5523d*dc*dsc*dp*ic*isc*ip*in*
+depends:        usbserial
+intree:         Y
+name:           ch341
+vermagic:       5.15.148-rt-tegra SMP preempt_rt mod_unload modversions aarch64
+filename:       /lib/modules/5.15.148-rt-tegra/kernel/drivers/usb/serial/ftdi_sio.ko
+license:        GPL
+description:    USB FTDI Serial Converters Driver
+author:         Greg Kroah-Hartman <greg@kroah.com>, Bill Ryder <bryder@sgi.com>, Kuba Ober <kuba@mareimbrium.org>, Andreas Mohr, Johan Hovold <jhovold@gmail.com>
+alias:          usb:v0403p7151d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v0403p7150d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v1546p0503d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v1546p0502d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v0590p00B2d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v2CAFp13A3d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v2CAFp13A2d*dc*dsc*dp*ic*isc*ip*in*
+alias:          usb:v0920p7500d*dc*dsc*dp*ic*isc*ip*in*
+Nov 12 16:15:01 vision kernel: usb 5-1: new high-speed USB device number 2 using xhci_hcd
+Nov 12 16:15:02 vision kernel: usb 5-1.1: new full-speed USB device number 3 using xhci_hcd
+Nov 12 16:15:02 vision kernel: usb 5-1.4: new full-speed USB device number 4 using xhci_hcd
+Nov 12 16:15:03 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB0
+Nov 12 16:15:03 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB1
+Nov 12 16:15:03 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB2
+Nov 12 16:15:03 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB3
+Nov 12 16:15:03 vision kernel: usbcore: registered new interface driver ftdi_sio
+Nov 12 16:15:03 vision kernel: usbserial: USB Serial support registered for FTDI USB Serial Device
+Nov 12 16:15:03 vision kernel: ftdi_sio 5-1.1:1.0: FTDI USB Serial Device converter detected
+Nov 12 16:15:03 vision kernel: usb 5-1.1: Detected FT232RL
+Nov 12 16:15:03 vision kernel: usb 5-1.1: FTDI USB Serial Device converter now attached to ttyUSB4
+Nov 12 16:15:03 vision kernel: usbcore: registered new interface driver ch341
+Nov 12 16:15:03 vision kernel: usbserial: USB Serial support registered for ch341-uart
+Nov 12 16:15:03 vision kernel: ch341 5-1.4:1.0: ch341-uart converter detected
+Nov 12 16:15:03 vision kernel: usb 5-1.4: ch341-uart converter now attached to ttyUSB5
+Nov 12 16:15:03 vision kernel: usb 5-1.4: usbfs: interface 0 claimed by ch341 while 'brltty' sets config #1
+Nov 12 16:15:03 vision kernel: ch341-uart ttyUSB5: ch341-uart converter now disconnected from ttyUSB5
+Nov 12 16:15:03 vision kernel: ch341 5-1.4:1.0: device disconnected
+Nov 12 16:15:04 vision kernel: usb 5-1.1: usbfs: interface 0 claimed by ftdi_sio while 'brltty' sets config #1
+Nov 12 16:15:04 vision kernel: ftdi_sio ttyUSB4: FTDI USB Serial Device converter now disconnected from ttyUSB4
+Nov 12 16:15:04 vision kernel: ftdi_sio 5-1.1:1.0: device disconnected
+Nov 12 16:16:17 vision kernel: option1 ttyUSB0: GSM modem (1-port) converter now disconnected from ttyUSB0
+Nov 12 16:16:17 vision kernel: option1 ttyUSB1: GSM modem (1-port) converter now disconnected from ttyUSB1
+Nov 12 16:16:17 vision kernel: option1 ttyUSB2: GSM modem (1-port) converter now disconnected from ttyUSB2
+Nov 12 16:16:17 vision kernel: option1 ttyUSB3: GSM modem (1-port) converter now disconnected from ttyUSB3
+Nov 12 16:16:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB0
+Nov 12 16:16:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB1
+Nov 12 16:16:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB2
+Nov 12 16:16:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB3
+Nov 12 16:17:17 vision kernel: option1 ttyUSB0: GSM modem (1-port) converter now disconnected from ttyUSB0
+Nov 12 16:17:17 vision kernel: option1 ttyUSB1: GSM modem (1-port) converter now disconnected from ttyUSB1
+Nov 12 16:17:17 vision kernel: option1 ttyUSB2: GSM modem (1-port) converter now disconnected from ttyUSB2
+Nov 12 16:17:17 vision kernel: option1 ttyUSB3: GSM modem (1-port) converter now disconnected from ttyUSB3
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB0
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB1
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB2
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB3
+Nov 12 16:18:17 vision kernel: option1 ttyUSB0: GSM modem (1-port) converter now disconnected from ttyUSB0
+Nov 12 16:18:17 vision kernel: option1 ttyUSB1: GSM modem (1-port) converter now disconnected from ttyUSB1
+Nov 12 16:18:17 vision kernel: option1 ttyUSB2: GSM modem (1-port) converter now disconnected from ttyUSB2
+Nov 12 16:18:17 vision kernel: option1 ttyUSB3: GSM modem (1-port) converter now disconnected from ttyUSB3
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB0
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB1
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB2
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB3
+○ brltty.service - Braille Device Support
+     Loaded: loaded (/lib/systemd/system/brltty.service; disabled; vendor preset: enabled)
+     Active: inactive (dead)
+       Docs: man:brltty(1)
+             http://brltty.com/
+
+● brltty-udev.service - Braille Device Support
+     Loaded: loaded (/lib/systemd/system/brltty-udev.service; static)
+     Active: active (running) since Thu 2026-11-12 16:15:03 CST; 3min 43s ago
+       Docs: man:brltty(1)
+             http://brltty.com/
+   Main PID: 1509 (brltty)
+      Tasks: 6 (limit: 74756)
+     Memory: 8.3M
+        CPU: 3.588s
+     CGroup: /system.slice/brltty-udev.service
+             └─1509 /sbin/brltty -n -p /var/run/brltty.pid
+
+Nov 12 16:15:03 vision brltty[1509]: USB interface in use: 0 (ch341)
+Nov 12 16:15:03 vision brltty[1509]: brltty: USB interface in use: 0 (ch341)
+Nov 12 16:15:03 vision brltty[1509]: ioctl[KDFONTOP[GET]]: Function not implemented
+Nov 12 16:15:03 vision brltty[1509]: brltty: ioctl[KDFONTOP[GET]]: Function not implemented
+Nov 12 16:15:03 vision brltty[1509]: NoSpeech Speech Driver:
+Nov 12 16:15:03 vision brltty[1509]: brltty: NoSpeech Speech Driver:
+Nov 12 16:15:04 vision brltty[1509]: USB configuration set error 16: Device or resource busy
+Nov 12 16:15:04 vision brltty[1509]: brltty: USB configuration set error 16: Device or resource busy
+Nov 12 16:15:04 vision brltty[1509]: USB interface in use: 0 (ftdi_sio)
+Nov 12 16:15:04 vision brltty[1509]: brltty: USB interface in use: 0 (ftdi_sio)
+
+○ ModemManager.service - Modem Manager
+     Loaded: loaded (/lib/systemd/system/ModemManager.service; disabled; vendor preset: enabled)
+     Active: inactive (dead)
+   1509 root     brltty          /sbin/brltty -n -p /var/run/brltty.pid
+   4878 nvidia   bash            bash -c uname -r; lsmod | grep -E 'ch341|ftdi|usbserial|ch34'; modinfo ch341 2>&1 | head -12; modinfo ftdi_sio 2>&1 | head -12; journalctl -b -k --no-pager | grep -Ei 'ch34|ftdi|ttyUSB|usb 5-1|brltty' | tail -65; systemctl --no-pager --full status brltty.service brltty-udev.service ModemManager.service 2>&1 | head -65; fuser -v /dev/bus/usb/005/003 /dev/bus/usb/005/004 2>&1; ps -eo pid,user,comm,args | grep -E '[b]rltty|[M]odemManager|[g]ripper|[f]tdi|[c]h341' | head -20

@@ -1,0 +1,6 @@
+Looking in links: /home/nvidia/luna-gripper-check/wheels
+Processing ./luna-gripper-check/wheels/minimalmodbus-2.1.1-py3-none-any.whl
+Processing ./luna-gripper-check/wheels/pyserial-3.5-py2.py3-none-any.whl
+Installing collected packages: pyserial, minimalmodbus
+Successfully installed minimalmodbus-2.1.1 pyserial-3.5
+{"remote_exit_code": 0}

@@ -1,0 +1,107 @@
+{
+  "name": "SQUAT_TAUGHT_02",
+  "source": "user_supplied_fxplatform_realtime_screenshot",
+  "source_displayed_at_local": "2026-11-11T14:37:43+08:00",
+  "joint_units": "deg",
+  "pose": {
+    "arm0": null,
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      40.281,
+      -80.364,
+      40.456,
+      -0.296,
+      -1.651
+    ],
+    "head": [
+      2.107,
+      -15.998,
+      0
+    ]
+  },
+  "unobserved_groups": [
+    "arm0"
+  ],
+  "previous_taught_point": "points/taught/SQUAT_TAUGHT_UI-20261111-143323.json",
+  "baseline_point": "points/RECOVERED_START_20261111.json",
+  "body_delta_from_previous_point_deg": [
+    0,
+    0,
+    -38,
+    35,
+    0,
+    0
+  ],
+  "body_delta_from_baseline_deg": [
+    0,
+    31,
+    -63,
+    35,
+    0,
+    0.002
+  ],
+  "principal_changed_body_axes_since_previous_point": [
+    "B3",
+    "B4"
+  ],
+  "user_observation": {
+    "pose": "squat",
+    "torso": "vertical by user's visual observation",
+    "manually_adjusted_axes_this_step": [
+      "B3",
+      "B4"
+    ],
+    "independently_measured_torso_orientation": false
+  },
+  "user_teaching_note": {
+    "statement": "B2 through B4 need to coordinate for a very low squat",
+    "status": "user-provided theory and teaching guidance",
+    "coordination_ratio_established": false
+  },
+  "displayed_settings": {
+    "arm1": {
+      "mode": "Position",
+      "motion": "Stopped",
+      "error": 0,
+      "speed_percent": 3,
+      "acceleration_percent": 3
+    },
+    "body": {
+      "mode": "Position",
+      "error": 0,
+      "speed_percent": 5,
+      "acceleration_percent": 5
+    },
+    "head": {
+      "mode": "IDLE",
+      "error": 0
+    }
+  },
+  "capture_quality": {
+    "method": "visual transcription of Realtime Data, not Position Cmd",
+    "screenshot_count": 1,
+    "display_resolution_deg": 0.001,
+    "complete_robot_pose": false,
+    "sdk_frame_freshness_verified": false,
+    "joint_velocity_feedback_captured": false,
+    "stationarity_independently_verified": false,
+    "sdk_connection_attempted_this_capture": false
+  },
+  "evidence": [
+    "evidence/squat-taught-02-user-20261111-143743.png"
+  ],
+  "original_attachment": "D:/PhotoStack/tmp/codex-clipboard-ea66be53-6a58-44b3-9de6-47a6375d6327.png",
+  "measurement_preserved_without_clamping": true,
+  "trajectory_validated": false,
+  "motion_commands_sent": 0,
+  "mode_changes_sent": 0
+}

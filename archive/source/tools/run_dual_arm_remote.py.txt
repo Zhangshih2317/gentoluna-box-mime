@@ -1,0 +1,108 @@
+"""Dispatch the reviewed dual-arm program; stream and preserve robot evidence."""
+import argparse
+from datetime import datetime, timedelta, timezone
+import importlib.util
+import json
+import math
+import sys
+import uuid
+from robot_status import DEFAULT_CONNECTOR, ROOT
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    flags = parser.add_mutually_exclusive_group(required=True)
+    flags.add_argument("--preflight", action="store_true")
+    flags.add_argument("--execute", action="store_true")
+    flags.add_argument("--check-upload", action="store_true")
+    parser.add_argument("--large-wrist", action="store_true")
+    parser.add_argument("--replace-pending", action="store_true")
+    parser.add_argument("--continuous", action="store_true")
+    parser.add_argument("--speed-percent", type=float, default=5.0)
+    parser.add_argument("--acceleration-percent", type=float, default=5.0)
+    args = parser.parse_args()
+    for value in (args.speed_percent, args.acceleration_percent):
+        if not math.isfinite(value) or not 1 <= value <= 100:
+            parser.error("Speed and acceleration percentages must be finite and within 1..100")
+    mode = "--execute" if args.execute else "--check-upload" if args.check_upload else "--preflight"
+    if args.replace_pending:
+        mode += " --replace-pending"
+    if args.large_wrist:
+        mode += " --large-wrist"
+    if args.continuous:
+        mode += " --continuous"
+    mode += (f" --speed-percent {args.speed_percent!r}"
+             f" --acceleration-percent {args.acceleration_percent!r}")
+    spec = importlib.util.spec_from_file_location("luna_ssh", DEFAULT_CONNECTOR)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    source = (ROOT/"tools/dual_arm_five_moves.py").read_text(encoding="utf-8")
+    stamp = datetime.now(timezone(timedelta(hours=8)))
+    output = ROOT/"evidence"/("dual-arm-"+stamp.strftime("%Y%m%d-%H%M%S")+".jsonl")
+    output.parent.mkdir(exist_ok=True)
+    print("Evidence: "+str(output), flush=True)
+    run_id = uuid.uuid4().hex
+    pid = None
+    with module.connect() as client, output.open("w", encoding="utf-8") as log:
+        stdin, stdout, stderr = client.exec_command(
+            "bash -lc 'source /home/nvidia/gento-test-baseline/gento-test-env.sh"
+            " && exec env LUNA_RUN_ID="+run_id+" python3 -u - "+mode+" 2>&1'", timeout=480)
+        # Identify this exact remote invocation before any SDK operation.
+        preamble = (
+            "import os, json\nprint(json.dumps({'event':'remote_process',"
+            "'pid':os.getpid(),'run_id':os.environ['LUNA_RUN_ID']}),flush=True)\n"
+        )
+        try:
+            stdin.write((preamble+source).encode("utf-8"))
+            stdin.flush()
+            stdin.channel.shutdown_write()
+            for line in stdout:
+                log.write(line)
+                log.flush()
+                if line.startswith("{"):
+                    event = json.loads(line)
+                    if event.get("event") == "remote_process" and event.get("run_id") == run_id:
+                        pid = int(event["pid"])
+                print(line, end="", flush=True)
+            code = stdout.channel.recv_exit_status()
+        except BaseException:
+            # SIGTERM enters the robot runner's stop-both/finally handlers.
+            # Check the per-run token to avoid signalling an unrelated/reused PID.
+            if pid is not None:
+                stop_source = (
+                    "import os, signal\n"
+                    f"pid={pid!r}\n"
+                    f"token={('LUNA_RUN_ID='+run_id).encode()!r}\n"
+                    "try:\n"
+                    "    with open('/proc/%d/environ'%pid,'rb') as f: env=f.read().split(b'\\0')\n"
+                    "    if token not in env: raise RuntimeError('Remote process token mismatch')\n"
+                    "    os.kill(pid,signal.SIGTERM)\n"
+                    "    print('Stop signal delivered to this robot run',flush=True)\n"
+                    "except FileNotFoundError:\n"
+                    "    print('Robot run has already exited',flush=True)\n"
+                )
+                try:
+                    with module.connect() as stop_client:
+                        si, so, se = stop_client.exec_command("python3 -", timeout=15)
+                        si.write(stop_source.encode())
+                        si.flush()
+                        si.channel.shutdown_write()
+                        print(so.read().decode("utf-8", errors="replace"), flush=True)
+                        if so.channel.recv_exit_status() != 0:
+                            raise RuntimeError(se.read().decode("utf-8", errors="replace"))
+                    stdout.channel.settimeout(15)
+                    for line in stdout:
+                        log.write(line)
+                        log.flush()
+                        print(line, end="", flush=True)
+                except Exception as exc:
+                    print("STOP NOT CONFIRMED; use physical emergency stop: "+str(exc), flush=True)
+            raise
+        log.write(json.dumps({"remote_exit_code": code})+"\n")
+    return code
+
+
+if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    raise SystemExit(main())

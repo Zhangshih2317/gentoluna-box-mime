@@ -1,0 +1,17 @@
+{"event": "remote_process", "time": "2026-11-13T01:10:42.901125+00:00", "pid": 6516, "run_id": "[REDACTED]"}
+{"event": "device_identity", "time": "2026-11-13T01:10:42.953878+00:00", "port": "/dev/luna-gripper-ftdi", "resolved": "/dev/ttyUSB4", "identity": {"ID_VENDOR_ID": "0403", "ID_MODEL_ID": "6001", "ID_SERIAL_SHORT": "BG011JUB"}}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:44.915353+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 115200, "addresses": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:45.164462+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 9600, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:45.409094+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 57600, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:45.653487+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 38400, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:45.898440+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 19200, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:46.142845+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 230400, "addresses": [1, 2], "responses": []}
+{"event": "device_identity", "time": "2026-11-13T01:10:46.201344+00:00", "port": "/dev/luna-gripper-ch340", "resolved": "/dev/ttyUSB5", "identity": {"ID_VENDOR_ID": "1a86", "ID_MODEL_ID": "7523", "ID_PATH": "platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.4:1.0"}}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:48.174206+00:00", "port": "/dev/luna-gripper-ch340", "baudrate": 115200, "addresses": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:48.425847+00:00", "port": "/dev/luna-gripper-ch340", "baudrate": 9600, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:48.676147+00:00", "port": "/dev/luna-gripper-ch340", "baudrate": 57600, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:48.936109+00:00", "port": "/dev/luna-gripper-ch340", "baudrate": 38400, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:49.189523+00:00", "port": "/dev/luna-gripper-ch340", "baudrate": 19200, "addresses": [1, 2], "responses": []}
+{"event": "readonly_probe_batch", "time": "2026-11-13T01:10:49.439556+00:00", "port": "/dev/luna-gripper-ch340", "baudrate": 230400, "addresses": [1, 2], "responses": []}
+{"event": "inspection_complete", "time": "2026-11-13T01:10:49.446306+00:00", "both_responded": false, "write_register_commands": 0}
+{"remote_exit_code": 1}

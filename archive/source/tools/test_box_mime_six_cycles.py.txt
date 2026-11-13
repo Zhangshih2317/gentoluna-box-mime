@@ -1,0 +1,192 @@
+"""Offline coverage for the independent six-cycle demo snapshot."""
+
+import ast
+import copy
+import importlib.util
+from pathlib import Path
+import sys
+import types
+import unittest
+from unittest.mock import Mock, patch, mock_open
+
+from box_motion_plan import delta
+import test_mime_speed_setting
+import test_native_arm_motion
+
+
+class Tests(unittest.TestCase):
+    def setUp(self):
+        old_path = sys.path.copy()
+        self.addCleanup(lambda: sys.path.__setitem__(slice(None), old_path))
+        self.helpers = test_mime_speed_setting.Tests()
+        self.helpers.setUp()
+        root = Path(__file__).resolve().parents[1]
+        spec = importlib.util.spec_from_file_location("six_cycle_entry", root/"run_box_mime_six_cycles.py")
+        self.entry = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.entry)
+        self.helpers.entry = self.entry
+        self.fixture = self.helpers.fixture
+        self.home, self.squat, self.waist = self.fixture.home, self.fixture.squat, self.fixture.waist
+
+    def test_copies_latest_successful_ratios_and_uses_separate_source_and_cache(self):
+        self.assertEqual(self.entry.configured_ratios(), {
+            key: {"speed_percent": 100., "acceleration_percent": 50.}
+            for key in ("arm0", "arm1", "body")})
+        self.assertEqual(self.entry.CACHE.name, "BOX_MIME_SIX_CYCLES_GEOMETRY_CACHE.json")
+        with self.helpers.remote_modules(None, native=True) as (_, control, call):
+            self.assertTrue(control.NATIVE_ARM_POSITION)
+            self.assertEqual(ast.literal_eval(call.func.value.slice), "box_mime_six_cycles")
+
+    def test_six_full_flows_alternate_relative_turn_and_return_home_each_time(self):
+        with self.helpers.remote_modules(None, native=True):
+            demo = sys.modules["box_mime_six_cycles"]
+            cycles = demo.build_cycles(self.home, self.home, self.squat, self.waist)
+            self.assertEqual([c["turn_relative_deg"] for c in cycles], [-45, 45]*3)
+            for index, cycle in enumerate(cycles):
+                stages = cycle["stages"]
+                turn = "turn_waist_negative_45" if index % 2 == 0 else "turn_waist_positive_45"
+                self.assertEqual([s["name"] for s in stages], [
+                    "open_before_crouch", "crouch", "embrace_empty_space", "stand",
+                    turn, "open_arms_standing", "arms_home", "body_home"])
+                self.assertEqual(stages[4]["target"]["body"][5]-self.home["body"][5],
+                                 cycle["turn_relative_deg"])
+                self.assertLess(delta(stages[-1]["target"], self.home), 1e-9)
+                for left, right in zip(stages, stages[1:]):
+                    self.assertEqual(left["target"], right["start"])
+                self.assertEqual(stages[3]["target"]["body"], self.home["body"])
+
+    def test_reverse_direction_changes_only_yaw_after_standing(self):
+        with self.helpers.remote_modules(None, native=True):
+            demo = sys.modules["box_mime_six_cycles"]
+            negative = demo.build_cycle(self.home, self.home, self.squat, self.waist, -45)
+            positive = demo.build_cycle(self.home, self.home, self.squat, self.waist, 45)
+            self.assertEqual(negative[:4], positive[:4])
+            for old, new in zip(negative, positive):
+                for endpoint in ("start", "target"):
+                    for key in ("arm0", "arm1", "head"):
+                        self.assertEqual(old[endpoint][key], new[endpoint][key])
+                    self.assertEqual(old[endpoint]["body"][:5], new[endpoint]["body"][:5])
+            for invalid in (0, 90, True):
+                with self.assertRaises(ValueError):
+                    demo.build_cycle(self.home, self.home, self.squat, self.waist, invalid)
+
+    def test_all_six_cycles_execute_full_native_and_body_flow_with_cycle_feedback(self):
+        with self.helpers.remote_modules(None, native=True) as (plan, control, _):
+            demo = sys.modules["box_mime_six_cycles"]
+            simulator = test_native_arm_motion.Tests()
+            simulator.setUp()
+            runner, robot, clock, _, writes = simulator.simulate(plan, control, delay=.2)
+            get_sg = robot.get_sg_dict
+            def sg():
+                result = get_sg()
+                for group in result["arms"]+[result["body"]]:
+                    group["set"].update(vel_ratio=100., acc_ratio=50.)
+                return result
+            robot.get_sg_dict = sg
+            geometry = Mock()
+            runner.geometry = geometry
+            cycles = demo.build_cycles(self.home, self.home, self.squat, self.waist)
+            with patch("time.monotonic", clock.monotonic), patch("time.sleep", clock.sleep), \
+                    patch.object(control, "emit"), patch.object(demo, "emit") as events, \
+                    patch("native_arm_motion.emit"):
+                results = demo.execute_cycles(runner, geometry, cycles)
+            self.assertEqual(len(results), 6)
+            self.assertEqual(len([w for w in writes if w[3]]), 48)
+            self.assertEqual({s["cycle_index"] for s in runner.response_samples}, set(range(1, 7)))
+            self.assertTrue(all(delta(r["pose"], self.home) <= 2. for r in results))
+            self.assertEqual(sum(c.args[0] == "demo_cycle_complete" for c in events.call_args_list), 6)
+            robot.switch_to_idle.assert_not_called()
+            robot.emergency_stop.assert_not_called()
+            self.assertGreaterEqual(geometry.check.call_count, 54)
+
+    def test_fault_in_one_cycle_prevents_later_cycles(self):
+        with self.helpers.remote_modules(None, native=True):
+            demo = sys.modules["box_mime_six_cycles"]
+            runner, geometry = Mock(), Mock()
+            runner.stream_stages_with_wait.side_effect = [None, RuntimeError("controller fault")]
+            runner.wait_target.return_value = self.home
+            cycles = demo.build_cycles(self.home, self.home, self.squat, self.waist)
+            with patch.object(demo, "emit"), self.assertRaisesRegex(RuntimeError, "controller fault"):
+                demo.execute_cycles(runner, geometry, cycles)
+            self.assertEqual(runner.stream_stages_with_wait.call_count, 2)
+            self.assertEqual(runner.wait_target.call_count, 1)
+
+    def test_both_direction_caches_required_and_old_single_cache_rejected(self):
+        with self.helpers.remote_modules(None, native=True):
+            demo = sys.modules["box_mime_six_cycles"]
+            valid = {"schema": demo.CACHE_SCHEMA, "code_id": "code",
+                     "directions": {"-45": {}, "45": {}}}
+            demo.validate_bundle(valid, "code")
+            for invalid in (None, {}, {**valid, "code_id": "old"},
+                            {**valid, "directions": {"-45": {}}}):
+                with self.assertRaises(RuntimeError):
+                    demo.validate_bundle(invalid, "code")
+
+    def test_source_generation_does_not_modify_original_launcher_or_cache(self):
+        path = self.entry.ROOT/"run_box_mime_taught.py"
+        cache = self.entry.ROOT/"points/BOX_MIME_GEOMETRY_CACHE.json"
+        original, certificate = path.read_bytes(), cache.read_bytes()
+        self.entry.source_for(False)
+        self.assertEqual(path.read_bytes(), original)
+        self.assertEqual(cache.read_bytes(), certificate)
+
+    def invoke_outer_run(self, execute, reject_positive=False):
+        with self.helpers.remote_modules(None, native=True):
+            demo = sys.modules["box_mime_six_cycles"]
+            robot = self.fixture.fake(self.home)
+            robot.link, robot.unlink = Mock(wraps=robot.link), Mock(wraps=robot.unlink)
+            runner, geometry = Mock(), Mock()
+            runner.stationary.return_value = self.home
+            sdk, flock = types.ModuleType("GentoRobot"), types.ModuleType("fcntl")
+            sdk.GentoRobot = lambda: robot
+            flock.LOCK_EX, flock.LOCK_NB, flock.flock = 1, 2, Mock()
+            directions = []
+            def check(*args):
+                runner.enable_all.assert_not_called()
+                direction = args[3]["turn"]
+                directions.append(direction)
+                if reject_positive and direction == 45:
+                    raise RuntimeError("positive cache rejected")
+            certificate = {
+                "schema": demo.CACHE_SCHEMA, "code_id": "test",
+                "directions": {"-45": {"turn": -45}, "45": {"turn": 45}}}
+            results = [{"maximum_home_error_deg": 0.} for _ in range(6)]
+            with patch.dict(sys.modules, {"GentoRobot": sdk, "fcntl": flock}), \
+                    patch("builtins.open", mock_open()), \
+                    patch.object(demo, "MimeRunner", return_value=runner), \
+                    patch.object(demo, "Geometry", return_value=geometry), \
+                    patch.object(demo, "read_native_limits", return_value={}), \
+                    patch.object(demo, "fast_check", side_effect=check), \
+                    patch.object(demo, "execute_cycles", return_value=results) as run_cycles, \
+                    patch.object(demo, "emit"):
+                if reject_positive:
+                    with self.assertRaisesRegex(RuntimeError, "positive cache rejected"):
+                        demo.run(self.home, self.squat, self.waist, execute,
+                                 certificate=certificate, code_id="test")
+                else:
+                    demo.run(self.home, self.squat, self.waist, execute,
+                             certificate=certificate, code_id="test")
+                if execute and not reject_positive:
+                    runner.enable_all.assert_called_once()
+                    run_cycles.assert_called_once()
+                    self.assertEqual(len(run_cycles.call_args.args[2]), 6)
+                else:
+                    runner.enable_all.assert_not_called()
+                    runner.segment.assert_not_called()
+                    run_cycles.assert_not_called()
+            self.assertEqual(directions, [-45, 45])
+            robot.link.assert_called_once()
+            robot.unlink.assert_called_once()
+            robot.switch_to_idle.assert_not_called()
+            robot.emergency_stop.assert_not_called()
+
+    def test_outer_run_checks_both_directions_before_one_enable_and_one_connection(self):
+        self.invoke_outer_run(False)
+        self.invoke_outer_run(True)
+
+    def test_positive_direction_cache_failure_prevents_any_movement(self):
+        self.invoke_outer_run(True, reject_positive=True)
+
+
+if __name__ == "__main__":
+    unittest.main()

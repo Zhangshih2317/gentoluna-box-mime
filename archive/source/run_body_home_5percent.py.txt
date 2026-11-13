@@ -1,0 +1,93 @@
+"""Return from the completed 10 cm rise to the saved standing HOME."""
+
+import argparse
+from datetime import datetime
+import importlib.util
+import json
+from pathlib import Path
+import sys
+import uuid
+
+ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT/"tools"))
+from robot_status import DEFAULT_CONNECTOR
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--execute", action="store_true")
+    args = parser.parse_args()
+    expected = json.loads((ROOT/"points/STAND_UP_100MM.json").read_text("utf-8"))["target"]
+    home = json.loads((ROOT/"points/BOX_START_BEFORE_INCIDENT.json").read_text("utf-8"))["pose"]
+    source = "import os,sys,types,json,signal\n"
+    source += "print(json.dumps({'event':'process','pid':os.getpid()}),flush=True)\n"
+    for name in ("box_motion_plan", "box_motion_robot", "recover_box_start_robot",
+                 "stand_up_robot", "body_home_robot"):
+        text = (ROOT/"tools"/(name+".py")).read_text("utf-8")
+        source += f"module=types.ModuleType({name!r})\nsys.modules[{name!r}]=module\n"
+        source += f"exec({text!r},module.__dict__)\n"
+    source += (
+        "def interrupted(signum,frame): raise RuntimeError('HOME interrupted')\n"
+        "signal.signal(signal.SIGTERM,interrupted)\n"
+        "signal.signal(signal.SIGINT,interrupted)\n"
+        f"sys.modules['body_home_robot'].run({expected!r},{home!r},{args.execute!r})\n"
+    )
+    spec = importlib.util.spec_from_file_location("home_connector", DEFAULT_CONNECTOR)
+    connector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(connector)
+    token, pid = uuid.uuid4().hex, None
+    command = ("bash -lc 'source /home/nvidia/gento-test-baseline/gento-test-env.sh"
+               " && exec env LUNA_HOME_RUN="+token+" python3 -u - 2>&1'")
+    path = ROOT/"evidence"/("body-home-5percent-"+datetime.now().strftime("%Y%m%d-%H%M%S")+".jsonl")
+    print("Evidence: "+str(path), flush=True)
+    with connector.connect() as client, path.open("x", encoding="utf-8") as log:
+        log.write(json.dumps({"event": "request", "execute": args.execute, "ratio": 5})+"\n")
+        stdin, stdout, stderr = client.exec_command(command, timeout=600)
+        try:
+            stdin.write(source.encode())
+            stdin.flush()
+            stdin.channel.shutdown_write()
+            for line in stdout:
+                log.write(line)
+                log.flush()
+                print(line, end="", flush=True)
+                if line.startswith("{"):
+                    event = json.loads(line)
+                    if event.get("event") == "process":
+                        pid = int(event["pid"])
+            code = stdout.channel.recv_exit_status()
+            log.write(json.dumps({"remote_exit_code": code})+"\n")
+            return code
+        except BaseException:
+            if pid is not None:
+                stop = (
+                    "import os,signal\n"
+                    f"pid={pid!r}\n"
+                    f"token={('LUNA_HOME_RUN='+token).encode()!r}\n"
+                    "try:\n"
+                    "    with open('/proc/%d/environ'%pid,'rb') as f: env=f.read().split(b'\\0')\n"
+                    "    if token not in env: raise RuntimeError('Process token mismatch')\n"
+                    "    os.kill(pid,signal.SIGTERM)\n"
+                    "except FileNotFoundError: pass\n"
+                )
+                try:
+                    with connector.connect() as stop_client:
+                        si, so, se = stop_client.exec_command("python3 -", timeout=15)
+                        si.write(stop.encode())
+                        si.flush()
+                        si.channel.shutdown_write()
+                        so.read()
+                        if so.channel.recv_exit_status():
+                            raise RuntimeError(se.read().decode(errors="replace"))
+                    stdout.channel.settimeout(15)
+                    for line in stdout:
+                        log.write(line)
+                        log.flush()
+                        print(line, end="", flush=True)
+                except Exception as error:
+                    print("STOP UNCONFIRMED; use physical emergency stop: "+str(error), flush=True)
+            raise
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

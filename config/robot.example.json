@@ -1,0 +1,10 @@
+{
+  "ssh_host": "192.0.2.10",
+  "ssh_port": 22,
+  "ssh_user": "robot",
+  "ssh_key_file": "~/.ssh/id_ed25519",
+  "controller_ip": "192.0.2.20",
+  "remote_env_script": "/home/robot/gento-test-baseline/gento-test-env.sh",
+  "sdk_root": "/home/robot/tianji-robot-SDK",
+  "model_path": "/home/robot/robot-model/gento_luna_full.urdf"
+}

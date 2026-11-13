@@ -1,0 +1,152 @@
+"""Standing recovery and recorded BODY-first return to HOME."""
+
+import copy
+import math
+import re
+import sys
+import time
+
+from box_motion_plan import collision_samples, delta, pose, validate_pose
+from box_motion_robot import Geometry, SDK_ROOT, emit, require_zero
+from box_mime_taught_plan import continuous_seconds
+from box_mime_taught_robot import MimeRunner
+from recover_box_start_robot import OBJECTS
+
+
+def build_home_stages(start, home, recovery_reference=None):
+    start, home = pose(**start), pose(**home)
+    validate_pose(start)
+    validate_pose(home)
+    if delta(start, home, ("head",)) > .05:
+        raise ValueError("HEAD differs from HOME; this program holds HEAD")
+    body_first = max(abs(start["body"][i]-home["body"][i]) for i in range(5)) > .05
+    if body_first:
+        if recovery_reference is None:
+            raise ValueError("Standing BODY posture required for wrist recovery")
+        if (recovery_reference.get("schema") != "luna_home_recovery_reference_v1"
+                or recovery_reference.get("scope") != "preflight_only"
+                or recovery_reference.get("joint_units") != "deg"):
+            raise ValueError("Invalid preflight recovery reference")
+        reference_start = pose(**recovery_reference["start"])
+        reference_home = pose(**recovery_reference["home"])
+        validate_pose(reference_start)
+        validate_pose(reference_home)
+        if delta(start, reference_start) > .05:
+            raise ValueError("Current pose differs from BODY-first preflight reference")
+        if delta(home, reference_home) > 1e-9:
+            raise ValueError("HOME differs from BODY-first preflight reference")
+    if abs(start["body"][5]-home["body"][5]) > 46:
+        raise ValueError("Waist outside recovery range")
+    home["head"] = start["head"].copy()
+    stages, current = [], copy.deepcopy(start)
+
+    def add(name, group, target):
+        nonlocal current
+        validate_pose(target)
+        if delta(current, target) > 1e-9:
+            stages.append({"name": name, "moving": [group],
+                           "start": current, "target": target})
+        current = target
+
+    if body_first:
+        target = copy.deepcopy(current)
+        target["body"] = home["body"].copy()
+        add("body_to_home", "body", target)
+    for key in ("arm0", "arm1"):
+        target = copy.deepcopy(current)
+        target[key][4:] = home[key][4:]
+        add(key+"_wrist_home", key, target)
+        target = copy.deepcopy(current)
+        target[key] = home[key].copy()
+        add(key+"_home", key, target)
+    target = copy.deepcopy(current)
+    target["body"] = home["body"].copy()
+    add("body_home", "body", target)
+    return stages, home
+
+
+class HomeRunner(MimeRunner):
+    def enable_all(self):
+        before = self.stationary()
+        _, rt, _ = self.read()
+        # Seed idle command slots with measured positions before enabling.
+        # This does not write the HOME target during mode setup.
+        for key, obj in OBJECTS.items():
+            raw = rt["body"] if key == "body" else rt["arms"][obj]
+            if raw["state"]["cur"] == 0:
+                self.changed = True
+                require_zero(self.robot.runtime_set_joint_pos_cmd(obj, before[key]),
+                             "Seed current position "+key)
+        if delta(before, self.stationary()) > .02:
+            raise RuntimeError("Pose drift before position entry")
+        super().enable_all()
+
+
+def run(home, execute, heartbeat=lambda: None, recovery_reference=None):
+    import fcntl
+    sys.path.insert(0, SDK_ROOT+"/PYTHON_SDK")
+    from GentoRobot import GentoRobot
+    robot, runner, geometry = GentoRobot(), None, None
+    with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            robot.link(6, 6, 7, 190)
+            if not robot._connected:
+                raise RuntimeError("SDK unavailable; disconnect other control clients")
+            runner = HomeRunner(robot, heartbeat)
+            start = runner.stationary()
+            stages, target = build_home_stages(start, home, recovery_reference)
+            for key, obj in OBJECTS.items():
+                code, text = robot.get_servo_error_codes(obj)
+                codes = re.findall(r"0x([0-9a-fA-F]{4})", text)
+                if code or len(codes) != len(start[key]) or any(int(c, 16) for c in codes):
+                    raise RuntimeError("Servo diagnostic rejection: "+key)
+            emit("home_plan", start=start, target=target, stages=stages, execute=execute,
+                 body_first=bool(stages and stages[0]["name"] == "body_to_home"),
+                 planned_seconds=sum(continuous_seconds(s) for s in stages))
+            geometry = Geometry()
+            geometry.verify_sdk(robot, stages or [{"start": start, "target": target}])
+            minimum, count, last_log = math.inf, 0, time.monotonic()
+            total = sum(len(collision_samples(s, .1)) for s in stages)
+            geometry.check(start)
+            for stage in stages:
+                for sample in collision_samples(stage, .1):
+                    heartbeat()
+                    spacing, _ = geometry.check(sample)
+                    count, minimum = count+1, min(minimum, spacing)
+                    if time.monotonic()-last_log >= 5. or count == total:
+                        emit("preflight_progress", phase="collision", stage=stage["name"],
+                             samples_checked=count, samples_total=total)
+                        last_log = time.monotonic()
+            emit("home_geometry_verified", samples=count,
+                 minimum_flange_spacing_mm=minimum if count else None,
+                 continuous_collision_detection=False, external_obstacles_checked=False)
+            if delta(start, runner.stationary()) > .02:
+                raise RuntimeError("Pose changed during HOME preflight")
+            if not execute:
+                emit("preflight_complete", motion_commands_sent=0, mode_changes_sent=0)
+                return
+            if stages:
+                runner.enable_all()
+                runner.stream_stages_with_wait(stages)
+                final = runner.stationary()
+                geometry.check(final)
+                if delta(final, target) > .05:
+                    raise RuntimeError("HOME arrival mismatch")
+                require_zero(robot.switch_to_idle(3, 2000), "BODY IDLE after HOME")
+                runner.enabled.remove("body")
+            final = runner.stationary()
+            if delta(final, target) > .05:
+                raise RuntimeError("HOME drift after arrival")
+            emit("home_complete", pose=final, returned_home=True,
+                 maximum_home_error_deg=delta(final, target))
+        except BaseException as error:
+            if runner:
+                runner.emergency(error)
+            raise
+        finally:
+            if robot._connected:
+                robot.unlink()
+                emit("sdk_disconnected")
+            if geometry:
+                geometry.close()

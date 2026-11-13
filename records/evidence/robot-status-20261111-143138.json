@@ -1,0 +1,22 @@
+{
+  "collected_at": "2026-11-11T14:31:38.114130+08:00",
+  "motion_commands_sent": 0,
+  "inspect_only": true,
+  "success": false,
+  "stdout": "{\"kind\": \"before\", \"data\": {\"success\": true, \"connected\": false, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"\"}}\n",
+  "stderr": "",
+  "remote_exit_code": 0,
+  "events": [
+    {
+      "kind": "before",
+      "data": {
+        "success": true,
+        "connected": false,
+        "expires_in": 0.0,
+        "owner_client_id": "",
+        "message": ""
+      }
+    }
+  ],
+  "error": "Gateway did not confirm an established SDK connection"
+}

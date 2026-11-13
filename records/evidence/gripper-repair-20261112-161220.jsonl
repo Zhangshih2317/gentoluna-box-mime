@@ -1,0 +1,13 @@
+{"command": ["systemctl", "status", "brltty-udev.service"], "code": 0, "stdout": "● brltty-udev.service - Braille Device Support\n     Loaded: loaded (/lib/systemd/system/brltty-udev.service; static)\n     Active: active (running) since Thu 2026-11-12 16:15:03 CST; 10min ago\n       Docs: man:brltty(1)\n             http://brltty.com/\n   Main PID: 1509 (brltty)\n      Tasks: 6 (limit: 74756)\n     Memory: 8.4M\n        CPU: 10.169s\n     CGroup: /system.slice/brltty-udev.service\n             └─1509 /sbin/brltty -n -p /var/run/brltty.pid\n\nNov 12 16:15:03 vision brltty[1509]: USB interface in use: 0 (ch341)\nNov 12 16:15:03 vision brltty[1509]: brltty: USB interface in use: 0 (ch341)\nNov 12 16:15:03 vision brltty[1509]: ioctl[KDFONTOP[GET]]: Function not implemented\nNov 12 16:15:03 vision brltty[1509]: brltty: ioctl[KDFONTOP[GET]]: Function not implemented\nNov 12 16:15:03 vision brltty[1509]: NoSpeech Speech Driver:\nNov 12 16:15:03 vision brltty[1509]: brltty: NoSpeech Speech Driver:\nNov 12 16:15:04 vision brltty[1509]: USB configuration set error 16: Device or resource busy\nNov 12 16:15:04 vision brltty[1509]: brltty: USB configuration set error 16: Device or resource busy\nNov 12 16:15:04 vision brltty[1509]: USB interface in use: 0 (ftdi_sio)\nNov 12 16:15:04 vision brltty[1509]: brltty: USB interface in use: 0 (ftdi_sio)\n", "stderr": ""}
+{"command": ["udevadm", "control", "--reload-rules"], "code": 0, "stdout": "", "stderr": ""}
+{"command": ["systemctl", "stop", "brltty-udev.service"], "code": 0, "stdout": "", "stderr": ""}
+{"command": ["udevadm", "trigger", "--action=change", "/sys/bus/usb/devices/5-1.1"], "code": 0, "stdout": "", "stderr": ""}
+{"command": ["udevadm", "trigger", "--action=change", "/sys/bus/usb/devices/5-1.4"], "code": 0, "stdout": "", "stderr": ""}
+{"command": ["udevadm", "settle", "--timeout=10"], "code": 0, "stdout": "", "stderr": ""}
+{"command": ["udevadm", "trigger", "--action=change", "--subsystem-match=tty"], "code": 0, "stdout": "", "stderr": ""}
+{"command": ["udevadm", "settle", "--timeout=10"], "code": 0, "stdout": "", "stderr": ""}
+{"alias": "/dev/luna-gripper-ftdi", "device": "/dev/ttyUSB4"}
+{"alias": "/dev/luna-gripper-ch340", "device": "/dev/ttyUSB5"}
+{"command": ["systemctl", "is-active", "brltty-udev.service"], "code": 3, "stdout": "inactive\n", "stderr": ""}
+{"event": "repair_complete", "backup": "/var/backups/luna-gripper-usb-20261112-162545", "serial_data_sent": false}
+{"remote_exit_code": 0}

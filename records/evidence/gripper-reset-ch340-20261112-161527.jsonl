@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/home/nvidia/luna-gripper-check/repair_gripper_usb.py", line 102, in <module>
+    main()
+  File "/home/nvidia/luna-gripper-check/repair_gripper_usb.py", line 36, in main
+    fcntl.ioctl(usb.fileno(), 0x5514, 0)
+OSError: [Errno 19] No such device
+{"remote_exit_code": 1}

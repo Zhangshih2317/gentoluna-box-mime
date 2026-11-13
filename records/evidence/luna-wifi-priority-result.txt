@@ -1,0 +1,13 @@
+{
+    "InterfaceIndex":  20,
+    "InterfaceAlias":  "WLAN",
+    "AutomaticMetric":  0,
+    "InterfaceMetric":  1
+}
+{
+    "InterfaceIndex":  20,
+    "InterfaceAlias":  "WLAN",
+    "AutomaticMetric":  0,
+    "InterfaceMetric":  500
+}
+SUCCESS

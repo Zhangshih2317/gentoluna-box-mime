@@ -1,0 +1,89 @@
+"""Windows entry point for the five large wrist moves; user starts motion."""
+
+from pathlib import Path
+import subprocess
+import sys
+
+
+# ===== 速度选项：以后在这里修改（百分比，范围 1～100）=====
+SPEED_PERCENT = 60.0          # 双臂速度：60 表示 60%；同步用于轨迹规划与控制器倍率
+ACCELERATION_PERCENT = 5.0    # 控制器加速度倍率，独立于速度选项
+
+ROOT = Path(__file__).resolve().parent
+RUNNER = ROOT / "tools" / "run_dual_arm_remote.py"
+
+
+def run(mode):
+    command = [sys.executable, str(RUNNER), mode, "--large-wrist", "--continuous",
+               "--speed-percent", str(SPEED_PERCENT),
+               "--acceleration-percent", str(ACCELERATION_PERCENT)]
+    if mode == "--execute":
+        command.append("--replace-pending")
+    process = subprocess.Popen(
+        command,
+        cwd=str(ROOT),
+    )
+    try:
+        return process.wait()
+    except KeyboardInterrupt:
+        # Let the child handle console Ctrl+C and stop its exact remote run.
+        print("\n正在等待机器人端停止并释放连接……", flush=True)
+        try:
+            process.wait(timeout=35)
+        except subprocess.TimeoutExpired:
+            print("未确认停止，请使用现场物理急停。", flush=True)
+        raise
+
+
+def main():
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if sys.argv[1:] == ["--help"]:
+        print("python run_dual_arm_large.py")
+        print("Preflight first, then type RUN to execute. --preflight checks only.")
+        print(f"Speed: {SPEED_PERCENT:g}%; acceleration ratio: {ACCELERATION_PERCENT:g}%.")
+        print("Edit SPEED_PERCENT near the top of this file to change speed.")
+        return 0
+    if sys.argv[1:] not in ([], ["--preflight"]):
+        print("Use no arguments, --preflight, or --help.")
+        return 2
+    print(
+        "\n双臂五组连贯腕部动作，最后返回 HOME\n"
+        "左臂 HOME: [90,-90,-90,-90,0,0,0]\n"
+        "右臂 HOME: [-90,-90,90,-90,0,0,0]\n"
+        "J1-J4 保持 HOME；只运动 J5-J7。\n"
+        "每段最大单轴变化：25、30、35、30、25 度，随后回 HOME。\n"
+        f"双臂速度倍率：{SPEED_PERCENT:g}%；加速度倍率：{ACCELERATION_PERCENT:g}%。\n"
+        "速度选项在本文件顶部 SPEED_PERCENT，不是角速度（度/秒）。\n"
+        "时长由本次预规划计算。整条轨迹提前上传，双臂只同步启动一次。\n"
+        "取消中途驻留和分段重启；换向正常减速，最后在 HOME 停稳。\n"
+        "请先断开 FXPlatform 和其他控制程序，清空腕部及附件转动范围。\n"
+        "现场物理急停应可随时使用。\n",
+        flush=True,
+    )
+    print("正在执行只读预检，不发送运动……", flush=True)
+    result = run("--preflight")
+    if result:
+        print("预检未通过，未启动运动。请查看上方错误及 evidence 日志。")
+        return result
+    if sys.argv[1:] == ["--preflight"]:
+        return 0
+    answer = input(
+        "\n输入 RUN：确认空间已清空，替换未启动的残留轨迹并执行本次新轨迹；其他输入退出："
+    ).strip()
+    if answer != "RUN":
+        print("已退出，未启动运动。")
+        return 0
+    print("开始执行。异常时程序停止双臂，不自动继续或盲目回原点。", flush=True)
+    result = run("--execute")
+    print("完成：五组动作并返回 HOME。" if result == 0 else
+          "执行未完成，请查看日志和现场状态；不要直接重复启动。")
+    return result
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except (EOFError, KeyboardInterrupt):
+        print("\n输入或运行被中断。若机械臂仍在运动，请使用现场急停。")
+        raise SystemExit(130)

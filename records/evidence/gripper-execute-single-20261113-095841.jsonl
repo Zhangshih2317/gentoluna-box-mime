@@ -1,0 +1,19 @@
+{"event": "remote_process", "time": "2026-11-13T02:12:14.289539+00:00", "pid": 8445, "run_id": "[REDACTED]"}
+{"event": "device_identity", "time": "2026-11-13T02:12:14.337738+00:00", "port": "/dev/luna-gripper-ch340", "resolved": "/dev/ttyUSB4", "identity": {"ID_VENDOR_ID": "1a86", "ID_MODEL_ID": "7523", "ID_PATH": "platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0"}}
+{"event": "motion_preflight", "time": "2026-11-13T02:12:14.428845+00:00", "port": "/dev/luna-gripper-ch340", "model": "CTAG2F90D", "user_limits": [0, 9000], "feedback": {"status": 21, "status_hex": "0x15", "fault": 0, "alarm": 0, "enabled_status_bit": false, "position_reached": true, "zero_speed": true, "force_reached": false, "position_raw": 0, "speed_raw": 0, "current_raw": 0}}
+{"event": "sdk_test_plan", "time": "2026-11-13T02:12:14.429058+00:00", "cycles_per_gripper": 5, "targets": [9000, 0], "speed_percent": 50, "force_percent": 25, "acceleration": 60, "deceleration": 60, "minimum_seconds_per_target": 3, "position_tolerance_raw": 20, "supply_24v_confirmed_by_user": true}
+{"event": "motion_triggered", "time": "2026-11-13T02:12:14.527973+00:00", "port": "/dev/luna-gripper-ch340", "cycle": 1, "target_raw": 9000}
+{"event": "stop_after_failure", "time": "2026-11-13T02:12:14.818614+00:00", "results": [{"port": "/dev/luna-gripper-ch340", "stop_acknowledged": true, "feedback": {"status": 0, "status_hex": "0x0", "fault": 0, "alarm": 4096, "enabled_status_bit": false, "position_reached": false, "zero_speed": false, "force_reached": false, "position_raw": 5121, "speed_raw": 19, "current_raw": 11}}]}
+Traceback (most recent call last):
+  File "/home/nvidia/luna-gripper-check/check_gripper_sdk.py", line 337, in <module>
+    raise SystemExit(main())
+  File "/home/nvidia/luna-gripper-check/check_gripper_sdk.py", line 276, in main
+    execute_test(stack, [args.port] if args.execute_single else None)
+  File "/home/nvidia/luna-gripper-check/check_gripper_sdk.py", line 248, in execute_test
+    run_cycles(motors)
+  File "/home/nvidia/luna-gripper-check/check_gripper_sdk.py", line 213, in run_cycles
+    validate_feedback(state)
+  File "/home/nvidia/luna-gripper-check/check_gripper_sdk.py", line 163, in validate_feedback
+    raise RuntimeError("Gripper alarm: "+json.dumps(state))
+RuntimeError: Gripper alarm: {"status": 24, "status_hex": "0x18", "fault": 0, "alarm": 4096, "enabled_status_bit": false, "position_reached": false, "zero_speed": false, "force_reached": true, "position_raw": 4467, "speed_raw": 32, "current_raw": 13}
+{"remote_exit_code": 1}

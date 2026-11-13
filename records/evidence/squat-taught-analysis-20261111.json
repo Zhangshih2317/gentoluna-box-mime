@@ -1,0 +1,263 @@
+{
+  "method": "Offline forward kinematics of observed endpoints, not a motion plan",
+  "urdf": "reference\\robot_frames\\calibration_transforms\\calibration_data\\gento_luna_body_head.urdf",
+  "urdf_sha256": "58b997e56bebfc14cf43fdceb40386b019e7c8c08a3c6828bfc97e2438f2eaef",
+  "mapping_source": "archived calibration axis_mapping; not remeasured in this session",
+  "fixed_base_assumption": true,
+  "model_point": "BODY J6 origin, not head height or center of mass",
+  "results": [
+    {
+      "label": "Recovered start",
+      "point": "points/RECOVERED_START_20261111.json",
+      "body_deg": [
+        -0.744,
+        9.281,
+        -17.364,
+        5.456,
+        -0.296,
+        -1.653
+      ],
+      "delta_from_start_deg": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "b2_b3_b4_sum_deg": -2.627,
+      "sum_change_from_start_deg": 0.0,
+      "j6_position_mm": [
+        -6.197975,
+        9.843742,
+        858.028512
+      ],
+      "j6_height_mm": 858.028512,
+      "j6_drop_from_start_mm": 0.0,
+      "j6_x_change_from_start_mm": 0.0,
+      "model_torso_up_tilt_from_world_vertical_deg": 2.82559,
+      "model_torso_rotation_from_start_deg": 2e-06,
+      "planar_approximation_height_mm": 858.092402,
+      "planar_approximation_x_mm": -6.200724,
+      "torso_transform": [
+        [
+          0.9985400504523614,
+          0.028579050830756292,
+          0.0458367264996971,
+          -6.19797536436959
+        ],
+        [
+          -0.029436436205323,
+          0.9994020312878701,
+          0.018140454272390392,
+          9.843742448741223
+        ],
+        [
+          -0.045290880606640195,
+          -0.019463239999850633,
+          0.998784220150971,
+          858.0285115640955
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "label": "Squat 1",
+      "point": "points/taught/SQUAT_TAUGHT_UI-20261111-143323.json",
+      "body_deg": [
+        -0.744,
+        40.281,
+        -42.364,
+        5.456,
+        -0.296,
+        -1.651
+      ],
+      "delta_from_start_deg": [
+        0.0,
+        31.0,
+        -25.0,
+        0.0,
+        0.0,
+        0.002
+      ],
+      "b2_b3_b4_sum_deg": 3.373,
+      "sum_change_from_start_deg": 6.0,
+      "j6_position_mm": [
+        -183.054375,
+        9.007181,
+        793.608781
+      ],
+      "j6_height_mm": 793.608781,
+      "j6_drop_from_start_mm": 64.419731,
+      "j6_x_change_from_start_mm": -176.8564,
+      "model_torso_up_tilt_from_world_vertical_deg": 3.529488,
+      "model_torso_rotation_from_start_deg": 5.99999,
+      "planar_approximation_height_mm": 793.666598,
+      "planar_approximation_x_mm": -183.05689,
+      "torso_transform": [
+        [
+          0.9978446995747042,
+          0.029065472825512022,
+          -0.05883157162695227,
+          -183.05437526775953
+        ],
+        [
+          -0.028042992095996453,
+          0.9994422621896404,
+          0.018131606204570248,
+          9.007180760063068
+        ],
+        [
+          0.05932576274243499,
+          -0.016442713847876572,
+          0.9981032466815971,
+          793.6087806729975
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "label": "Squat 2",
+      "point": "points/taught/SQUAT_TAUGHT_02_UI-20261111-143743.json",
+      "body_deg": [
+        -0.744,
+        40.281,
+        -80.364,
+        40.456,
+        -0.296,
+        -1.651
+      ],
+      "delta_from_start_deg": [
+        0.0,
+        31.0,
+        -63.0,
+        35.0,
+        0.0,
+        0.002
+      ],
+      "b2_b3_b4_sum_deg": 0.373,
+      "sum_change_from_start_deg": 3.0,
+      "j6_position_mm": [
+        -0.789797,
+        8.094759,
+        723.346022
+      ],
+      "j6_height_mm": 723.346022,
+      "j6_drop_from_start_mm": 134.682489,
+      "j6_x_change_from_start_mm": 5.408179,
+      "model_torso_up_tilt_from_world_vertical_deg": 1.104992,
+      "model_torso_rotation_from_start_deg": 2.99999,
+      "planar_approximation_height_mm": 723.398576,
+      "planar_approximation_x_mm": -0.792057,
+      "torso_transform": [
+        [
+          0.9995627395011323,
+          0.028844364271512792,
+          -0.006506339275143476,
+          -0.7897967238124863
+        ],
+        [
+          -0.028722152834282474,
+          0.9994225715762082,
+          0.018153824956816212,
+          8.094758652121143
+        ],
+        [
+          0.0070262178698869485,
+          -0.01795901093520687,
+          0.9998140358029955,
+          723.3460220815193
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    {
+      "label": "Squat 3",
+      "point": "points/taught/SQUAT_TAUGHT_03_UI-20261111-144906.json",
+      "body_deg": [
+        -0.744,
+        70.281,
+        -127.364,
+        55.0,
+        -0.296,
+        -1.651
+      ],
+      "delta_from_start_deg": [
+        0.0,
+        61.0,
+        -110.0,
+        49.544,
+        0.0,
+        0.002
+      ],
+      "b2_b3_b4_sum_deg": -2.083,
+      "sum_change_from_start_deg": 0.544,
+      "j6_position_mm": [
+        -30.568457,
+        5.573753,
+        529.213219
+      ],
+      "j6_height_mm": 529.213219,
+      "j6_drop_from_start_mm": 328.815293,
+      "j6_x_change_from_start_mm": -24.370482,
+      "model_torso_up_tilt_from_world_vertical_deg": 2.328433,
+      "model_torso_rotation_from_start_deg": 0.543993,
+      "planar_approximation_height_mm": 529.249297,
+      "planar_approximation_x_mm": -30.570013,
+      "torso_transform": [
+        [
+          0.9989296467884071,
+          0.028604460022654113,
+          0.03635031821043708,
+          -30.568456951290187
+        ],
+        [
+          -0.029278419274985434,
+          0.9994065810590733,
+          0.018145520124030624,
+          5.573752630819776
+        ],
+        [
+          -0.03580970443812415,
+          -0.019190377865634163,
+          0.999174356389028,
+          529.2132189172585
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "inferred_orientation_relation": "delta_B2 + delta_B3 + delta_B4 = 0 to preserve pitch with B1/B5/B6 fixed",
+  "conditions": [
+    "Exact orientation relation in the archived model, subject to physical model accuracy.",
+    "B2/B3 determine J6 translation; B4 changes orientation at the same modeled origin.",
+    "Joint rotation relative to baseline is not a measured world-vertical torso angle.",
+    "Endpoint geometry does not establish path collision clearance, stability or dynamic safety.",
+    "Editable command values are not proof of accepted or executed commands."
+  ],
+  "offline_checks": {
+    "orientation_compensation": "passed",
+    "b4_j6_origin_invariance": "passed"
+  },
+  "motion_commands_sent": 0
+}

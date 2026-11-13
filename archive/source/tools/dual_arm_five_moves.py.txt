@@ -1,0 +1,570 @@
+"""Five bounded dual-arm moves and HOME; preview by default, --execute moves."""
+
+import argparse
+import ctypes
+from datetime import datetime, timezone
+import json
+import math
+import signal
+import sys
+import time
+
+HOME = [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]]
+OFFSETS = [
+    [[1, -1, 1, 1, 2, -1, 3], [-1, 1, -1, 1, -2, 1, -3]],
+    [[-2, 1, 0, -1, -1, 2, -2], [1, -2, 1, -1, 2, -2, 1]],
+    [[0, 2, -2, 0, 3, -2, 1], [-2, 0, 2, 1, -1, 3, -2]],
+    [[2, 0, 1, -2, -2, 1, -3], [0, 2, -1, -2, 3, -1, 2]],
+    [[-1, -2, 2, 1, 1, 3, 0], [2, -1, 0, 2, -3, 2, -1]],
+]
+LIMITS = [(-173, 173), (-118, 118), (-173, 173), (-145, 45),
+          (-173, 173), (-60, 60), (-90, 90)]
+SPEED, FREQUENCY, MASK = 5.0, 50, 3
+ACCELERATION = 5.0
+# Preserve the existing 5% -> 0.01 planner calibration; 60% uses 0.12.
+PLANNER_FACTOR_PER_PERCENT = .01/5
+PLANNER_SPEED = SPEED*PLANNER_FACTOR_PER_PERCENT
+PLANNER_ACCELERATION = ACCELERATION*PLANNER_FACTOR_PER_PERCENT
+MAX_PLANNED_SPEED = 180*PLANNER_SPEED + .1
+HOME_BOUNDS = [3.05]*7
+MAX_SEGMENT_DELTA = 6.1
+UPLOAD_MAX_POINTS = 250
+CONTINUOUS_MAX_POINTS = 5000
+UPLOAD_PACKET_POINTS = 50
+UPLOAD_PACKET_INTERVAL = .02
+ENDPOINT_HOLD_POINTS = FREQUENCY
+LARGE_WRIST_OFFSETS = [
+    [[0, 0, 0, 0, 25, 20, 25], [0, 0, 0, 0, -25, 20, -25]],
+    [[0, 0, 0, 0, -5, -10, -5], [0, 0, 0, 0, 5, -10, 5]],
+    [[0, 0, 0, 0, 20, 15, 30], [0, 0, 0, 0, -20, 15, -30]],
+    [[0, 0, 0, 0, -10, -15, 0], [0, 0, 0, 0, 10, -15, 0]],
+    [[0, 0, 0, 0, 15, 10, -25], [0, 0, 0, 0, -15, 10, 25]],
+]
+
+
+def use_large_wrist_plan():
+    global OFFSETS, HOME_BOUNDS, MAX_SEGMENT_DELTA
+    OFFSETS = LARGE_WRIST_OFFSETS
+    HOME_BOUNDS = [1.1]*4 + [25.05, 20.05, 30.05]
+    MAX_SEGMENT_DELTA = 36.1
+
+
+def configure_speed(speed, acceleration):
+    global SPEED, ACCELERATION, PLANNER_SPEED, PLANNER_ACCELERATION, MAX_PLANNED_SPEED
+    if any(not math.isfinite(x) or not 1 <= x <= 100 for x in (speed, acceleration)):
+        raise ValueError("Speed and acceleration percentages must be finite and within 1..100")
+    SPEED, ACCELERATION = float(speed), float(acceleration)
+    # Keep the previous speed calibration instead of jumping from 0.01 to 0.60.
+    PLANNER_SPEED = max(.01, SPEED*PLANNER_FACTOR_PER_PERCENT)
+    PLANNER_ACCELERATION = max(.01, ACCELERATION*PLANNER_FACTOR_PER_PERCENT)
+    MAX_PLANNED_SPEED = 180*PLANNER_SPEED + .1
+
+
+def emit(event, **data):
+    print(json.dumps({"event": event, "time": datetime.now(timezone.utc).isoformat(),
+                      **data}, ensure_ascii=True), flush=True)
+
+
+def vector(values, size=7):
+    if len(values) != size or not all(math.isfinite(float(v)) for v in values):
+        raise ValueError("Invalid finite joint vector")
+    return [float(v) for v in values]
+
+
+def distance(a, b):
+    return max(abs(x-y) for x, y in zip(vector(a), vector(b)))
+
+
+def validate_point(arm, q):
+    q = vector(q)
+    if any(abs(x-h) > bound for x,h,bound in zip(q, HOME[arm], HOME_BOUNDS)):
+        raise ValueError("Point exceeds the configured HOME neighborhood")
+    if any(not low+2 <= x <= high-2 for x, (low, high) in zip(q, LIMITS)):
+        raise ValueError("Point violates joint limit margin")
+
+
+def targets():
+    result = [[[h+d for h, d in zip(HOME[a], offsets[a])] for a in (0, 1)]
+              for offsets in OFFSETS] + [[q.copy() for q in HOME]]
+    for pair in result:
+        for arm, q in enumerate(pair):
+            validate_point(arm, q)
+    return result
+
+
+def upload_chunks(plan):
+    """Preserve every sample; share cut points and endpoint holds across arms."""
+    count = plan["count"]
+    if count < 5:
+        raise ValueError("Controller requires at least five trajectory samples")
+    if count <= UPLOAD_MAX_POINTS:
+        return [dict(plan, chunk_index=1, chunk_count=1)]
+    # Reserve one shared boundary sample and a one-second endpoint hold.
+    capacity = UPLOAD_MAX_POINTS-ENDPOINT_HOLD_POINTS-1
+    chunks = math.ceil(count/capacity)
+    base, extra = divmod(count, chunks)
+    output, begin = [], 0
+    for index in range(chunks):
+        end = begin+base+(index < extra)
+        first = max(0, begin-1)
+        hold = ENDPOINT_HOLD_POINTS if index < chunks-1 else 0
+        size = end-first+hold
+        arrays, target = [], []
+        for raw in plan["arrays"]:
+            values = [float(raw[i]) for i in range(first*7, end*7)]
+            endpoint = values[-7:]
+            values.extend(endpoint*hold)
+            arrays.append((ctypes.c_double*len(values))(*values))
+            target.append(endpoint)
+        if not 5 <= size <= UPLOAD_MAX_POINTS:
+            raise ValueError("Invalid bounded upload chunk size")
+        output.append({
+            "number": plan["number"], "chunk_index": index+1, "chunk_count": chunks,
+            "start": plan["start"] if index == 0 else output[-1]["target"],
+            "target": target, "arrays": arrays, "count": size,
+            "source_range": [first, end], "endpoint_hold_points": hold,
+        })
+        begin = end
+    return output
+
+
+def join_plans(plans):
+    """Join vendor-planned paths without intermediate holds or restarts."""
+    rows_by_arm = [[], []]
+    boundaries = []
+    for plan in plans:
+        native = plan["native_point_counts"]
+        if max(native)-min(native) > 5:
+            raise RuntimeError("Dual-arm duration mismatch exceeds 100ms")
+        for arm in (0, 1):
+            raw = plan["arrays"][arm]
+            rows = [vector(raw[i*7:(i+1)*7]) for i in range(plan["count"])]
+            if rows_by_arm[arm]:
+                if distance(rows_by_arm[arm][-1], rows[0]) > 1e-6:
+                    raise RuntimeError("Continuous segment boundary mismatch")
+                rows = rows[1:]
+            rows_by_arm[arm].extend(rows)
+        boundaries.append(len(rows_by_arm[0])-1)
+    count = len(rows_by_arm[0])+ENDPOINT_HOLD_POINTS
+    if not 5 <= count <= CONTINUOUS_MAX_POINTS:
+        raise RuntimeError("Continuous path exceeds controller 5000-point capacity")
+    arrays = []
+    peaks = []
+    for arm, rows in enumerate(rows_by_arm):
+        if len(rows)+ENDPOINT_HOLD_POINTS != count:
+            raise RuntimeError("Continuous dual-arm sample counts differ")
+        rows += [rows[-1]]*ENDPOINT_HOLD_POINTS
+        for row in rows:
+            validate_point(arm, row)
+        peak = max(distance(a,b)*FREQUENCY for a,b in zip(rows,rows[1:]))
+        if peak > MAX_PLANNED_SPEED:
+            raise RuntimeError("Continuous boundary exceeds planned speed limit")
+        peaks.append(peak)
+        arrays.append((ctypes.c_double*(count*7))(*[x for row in rows for x in row]))
+    emit("continuous_planned", count=count, nominal_seconds=count/FREQUENCY,
+         waypoint_sample_indices=boundaries, peak_deg_s=peaks,
+         intermediate_hold_points=0, final_hold_points=ENDPOINT_HOLD_POINTS,
+         synchronous_start_commands=1)
+    return {"number": 1, "start": plans[0]["start"], "target": plans[-1]["target"],
+            "count": count, "arrays": arrays, "continuous": True,
+            "waypoint_sample_indices": boundaries}
+
+
+class Runner:
+    def __init__(self, robot, allow_replace_pending=False):
+        self.robot = robot
+        self.allow_replace_pending = allow_replace_pending
+        self.last_serial = None
+        self.last_fresh = time.monotonic()
+        self.body_start = self.head_start = None
+        self.pending = False
+
+    def snapshot(self, require_speed=False):
+        if self.robot.check_link_state() != 1:
+            raise RuntimeError("SDK connection lost")
+        rt, sg = self.robot.get_rt_dict(), self.robot.get_sg_dict()
+        serial, now = rt["frame_serial"], time.monotonic()
+        if serial != self.last_serial:
+            self.last_serial, self.last_fresh = serial, now
+        elif now-self.last_fresh > .5:
+            raise RuntimeError("Realtime feedback stale for 0.5 seconds")
+        arms = []
+        for i in (0, 1):
+            raw, config = rt["arms"][i], sg["arms"][i]
+            if raw["state"]["cur"] != 1 or raw["state"]["err"] != 0:
+                raise RuntimeError("ARM%d is not error-free Position: %s" % (i, raw["state"]))
+            q, v = vector(raw["fb"]["fb_pos"]), vector(raw["fb"]["fb_vel"])
+            if any(abs(x-h) > bound+.95 for x,h,bound in zip(q,HOME[i],HOME_BOUNDS)):
+                raise RuntimeError("Measured pose left bounded HOME neighborhood")
+            ratios = [float(config["set"][key]) for key in ("vel_ratio", "acc_ratio")]
+            expected = (SPEED, ACCELERATION)
+            if require_speed and any(not math.isfinite(x) or abs(x-y) > .1
+                                     for x,y in zip(ratios, expected)):
+                raise RuntimeError("Controller speed/acceleration ratios differ from %g/%g percent"
+                                   % expected)
+            arms.append({"joints_deg": q, "velocities_deg_s": v, "ratios": ratios,
+                         "trajectory_state": config["get"]["traj_state"], "state": raw["state"]})
+        body, head = vector(rt["body"]["fb_pos"], 6), vector(rt["head"]["fb_pos"], 3)
+        if self.body_start is not None:
+            if max(abs(x-y) for x, y in zip(body, self.body_start)) > .3:
+                raise RuntimeError("BODY posture changed")
+            if max(abs(x-y) for x, y in zip(head, self.head_start)) > .3:
+                raise RuntimeError("HEAD posture changed")
+        if rt["body"]["state"]["err"] or rt["head"]["state"]["err"]:
+            raise RuntimeError("BODY or HEAD error")
+        return {"arms": arms, "body": body, "head": head, "frame_serial": serial}
+
+    def initial(self):
+        self.snapshot()
+        time.sleep(.15)
+        first_serial = self.last_serial
+        state = self.snapshot()
+        if first_serial == state["frame_serial"]:
+            raise RuntimeError("No fresh feedback during preflight")
+        emit("initial_feedback", **state)
+        for arm, a in enumerate(state["arms"]):
+            if distance(a["joints_deg"], HOME[arm]) > 1.1:
+                raise RuntimeError("Start is no longer within 1.1 degrees of taught HOME")
+            if max(abs(v) for v in a["velocities_deg_s"]) > .5:
+                raise RuntimeError("Arm is still moving")
+            allowed = (0, 1, 2) if self.allow_replace_pending else (0, 1)
+            if a["trajectory_state"] not in allowed:
+                raise RuntimeError("ARM%d has existing trajectory state %s; "
+                                   "no automatic clear or restart attempted"
+                                   % (arm, a["trajectory_state"]))
+            if a["trajectory_state"] in (1, 2):
+                emit("pending_upload_detected", arm=arm, state=a["trajectory_state"],
+                     action="Replace with newly validated data only after explicit execution/replacement")
+        self.body_start, self.head_start = state["body"], state["head"]
+        return [a["joints_deg"] for a in state["arms"]]
+
+    def plan(self, start, continuous=False):
+        plans = []
+        for arm in (0, 1):
+            ret = self.robot.init_single_arm_config(arm)
+            if ret != 0:
+                raise RuntimeError("Kinematics initialization failed: %s" % ret)
+        for number, pair in enumerate(targets(), 1):
+            planned_pair = []
+            for arm in (0, 1):
+                if distance(start[arm], pair[arm]) > MAX_SEGMENT_DELTA:
+                    raise ValueError("Segment exceeds configured joint delta")
+                result = self.robot.plan_joints(
+                    arm, start[arm], pair[arm], PLANNER_SPEED, PLANNER_ACCELERATION, FREQUENCY)
+                if not isinstance(result, tuple) or len(result) != 2:
+                    raise RuntimeError("Vendor planning failed: %s" % result)
+                raw, count = result
+                if not 2 <= count <= 2500:
+                    raise RuntimeError("Unexpected planned point count")
+                rows = [vector([raw[row*7+j] for j in range(7)]) for row in range(count)]
+                if distance(rows[0], start[arm]) > .02 or distance(rows[-1], pair[arm]) > .02:
+                    raise RuntimeError("Planner endpoint mismatch")
+                for row in rows:
+                    validate_point(arm, row)
+                    if any(x < min(a,b)-.02 or x > max(a,b)+.02
+                           for x,a,b in zip(row,start[arm],pair[arm])):
+                        raise RuntimeError("Trajectory overshoots its segment")
+                peak = max(distance(a,b)*FREQUENCY for a,b in zip(rows,rows[1:]))
+                if peak > MAX_PLANNED_SPEED:
+                    raise RuntimeError("Planned joint speed %.3f exceeds %.3f deg/s"
+                                       % (peak, MAX_PLANNED_SPEED))
+                emit("trajectory_checked", segment=number, arm=arm, peak_deg_s=peak)
+                planned_pair.append(rows)
+            # Common end time and active endpoint samples on both arms.
+            count = max(map(len, planned_pair)) + (0 if continuous else FREQUENCY)
+            if count > 2500:
+                raise RuntimeError("Trajectory exceeds bounded upload size")
+            arrays = []
+            for rows in planned_pair:
+                padded = rows + [rows[-1]]*(count-len(rows))
+                arrays.append((ctypes.c_double*(count*7))(*[x for row in padded for x in row]))
+            plans.append({"number": number, "start": start, "target": pair,
+                          "arrays": arrays, "count": count,
+                          "native_point_counts": list(map(len, planned_pair))})
+            emit("planned", number=number, target=pair, point_count=count,
+                 native_point_counts=list(map(len, planned_pair)),
+                 upload_point_counts=[] if continuous else
+                 [chunk["count"] for chunk in upload_chunks(plans[-1])])
+            start = pair
+        return plans
+
+    def set_speed(self):
+        for arm in (0, 1):
+            ret = self.robot.runtime_set_speed_ratio(arm, SPEED, ACCELERATION)
+            if ret != 0:
+                raise RuntimeError("Speed setting failed: %s" % ret)
+        deadline = time.monotonic()+3
+        while time.monotonic() < deadline:
+            state = self.snapshot()
+            if all(abs(x-y) < .1 for a in state["arms"]
+                   for x,y in zip(a["ratios"], (SPEED, ACCELERATION))):
+                emit("speed_verified", speed_percent=SPEED, acceleration_percent=ACCELERATION)
+                return
+            time.sleep(.05)
+        raise RuntimeError("Requested speed/acceleration ratios %g/%g percent not confirmed"
+                           % (SPEED, ACCELERATION))
+
+    def stop(self):
+        ret = self.robot.runtime_stop_traj(MASK)
+        emit("stop_both", returned_mask=ret, confirmed=ret == MASK)
+        if ret != MASK:
+            emit("emergency_stop_both", returned_mask=self.robot.emergency_stop(MASK))
+
+    def upload(self, arm, points, count, before_state):
+        if not 5 <= count <= UPLOAD_MAX_POINTS:
+            raise ValueError("Upload sample count outside supported bounds")
+        for attempt in range(1, 4):
+            ret = self.robot.config_set_traj(arm, points, count)
+            if ret == 0:
+                return
+            if ret != -10:
+                detail = "Format command failed" if ret == -19 else "SDK upload error"
+                raise RuntimeError("ARM%d upload of %d points failed: %s (%s)"
+                                   % (arm, count, ret, detail))
+            # The SDK's acknowledgement wait is only about 10ms. State 2 after
+            # starting from 0/1 proves this upload is ready; never re-upload it.
+            deadline = time.monotonic()+.5
+            saw_initialized = before_state != 2
+            state = before_state
+            while time.monotonic() < deadline:
+                feedback = self.snapshot(require_speed=True)
+                state = feedback["arms"][arm]["trajectory_state"]
+                if any(a["trajectory_state"] >= 3 for a in feedback["arms"]):
+                    raise RuntimeError("Unexpected running trajectory during upload")
+                if state == 1:
+                    saw_initialized = True
+                if state == 2 and saw_initialized:
+                    emit("upload_ready_after_timeout", arm=arm, count=count, attempt=attempt)
+                    return
+                time.sleep(.02)
+            if state not in (0, 1, 2):
+                raise RuntimeError("Unexpected upload state: %s" % state)
+            if attempt == 3:
+                raise RuntimeError("Upload acknowledgement unconfirmed after three attempts")
+            # State 2 that predates this call is ambiguous, not proof of new data.
+            # Reinitialize the same new data, without sending RunTraj.
+            emit("upload_retry_without_motion", arm=arm, attempt=attempt+1,
+                 state=state, prior_ready_is_not_proof=not saw_initialized)
+            before_state = state
+            time.sleep(.1)
+
+    def upload_paced(self, arm, points, count, before_state):
+        """Use the vendor L0 buffer API, pacing packets before any RunTraj."""
+        if arm not in (0, 1) or not 5 <= count <= CONTINUOUS_MAX_POINTS:
+            raise ValueError("Invalid continuous upload arm/count")
+        if len(points) != count*7 or before_state not in (0, 1, 2):
+            raise ValueError("Invalid continuous upload data/state")
+        for offset in range(0, len(points), 7):
+            validate_point(arm, points[offset:offset+7])
+        init = getattr(self.robot.dll, "FX_L0_Arm%d_Runtime_InitTraj" % arm)
+        send = getattr(self.robot.dll, "FX_L0_Arm%d_Runtime_SetTraj" % arm)
+        init.argtypes = [ctypes.c_uint32, ctypes.c_int32]
+        send.argtypes = [ctypes.c_uint32, ctypes.c_int32, ctypes.c_int32,
+                         ctypes.POINTER(ctypes.c_double)]
+        init.restype = send.restype = ctypes.c_int32
+        baseline = self.snapshot(require_speed=True)
+
+        def stationary_feedback():
+            state = self.snapshot(require_speed=True)
+            for i, a in enumerate(state["arms"]):
+                if (a["trajectory_state"] not in (0, 1, 2)
+                        or max(map(abs, a["velocities_deg_s"])) > .5
+                        or distance(a["joints_deg"], baseline["arms"][i]["joints_deg"]) > .1):
+                    raise RuntimeError("Motion detected during continuous upload")
+            return state
+
+        stationary_feedback()
+        # L0Robot.h: thread 0, InitTraj 5..5000, SetTraj serial 0..N and 1..50 points.
+        # L1 sends all packets in a burst into RuntimeACB; pacing lets it drain.
+        with self.robot._lock:
+            ret = init(0, count)
+        if ret != 0:
+            raise RuntimeError("Continuous InitTraj failed: %s" % ret)
+        deadline = time.monotonic()+2
+        while True:
+            time.sleep(UPLOAD_PACKET_INTERVAL)
+            state = stationary_feedback()
+            if state["arms"][arm]["trajectory_state"] == 1:
+                break
+            if time.monotonic() >= deadline:
+                raise RuntimeError("New trajectory initialization not confirmed")
+        for serial, begin in enumerate(range(0, count, UPLOAD_PACKET_POINTS)):
+            if stationary_feedback()["arms"][arm]["trajectory_state"] != 1:
+                raise RuntimeError("Trajectory buffer changed before upload completed")
+            size = min(UPLOAD_PACKET_POINTS, count-begin)
+            packet = (ctypes.c_double*(size*7))(*points[begin*7:(begin+size)*7])
+            with self.robot._lock:
+                ret = send(0, serial, size, packet)
+            if ret != 0:
+                raise RuntimeError("Continuous packet %d enqueue failed: %s" % (serial, ret))
+            time.sleep(UPLOAD_PACKET_INTERVAL)
+        deadline = time.monotonic()+2
+        while True:
+            state = stationary_feedback()["arms"][arm]["trajectory_state"]
+            if state == 2:
+                emit("continuous_upload_ready", arm=arm, count=count,
+                     packets=math.ceil(count/UPLOAD_PACKET_POINTS), run_commands_sent=0)
+                return
+            if state != 1 or time.monotonic() >= deadline:
+                raise RuntimeError("Complete continuous buffer not confirmed ready")
+            time.sleep(UPLOAD_PACKET_INTERVAL)
+
+    def check_upload_without_motion(self, start, continuous=False):
+        """Exercise real uploads with current-position samples; never RunTraj."""
+        self.snapshot(require_speed=True)
+        upload = self.upload_paced if continuous else self.upload
+        self.pending = True
+        for count in (CONTINUOUS_MAX_POINTS if continuous else UPLOAD_MAX_POINTS, 5):
+            for arm in (0, 1):
+                state = self.snapshot(require_speed=True)
+                if distance(state["arms"][arm]["joints_deg"], start[arm]) > .1:
+                    raise RuntimeError("Arm moved during no-motion upload check")
+                raw = (ctypes.c_double*(count*7))(*(start[arm]*count))
+                upload(arm, raw, count, state["arms"][arm]["trajectory_state"])
+            state = self.snapshot(require_speed=True)
+            if any(a["trajectory_state"] != 2 for a in state["arms"]):
+                raise RuntimeError("Hold uploads not both ready")
+            emit("hold_upload_verified", count=count, feedback=state, run_commands_sent=0)
+        emit("upload_check_complete", run_commands_sent=0,
+             pending_data="five current-position hold samples per arm; never started")
+        self.pending = False
+
+    def execute_segment(self, plan):
+        continuous = plan.get("continuous", False)
+        maximum = CONTINUOUS_MAX_POINTS if continuous else UPLOAD_MAX_POINTS
+        if not 5 <= plan["count"] <= maximum:
+            raise ValueError("Oversized upload rejected before contacting controller")
+        before = self.snapshot(require_speed=True)
+        first_upload = plan["number"] == 1 and plan.get("chunk_index", 1) == 1
+        allowed_states = ((0, 1, 2) if self.allow_replace_pending else (0, 1)) if first_upload else (0,)
+        for arm, a in enumerate(before["arms"]):
+            if distance(a["joints_deg"], plan["start"][arm]) > .25:
+                raise RuntimeError("Actual segment start differs from validated trajectory")
+            if a["trajectory_state"] not in allowed_states or max(map(abs,a["velocities_deg_s"])) > .5:
+                raise RuntimeError("Prior motion is not settled")
+        self.pending = True
+        try:
+            upload = self.upload_paced if continuous else self.upload
+            for arm in (0, 1):
+                upload(arm, plan["arrays"][arm], plan["count"],
+                       before["arms"][arm]["trajectory_state"])
+            ready = self.snapshot(require_speed=True)
+            if any(a["trajectory_state"] != 2 for a in ready["arms"]):
+                raise RuntimeError("Both trajectories must be ready before synchronous start")
+            for arm, a in enumerate(ready["arms"]):
+                if (distance(a["joints_deg"], plan["start"][arm]) > .25
+                        or max(map(abs, a["velocities_deg_s"])) > .5):
+                    raise RuntimeError("Start position changed while uploading")
+            emit("continuous_start" if continuous else "segment_start",
+                 number=plan["number"], target=plan["target"],
+                 chunk_index=plan.get("chunk_index", 1), chunk_count=plan.get("chunk_count", 1))
+            ret = self.robot.runtime_run_traj(MASK)
+            if ret != MASK:
+                raise RuntimeError("Dual-arm start mask mismatch: %s" % ret)
+            timeout = max(60, plan["count"]/FREQUENCY*2+30) if continuous else 60
+            deadline, stable, last_log = time.monotonic()+timeout, 0, 0
+            observed_running = [False, False]
+            while time.monotonic() < deadline:
+                state = self.snapshot(require_speed=True)
+                at_target = True
+                for arm, a in enumerate(state["arms"]):
+                    observed_running[arm] |= a["trajectory_state"] >= 3
+                    at_target &= (a["trajectory_state"] == 0
+                                  and distance(a["joints_deg"], plan["target"][arm]) <= .2
+                                  and max(map(abs, a["velocities_deg_s"])) <= .5)
+                stable = stable+1 if at_target else 0
+                # A full loop ends where it starts. Idle at HOME alone is not
+                # completion: both controllers must have actually run the path.
+                if stable >= 3 and (not continuous or all(observed_running)):
+                    self.pending = False
+                    emit("continuous_complete" if continuous else "segment_complete",
+                         number=plan["number"], feedback=state,
+                         observed_running=observed_running,
+                         chunk_index=plan.get("chunk_index", 1),
+                         chunk_count=plan.get("chunk_count", 1))
+                    return
+                if time.monotonic()-last_log > 2:
+                    emit("progress", number=plan["number"], feedback=state)
+                    last_log = time.monotonic()
+                time.sleep(.05)
+            raise TimeoutError("Dual-arm segment timed out")
+        except BaseException:
+            self.stop()
+            self.pending = False
+            raise
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--execute", action="store_true")
+    group.add_argument("--preflight", action="store_true")
+    group.add_argument("--check-upload", action="store_true",
+                       help="Upload only current-position hold samples; never start motion")
+    parser.add_argument("--replace-pending", action="store_true",
+                        help="Explicitly replace an unstarted ready trajectory on first upload")
+    parser.add_argument("--large-wrist", action="store_true",
+                        help="Five wrist moves with 25-35 degree largest joint changes")
+    parser.add_argument("--continuous", action="store_true",
+                        help="Upload one complete path; no intermediate holds/restarts")
+    parser.add_argument("--speed-percent", type=float, default=5.0)
+    parser.add_argument("--acceleration-percent", type=float, default=5.0)
+    args = parser.parse_args()
+    configure_speed(args.speed_percent, args.acceleration_percent)
+    if args.large_wrist:
+        use_large_wrist_plan()
+    emit("plan", home=HOME, targets=targets(), speed_percent=SPEED,
+         acceleration_percent=ACCELERATION, planner_velocity=PLANNER_SPEED,
+         planner_acceleration=PLANNER_ACCELERATION,
+         execute=args.execute, continuous=args.continuous)
+    if not args.execute and not args.preflight and not args.check_upload:
+        return
+    import fcntl
+    sys.path.insert(0, "/home/nvidia/tianji-robot-SDK/PYTHON_SDK")
+    from GentoRobot import GentoRobot, FXLogMask
+    with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        robot, runner = GentoRobot(), None
+        runner = Runner(robot, allow_replace_pending=(
+            args.replace_pending or args.preflight or args.check_upload))
+        def interrupted(signum, frame):
+            raise KeyboardInterrupt("Signal %s" % signum)
+        for sig in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):
+            signal.signal(sig, interrupted)
+        try:
+            ret = robot.link(6, 6, 7, 190, log_level=FXLogMask.FX_LOG_INFO_FLAG)
+            if not robot._connected or robot.check_link_state() != 1:
+                raise RuntimeError("SDK link failed: %s" % ret)
+            emit("connected", sdk=robot.get_sdk_version(), controller=robot.get_controller_version())
+            start = runner.initial()
+            if args.check_upload:
+                runner.check_upload_without_motion(start, continuous=args.continuous)
+                return
+            plans = runner.plan(start, continuous=args.continuous)
+            joined = join_plans(plans) if args.continuous else None
+            if not args.execute:
+                emit("preflight_complete", motion_commands_sent=0)
+                return
+            runner.set_speed()
+            if joined is not None:
+                runner.execute_segment(joined)
+            else:
+                for plan in plans:
+                    for chunk in upload_chunks(plan):
+                        runner.execute_segment(chunk)
+                    emit("waypoint_complete", number=plan["number"], target=plan["target"])
+            emit("complete", movements=5, returned_home=True, final=runner.snapshot(require_speed=True))
+        finally:
+            if runner.pending:
+                runner.stop()
+            if getattr(robot, "_connected", False):
+                robot.unlink()
+                emit("sdk_disconnected")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except BaseException as exc:
+        emit("failed", error=type(exc).__name__+": "+str(exc))
+        raise SystemExit(1)

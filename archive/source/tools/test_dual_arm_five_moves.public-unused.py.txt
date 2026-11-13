@@ -1,0 +1,412 @@
+"""Offline tests: no SDK import or robot connection."""
+import copy
+import ctypes
+from contextlib import nullcontext
+import itertools
+import json
+from pathlib import Path
+import unittest
+import sys
+from unittest.mock import Mock, patch
+
+import dual_arm_five_moves as m
+
+
+def sample(pair=None, trajectory=0, speed=5):
+    return {"arms": [
+        {"joints_deg": list(q), "velocities_deg_s": [0]*7,
+         "ratios": [speed, speed], "trajectory_state": trajectory,
+         "state": {"cur": 1, "err": 0}}
+        for q in (pair or m.HOME)]}
+
+
+class Tests(unittest.TestCase):
+    def test_speed_option_preserves_calibration_and_separate_acceleration(self):
+        names = ("SPEED", "ACCELERATION", "PLANNER_SPEED",
+                 "PLANNER_ACCELERATION", "MAX_PLANNED_SPEED")
+        with patch.multiple(m, **{name: getattr(m, name) for name in names}):
+            m.configure_speed(5, 5)
+            self.assertAlmostEqual(m.PLANNER_SPEED, .01)
+            m.configure_speed(60, 5)
+            self.assertEqual((m.SPEED, m.ACCELERATION), (60, 5))
+            self.assertAlmostEqual(m.PLANNER_SPEED, .12)
+            self.assertAlmostEqual(m.PLANNER_ACCELERATION, .01)
+            self.assertAlmostEqual(m.MAX_PLANNED_SPEED, 21.7)
+            robot = Mock()
+            robot.runtime_set_speed_ratio.return_value = 0
+            runner = m.Runner(robot)
+            state = sample()
+            for arm in state["arms"]:
+                arm["ratios"] = [60, 5]
+            runner.snapshot = Mock(return_value=state)
+            with patch.object(m, "emit"):
+                runner.set_speed()
+            self.assertEqual([call.args for call in robot.runtime_set_speed_ratio.call_args_list],
+                             [(0, 60, 5), (1, 60, 5)])
+            robot.runtime_run_traj.assert_not_called()
+
+    def test_invalid_speed_options_rejected_without_changing_configuration(self):
+        before = (m.SPEED, m.ACCELERATION, m.PLANNER_SPEED, m.PLANNER_ACCELERATION)
+        for invalid in (0, -5, 100.01, float("nan"), float("inf")):
+            for values in ((invalid, 5), (60, invalid)):
+                with self.assertRaises(ValueError):
+                    m.configure_speed(*values)
+                self.assertEqual(
+                    (m.SPEED, m.ACCELERATION, m.PLANNER_SPEED, m.PLANNER_ACCELERATION), before)
+
+    def test_feedback_must_match_speed_and_acceleration_independently(self):
+        robot = Mock()
+        robot.check_link_state.return_value = 1
+        robot.get_rt_dict.return_value = {
+            "frame_serial": 1,
+            "arms": [{"state": {"cur": 1, "err": 0},
+                      "fb": {"fb_pos": q, "fb_vel": [0]*7}} for q in m.HOME],
+            "body": {"fb_pos": [0]*6, "state": {"err": 0}},
+            "head": {"fb_pos": [0]*3, "state": {"err": 0}},
+        }
+        with patch.object(m, "SPEED", 60), patch.object(m, "ACCELERATION", 5):
+            for ratios in ((60, 5), (5, 5), (60, 60), (float("nan"), 5)):
+                robot.get_sg_dict.return_value = {"arms": [
+                    {"set": {"vel_ratio": ratios[0], "acc_ratio": ratios[1]},
+                     "get": {"traj_state": 0}} for _ in (0, 1)]}
+                runner = m.Runner(robot)
+                if ratios == (60, 5):
+                    runner.snapshot(require_speed=True)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        runner.snapshot(require_speed=True)
+
+    def test_windows_entry_passes_settings_to_preflight_and_execute(self):
+        with patch.object(sys, "path", [str(Path(__file__).resolve().parents[1])]+sys.path):
+            import run_dual_arm_large as entry
+        with patch.object(entry, "SPEED_PERCENT", 60), \
+                patch.object(entry, "ACCELERATION_PERCENT", 5), \
+                patch.object(entry.subprocess, "Popen") as popen:
+            popen.return_value.wait.return_value = 0
+            for mode in ("--preflight", "--execute"):
+                self.assertEqual(entry.run(mode), 0)
+                command = popen.call_args.args[0]
+                self.assertEqual(command[command.index("--speed-percent")+1], "60")
+                self.assertEqual(command[command.index("--acceleration-percent")+1], "5")
+                self.assertEqual("--replace-pending" in command, mode == "--execute")
+
+    def test_continuous_join_preserves_samples_without_intermediate_holds(self):
+        plans, start = [], copy.deepcopy(m.HOME)
+        for number, delta in enumerate((1, -1, 0), 1):
+            target = copy.deepcopy(m.HOME)
+            for q in target:
+                q[4] = delta
+            count = 81
+            arrays = [(ctypes.c_double*(count*7))(*[
+                a+(b-a)*i/(count-1)
+                for i in range(count) for a,b in zip(start[arm],target[arm])])
+                for arm in (0, 1)]
+            plans.append({"number": number, "start": start, "target": target,
+                          "arrays": arrays, "count": count, "native_point_counts": [count]*2})
+            start = target
+        with patch.object(m, "emit"):
+            joined = m.join_plans(plans)
+        self.assertEqual(joined["count"], 241+m.ENDPOINT_HOLD_POINTS)
+        self.assertEqual(joined["waypoint_sample_indices"], [80, 160, 240])
+        for arm in (0, 1):
+            expected = list(plans[0]["arrays"][arm])
+            for plan in plans[1:]:
+                expected.extend(list(plan["arrays"][arm])[7:])
+            expected.extend(m.HOME[arm]*m.ENDPOINT_HOLD_POINTS)
+            self.assertEqual(list(joined["arrays"][arm]), expected)
+        self.assertEqual(joined["target"], m.HOME)
+        self.assertTrue(joined["continuous"])
+
+    def test_continuous_join_rejects_oversize_and_duration_mismatch(self):
+        for count, native in ((5000, [5000, 5000]), (20, [20, 10])):
+            plan = {"start": m.HOME, "target": m.HOME, "count": count,
+                    "native_point_counts": native,
+                    "arrays": [(ctypes.c_double*(count*7))(*(q*count)) for q in m.HOME]}
+            with self.assertRaises(RuntimeError):
+                m.join_plans([plan])
+
+    def test_paced_upload_uses_one_buffer_and_ordered_packets(self):
+        robot = Mock()
+        robot._lock = nullcontext()
+        robot.dll.FX_L0_Arm0_Runtime_InitTraj.return_value = 0
+        send = robot.dll.FX_L0_Arm0_Runtime_SetTraj
+        send.return_value = 0
+        runner = m.Runner(robot)
+        runner.snapshot = Mock(side_effect=[
+            sample(trajectory=2), sample(trajectory=2), sample(trajectory=1),
+            sample(trajectory=1), sample(trajectory=1), sample(trajectory=1),
+            sample(trajectory=2)])
+        rows = [m.HOME[0][:4]+[i*.001, 0, 0] for i in range(123)]
+        flat = [x for row in rows for x in row]
+        raw = (ctypes.c_double*len(flat))(*flat)
+        with patch.object(m, "emit"), patch.object(m.time, "sleep"):
+            runner.upload_paced(0, raw, 123, 2)
+        robot.dll.FX_L0_Arm0_Runtime_InitTraj.assert_called_once_with(0, 123)
+        self.assertEqual([c.args[:3] for c in send.call_args_list],
+                         [(0, 0, 50), (0, 1, 50), (0, 2, 23)])
+        self.assertEqual([x for c in send.call_args_list for x in c.args[3]], flat)
+        robot.runtime_run_traj.assert_not_called()
+        robot.config_set_traj.assert_not_called()
+
+    def test_paced_upload_never_accepts_old_ready_or_running_feedback(self):
+        for state in (2, 3):
+            robot = Mock()
+            robot._lock = nullcontext()
+            robot.dll.FX_L0_Arm0_Runtime_InitTraj.return_value = 0
+            runner = m.Runner(robot)
+            runner.snapshot = Mock(return_value=sample(trajectory=state))
+            raw = (ctypes.c_double*35)(*(m.HOME[0]*5))
+            with patch.object(m.time, "sleep"), \
+                    patch.object(m.time, "monotonic", side_effect=itertools.count()), \
+                    self.assertRaises(RuntimeError):
+                runner.upload_paced(0, raw, 5, 2)
+            robot.dll.FX_L0_Arm0_Runtime_SetTraj.assert_not_called()
+            robot.runtime_run_traj.assert_not_called()
+
+    def test_continuous_loop_requires_observed_motion_before_home_completion(self):
+        for did_run in (True, False):
+            robot = Mock()
+            robot.runtime_run_traj.return_value = 3
+            robot.runtime_stop_traj.return_value = 3
+            runner = m.Runner(robot)
+            runner.upload_paced = Mock()
+            states = [sample(), sample(trajectory=2)]
+            if did_run:
+                states += [sample(trajectory=3)]
+            states += [sample()]*100
+            runner.snapshot = Mock(side_effect=states)
+            plan = {"start": m.HOME, "target": m.HOME, "arrays": [[], []],
+                    "count": 300, "number": 1, "continuous": True}
+            with patch.object(m, "emit"), patch.object(m.time, "sleep"), \
+                    patch.object(m.time, "monotonic", side_effect=itertools.count(0, 2)):
+                if did_run:
+                    runner.execute_segment(plan)
+                    robot.runtime_stop_traj.assert_not_called()
+                else:
+                    with self.assertRaises(TimeoutError):
+                        runner.execute_segment(plan)
+                    robot.runtime_stop_traj.assert_called_once_with(3)
+            robot.runtime_run_traj.assert_called_once_with(3)
+            self.assertEqual(runner.upload_paced.call_count, 2)
+            robot.config_set_traj.assert_not_called()
+
+    def test_continuous_packet_failure_stops_both_without_start(self):
+        robot = Mock()
+        robot.runtime_stop_traj.return_value = 3
+        runner = m.Runner(robot)
+        runner.snapshot = Mock(return_value=sample())
+        runner.upload_paced = Mock(side_effect=[None, RuntimeError("packet enqueue failed")])
+        plan = {"start": m.HOME, "target": m.HOME, "arrays": [[], []],
+                "count": 300, "number": 1, "continuous": True}
+        with patch.object(m, "emit"), self.assertRaises(RuntimeError):
+            runner.execute_segment(plan)
+        robot.runtime_run_traj.assert_not_called()
+        robot.runtime_stop_traj.assert_called_once_with(3)
+
+    def test_timeout_followed_by_new_ready_does_not_repeat_upload(self):
+        for before, replies in ((0, [1, 2]), (1, [2]), (2, [1, 2])):
+            robot = Mock()
+            robot.config_set_traj.return_value = -10
+            runner = m.Runner(robot)
+            runner.snapshot = Mock(side_effect=[sample(trajectory=s) for s in replies])
+            with patch.object(m, "emit"), patch.object(m.time, "sleep"):
+                runner.upload(0, [], 240, before)
+            robot.config_set_traj.assert_called_once()
+            robot.runtime_run_traj.assert_not_called()
+
+    def test_stale_ready_after_timeout_requires_new_acknowledgement(self):
+        for responses, succeeds in (([-10, 0], True), ([-10, -10, -10], False)):
+            robot = Mock()
+            robot.config_set_traj.side_effect = responses
+            runner = m.Runner(robot)
+            runner.snapshot = Mock(return_value=sample(trajectory=2))
+            with patch.object(m, "emit"), patch.object(m.time, "sleep"), \
+                    patch.object(m.time, "monotonic", side_effect=itertools.count(0, .1)):
+                if succeeds:
+                    runner.upload(0, [], 240, 2)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        runner.upload(0, [], 240, 2)
+            self.assertEqual(robot.config_set_traj.call_count, len(responses))
+            robot.runtime_run_traj.assert_not_called()
+
+    def test_hold_upload_check_never_runs_and_contains_only_current_position(self):
+        for continuous in (False, True):
+            robot = Mock()
+            runner = m.Runner(robot, allow_replace_pending=True)
+            runner.snapshot = Mock(return_value=sample(trajectory=2))
+            runner.upload = Mock()
+            runner.upload_paced = Mock()
+            with patch.object(m, "emit"):
+                runner.check_upload_without_motion(m.HOME, continuous=continuous)
+            uploader = runner.upload_paced if continuous else runner.upload
+            self.assertEqual(uploader.call_count, 4)
+            for call in uploader.call_args_list:
+                arm, raw, count, _ = call.args
+                self.assertIn(count, (5000 if continuous else 250, 5))
+                self.assertEqual(list(raw), m.HOME[arm]*count)
+            robot.runtime_run_traj.assert_not_called()
+            robot.runtime_set_speed_ratio.assert_not_called()
+            self.assertFalse(runner.pending)
+
+    def test_pending_ready_requires_explicit_replacement_permission(self):
+        for allowed in (False, True):
+            robot = Mock()
+            robot.config_set_traj.return_value = 0
+            robot.runtime_run_traj.return_value = 3
+            runner = m.Runner(robot, allow_replace_pending=allowed)
+            target = m.targets()[0]
+            runner.snapshot = Mock(side_effect=[
+                sample(trajectory=2), sample(trajectory=2),
+                sample(target), sample(target), sample(target)])
+            plan = {"start": m.HOME, "target": target, "arrays": ["left", "right"],
+                    "count": 100, "number": 1}
+            with patch.object(m, "emit"), patch.object(m.time, "sleep"):
+                if allowed:
+                    runner.execute_segment(plan)
+                    self.assertEqual(robot.config_set_traj.call_count, 2)
+                    robot.runtime_run_traj.assert_called_once_with(3)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        runner.execute_segment(plan)
+                    robot.config_set_traj.assert_not_called()
+
+    def test_upload_chunks_preserve_samples_and_dual_arm_alignment(self):
+        for count in (5, 249, 250, 251, 252, 760, 899, 1038, 2500):
+            arrays = [(ctypes.c_double*(count*7))(
+                *[arm*100000+row*10+j for row in range(count) for j in range(7)])
+                for arm in (0, 1)]
+            plan = {"number": 1, "count": count, "arrays": arrays,
+                    "start": [[float(a[j]) for j in range(7)] for a in arrays],
+                    "target": [[float(a[(count-1)*7+j]) for j in range(7)] for a in arrays]}
+            chunks = m.upload_chunks(plan)
+            seen = set()
+            for i, chunk in enumerate(chunks):
+                self.assertTrue(5 <= chunk["count"] <= 250)
+                self.assertEqual(chunk["chunk_count"], len(chunks))
+                begin, end = chunk.get("source_range", [0, count])
+                seen.update(range(begin, end))
+                if i:
+                    self.assertEqual(chunk["start"], chunks[i-1]["target"])
+                for arm in (0, 1):
+                    raw = chunk["arrays"][arm]
+                    self.assertEqual(list(raw[:(end-begin)*7]), list(arrays[arm][begin*7:end*7]))
+                    self.assertEqual(list(raw[-7:]), plan["target"][arm] if i == len(chunks)-1
+                                     else list(arrays[arm][(end-1)*7:end*7]))
+                    for pos in range((end-begin)*7, len(raw), 7):
+                        self.assertEqual(list(raw[pos:pos+7]), chunk["target"][arm])
+            self.assertEqual(seen, set(range(count)))
+            self.assertEqual(chunks[-1]["target"], plan["target"])
+
+    def test_oversized_direct_upload_blocked(self):
+        robot = Mock()
+        runner = m.Runner(robot)
+        with self.assertRaises(ValueError):
+            runner.execute_segment({"count": 251})
+        self.assertEqual(robot.mock_calls, [])
+
+    def test_initialized_residue_can_be_replaced_only_on_first_upload(self):
+        for number, chunk_index, allowed in ((1, 1, True), (1, 2, False), (2, 1, False)):
+            robot = Mock()
+            robot.config_set_traj.return_value = 0
+            robot.runtime_run_traj.return_value = 3
+            runner = m.Runner(robot)
+            target = m.targets()[0]
+            runner.snapshot = Mock(side_effect=[
+                sample(trajectory=1), sample(trajectory=2),
+                sample(target), sample(target), sample(target)])
+            plan = {"start": m.HOME, "target": target, "arrays": ["left", "right"],
+                    "count": 100, "number": number, "chunk_index": chunk_index}
+            with patch.object(m, "emit"), patch.object(m.time, "sleep"):
+                if allowed:
+                    runner.execute_segment(plan)
+                    robot.runtime_run_traj.assert_called_once_with(3)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        runner.execute_segment(plan)
+                    robot.config_set_traj.assert_not_called()
+
+    def test_ready_or_running_trajectory_never_overwritten(self):
+        for state in (2, 3, 6, 8):
+            robot = Mock()
+            runner = m.Runner(robot)
+            runner.snapshot = Mock(return_value=sample(trajectory=state))
+            with self.assertRaises(RuntimeError):
+                runner.execute_segment({"count": 100, "number": 1, "start": m.HOME})
+            robot.config_set_traj.assert_not_called()
+
+    def test_large_wrist_plan_preserves_shoulders_and_has_large_steps(self):
+        with patch.object(m, "OFFSETS", m.LARGE_WRIST_OFFSETS), \
+                patch.object(m, "HOME_BOUNDS", [1.1]*4+[25.05,20.05,30.05]):
+            previous = m.HOME
+            for pair in m.targets():
+                for arm in (0, 1):
+                    self.assertEqual(pair[arm][:4], m.HOME[arm][:4])
+                    self.assertGreaterEqual(m.distance(pair[arm], previous[arm]), 25)
+                    self.assertLessEqual(m.distance(pair[arm], previous[arm]), 35)
+                previous = pair
+            bad = m.HOME[0].copy()
+            bad[0] += 5
+            with self.assertRaises(ValueError):
+                m.validate_point(0, bad)
+
+    def test_plan_and_saved_home(self):
+        pairs = m.targets()
+        self.assertEqual(len(pairs), 6)
+        self.assertEqual(pairs[-1], m.HOME)
+        self.assertEqual(len({str(q) for q in pairs[:5]}), 5)
+        saved = json.loads((Path(__file__).resolve().parents[1]/"points/HOME.json").read_text())
+        for arm in (0, 1):
+            self.assertEqual(saved["arms"][f"arm{arm}"]["target_joints_deg"], m.HOME[arm])
+            self.assertTrue(all(m.distance(q[arm], m.HOME[arm]) <= 3 for q in pairs))
+        for bad in ([float("nan")]*7, [0]*6, [180]*7):
+            with self.assertRaises(ValueError):
+                m.validate_point(0, bad)
+
+    def test_both_uploaded_before_single_start(self):
+        robot = Mock()
+        robot.config_set_traj.return_value = 0
+        robot.runtime_run_traj.return_value = 3
+        runner = m.Runner(robot)
+        target = m.targets()[0]
+        runner.snapshot = Mock(side_effect=[
+            sample(), sample(trajectory=2), sample(target, 3),
+            sample(target), sample(target), sample(target)])
+        plan = {"start": m.HOME, "target": target, "arrays": ["left", "right"],
+                "count": 100, "number": 1}
+        with patch.object(m, "emit"), patch.object(m.time, "sleep"):
+            runner.execute_segment(plan)
+        calls = [c[0] for c in robot.mock_calls]
+        self.assertEqual(calls, ["config_set_traj", "config_set_traj", "runtime_run_traj"])
+        robot.runtime_run_traj.assert_called_once_with(3)
+        self.assertFalse(runner.pending)
+
+    def test_upload_failure_stops_both_without_start(self):
+        robot = Mock()
+        robot.config_set_traj.side_effect = [0, -1]
+        robot.runtime_stop_traj.return_value = 3
+        runner = m.Runner(robot)
+        runner.snapshot = Mock(return_value=sample())
+        plan = {"start": m.HOME, "target": m.targets()[0], "arrays": [[], []],
+                "count": 100, "number": 1}
+        with patch.object(m, "emit"), self.assertRaises(RuntimeError):
+            runner.execute_segment(plan)
+        robot.runtime_run_traj.assert_not_called()
+        robot.runtime_stop_traj.assert_called_once_with(3)
+
+    def test_partial_start_stops_both(self):
+        robot = Mock()
+        robot.config_set_traj.return_value = 0
+        robot.runtime_run_traj.return_value = 1
+        robot.runtime_stop_traj.return_value = 3
+        runner = m.Runner(robot)
+        runner.snapshot = Mock(side_effect=[sample(), sample(trajectory=2)])
+        plan = {"start": m.HOME, "target": m.targets()[0], "arrays": [[], []],
+                "count": 100, "number": 1}
+        with patch.object(m, "emit"), self.assertRaises(RuntimeError):
+            runner.execute_segment(plan)
+        robot.runtime_stop_traj.assert_called_once_with(3)
+
+
+if __name__ == "__main__":
+    unittest.main()

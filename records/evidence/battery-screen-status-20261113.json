@@ -1,0 +1,31 @@
+{
+  "received_at": "2026-11-13T09:15:04.577885+08:00",
+  "fresh": true,
+  "seconds_since_feedback": 0.6,
+  "batteries": [
+    {
+      "id": 1,
+      "energy": 69,
+      "health": 98,
+      "is_in_place": true,
+      "is_charging": true,
+      "voltage": 50.900001525878906,
+      "current": 7.900000095367432,
+      "temperature": 29.0,
+      "is_connected": true,
+      "error_code": 0
+    },
+    {
+      "id": 2,
+      "energy": 77,
+      "health": 98,
+      "is_in_place": true,
+      "is_charging": true,
+      "voltage": 51.0,
+      "current": 3.5999999046325684,
+      "temperature": 19.0,
+      "is_connected": true,
+      "error_code": 0
+    }
+  ]
+}

@@ -1,0 +1,478 @@
+[
+  {
+    "file": "box-mime-six-cycles-20261113-164309.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 48,
+    "cycle_completions": 6,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "demo_complete",
+      "time": "2026-11-13T08:59:49.583228+00:00",
+      "completed_cycles": 6,
+      "results": [
+        {
+          "cycle": 1,
+          "turn_relative_deg": -45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              -0.0,
+              -0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.655
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.770861760000116
+        },
+        {
+          "cycle": 2,
+          "turn_relative_deg": 45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.651
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.761560639999516
+        },
+        {
+          "cycle": 3,
+          "turn_relative_deg": -45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.655
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 30.31344096000248
+        },
+        {
+          "cycle": 4,
+          "turn_relative_deg": 45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.651
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.738599968000926
+        },
+        {
+          "cycle": 5,
+          "turn_relative_deg": -45,
+          "maximum_home_error_deg": 0.0009999999999998899,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              -0.0,
+              0.0,
+              -0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.654
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 30.591452543998457
+        },
+        {
+          "cycle": 6,
+          "turn_relative_deg": 45,
+          "maximum_home_error_deg": 0.0020000000000000018,
+          "pose": {
+            "arm0": [
+              90.0,
+              -90.0,
+              -90.0,
+              -90.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            "arm1": [
+              -90.0,
+              -90.0,
+              90.0,
+              -90.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "body": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.651
+            ],
+            "head": [
+              2.107,
+              -16.002,
+              0.0
+            ]
+          },
+          "elapsed_seconds": 27.74695247999989
+        }
+      ],
+      "returned_home": true,
+      "retained_position_mode": true,
+      "maximum_home_error_deg": 0.0020000000000000018
+    },
+    "cycle_seconds": [
+      27.770861760000116,
+      27.761560639999516,
+      30.31344096000248,
+      27.738599968000926,
+      30.591452543998457,
+      27.74695247999989
+    ],
+    "sum_cycle_seconds": 171.9228683520014,
+    "response_samples": 8404,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-162035.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 60.0,
+        "acceleration_percent": 30.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:34:54.534195+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0009999999999998899
+    },
+    "response_samples": 1656,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-162152.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 80.0,
+        "acceleration_percent": 40.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:36:07.842922+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.655
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0020000000000000018
+    },
+    "response_samples": 1456,
+    "response_samples_dropped": 0
+  },
+  {
+    "file": "box-mime-taught-20261113-162337.jsonl",
+    "execute_requested": true,
+    "controller_ratios": {
+      "arm0": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "arm1": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      },
+      "body": {
+        "speed_percent": 100.0,
+        "acceleration_percent": 50.0
+      }
+    },
+    "stage_completions": 8,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": true,
+    "completion": {
+      "event": "mime_complete",
+      "time": "2026-11-13T08:37:50.757183+00:00",
+      "pose": {
+        "arm0": [
+          90.0,
+          -90.0,
+          -90.0,
+          -90.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "arm1": [
+          -90.0,
+          -90.0,
+          90.0,
+          -90.0,
+          -0.0,
+          0.0,
+          -0.0
+        ],
+        "body": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.654
+        ],
+        "head": [
+          2.107,
+          -16.002,
+          0.0
+        ]
+      },
+      "returned_home": true,
+      "retained_position_mode": true,
+      "arrival_tolerance_deg": 2.0,
+      "maximum_home_error_deg": 0.0009999999999998899
+    },
+    "response_samples": 1358,
+    "response_samples_dropped": 0
+  }
+]

@@ -1,0 +1,218 @@
+"""Read-only ROS battery monitor for the robot's physical display."""
+
+import argparse
+from datetime import datetime
+import json
+import os
+from pathlib import Path
+import queue
+import subprocess
+import threading
+import time
+import tkinter as tk
+
+from battery_audio import BatteryAudio
+
+
+BG = "#f2f5f4"
+INK = "#192422"
+MUTED = "#53655f"
+GREEN = "#087f66"
+AMBER = "#a45c00"
+RED = "#c5353b"
+STALE_SECONDS = 8
+
+
+def consume_batteries(events):
+    import rclpy
+    from driver.msg import BatteriesData
+    from rclpy.qos import qos_profile_sensor_data
+
+    rclpy.init()
+    node = rclpy.create_node("luna_battery_screen")
+
+    def receive(message):
+        stamp = (message.header.stamp.sec, message.header.stamp.nanosec)
+        entries = [
+            {key: getattr(item, key) for key in (
+                "id", "energy", "health", "is_in_place", "is_charging",
+                "voltage", "current", "temperature", "is_connected", "error_code",
+            )}
+            for item in message.data
+        ]
+        event = (time.monotonic(), stamp, entries)
+        try:
+            events.put_nowait(event)
+        except queue.Full:
+            events.get_nowait()
+            events.put_nowait(event)
+
+    subscription = node.create_subscription(
+        BatteriesData, "/driver/battery/Data", receive, qos_profile_sensor_data
+    )
+    try:
+        rclpy.spin(node)
+    finally:
+        node.destroy_subscription(subscription)
+        node.destroy_node()
+        rclpy.shutdown()
+
+
+def battery_state(item, fresh):
+    if not fresh:
+        return "--", "\u53cd\u9988\u4e2d\u65ad", MUTED
+    if not item or not item["is_connected"] or not item["is_in_place"]:
+        return "--", "\u672a\u8fde\u63a5", RED
+    energy = item["energy"]
+    if not 0 <= energy <= 100:
+        return "--", "\u6570\u636e\u5f02\u5e38", RED
+    color = RED if energy <= 10 else AMBER if energy <= 20 else GREEN
+    status = "\u6b63\u5728\u5145\u7535" if item["is_charging"] else "\u672a\u5145\u7535"
+    if item["error_code"]:
+        status = "\u6545\u969c\u7801 " + str(item["error_code"])
+        color = RED
+    return str(energy), status, color
+
+
+class BatteryScreen:
+    def __init__(self, root, demo=False, windowed=False):
+        self.root = root
+        self.events = queue.Queue(maxsize=4)
+        self.last_received = 0
+        self.last_progress = 0
+        self.last_stamp = None
+        self.entries = {}
+        self.last_wake = 0
+        self.demo = demo
+        self.audio = None if demo else BatteryAudio()
+        root.title("Luna Battery")
+        root.configure(bg=BG, cursor="none" if not windowed else "")
+        root.geometry("1520x720")
+        if not windowed:
+            root.attributes("-fullscreen", True)
+            root.attributes("-topmost", True)
+            root.overrideredirect(True)
+        root.bind("<Escape>", lambda event: root.destroy())
+        self.canvas = tk.Canvas(root, bg=BG, highlightthickness=0)
+        self.canvas.pack(fill="both", expand=True)
+        if demo:
+            self.events.put((time.monotonic(), (1, 0), [
+                dict(id=1, energy=58, health=98, is_in_place=True,
+                     is_charging=True, voltage=51.2, current=11.5,
+                     temperature=28, is_connected=True, error_code=0),
+                dict(id=2, energy=76, health=98, is_in_place=True,
+                     is_charging=False, voltage=49.9, current=0,
+                     temperature=19, is_connected=True, error_code=0),
+            ]))
+        else:
+            threading.Thread(target=consume_batteries, args=(self.events,), daemon=True).start()
+        root.after(100, self.tick)
+
+    def text(self, x, y, text, size, color=INK, anchor="nw", weight="normal"):
+        self.canvas.create_text(
+            x, y, text=text, fill=color, anchor=anchor,
+            font=("Noto Sans CJK SC", -size, weight),
+        )
+
+    def tick(self):
+        now = time.monotonic()
+        while not self.events.empty():
+            received, stamp, entries = self.events.get_nowait()
+            self.last_received = received
+            if stamp != self.last_stamp:
+                self.last_progress = received
+                self.last_stamp = stamp
+            # A missing battery must not retain its last known reading.
+            self.entries = {int(item["id"]): item for item in entries}
+        fresh = bool(self.last_received) and (
+            self.demo or now - min(self.last_received, self.last_progress) < STALE_SECONDS
+        )
+        if not self.demo and now - self.last_wake >= 30:
+            for args in (["s", "off"], ["dpms", "force", "on"], ["-dpms"]):
+                subprocess.run(["xset", *args], capture_output=True, timeout=2, check=False)
+            self.last_wake = now
+        self.draw(fresh)
+        if not self.demo:
+            self.audio.update(self.entries, fresh, self.last_stamp, now)
+            status = {
+                "received_at": datetime.now().astimezone().isoformat(),
+                "fresh": fresh,
+                "seconds_since_feedback": round(now - self.last_received, 1) if self.last_received else None,
+                "batteries": list(self.entries.values()),
+                "audio": self.audio.status(),
+            }
+            path = Path("/run/luna-battery-screen/status.json")
+            temporary = path.with_suffix(".tmp")
+            temporary.write_text(json.dumps(status), encoding="utf-8")
+            temporary.replace(path)
+        self.root.after(1000, self.tick)
+
+    def draw(self, fresh):
+        c = self.canvas
+        c.delete("all")
+        w, h = max(c.winfo_width(), 640), max(c.winfo_height(), 400)
+        compact = h < 560 or w < 1000
+        margin = 36 if compact else 64
+        self.text(margin, 28, "LUNA", 20, GREEN, weight="bold")
+        self.text(margin, 76, "\u673a\u5668\u4eba\u7535\u91cf", 25 if compact else 34, weight="bold")
+        self.text(w - margin, 38, datetime.now().strftime("%H:%M:%S"), 20, MUTED, "ne")
+        c.create_line(margin, 146, w - margin, 146, fill="#d2ddd8", width=2)
+        top = 175
+        for index in range(2):
+            x = margin + index * (w / 2)
+            right = (index + 1) * w / 2 - margin
+            item = self.entries.get(index + 1)
+            energy, status, color = battery_state(item, fresh)
+            self.text(x, top, f"{index + 1}\u53f7\u7535\u6c60", 21, MUTED)
+            self.text(x, top + 38, energy + ("%" if energy != "--" else ""),
+                      70 if compact else 106, color, weight="bold")
+            bar_y = top + (158 if compact else 202)
+            c.create_rectangle(x, bar_y, right, bar_y + 14, fill="#d9e3de", outline="")
+            if energy != "--":
+                c.create_rectangle(x, bar_y, x + (right - x) * float(energy) / 100,
+                                   bar_y + 14, fill=color, outline="")
+            self.text(x, bar_y + 32, status, 23, color, weight="bold")
+            if fresh and item and energy != "--":
+                detail = f'{item["voltage"]:.1f} V    {item["temperature"]:.0f} \u00b0C'
+                self.text(x, bar_y + 78, detail, 17, MUTED)
+        footer_y = h - (80 if compact else 96)
+        warning = ""
+        footer_color = MUTED
+        if not fresh:
+            warning = ("\u7b49\u5f85\u7535\u6c60\u53cd\u9988" if not self.last_received
+                       else "\u7535\u91cf\u53cd\u9988\u4e2d\u65ad \u00b7 \u8bf7\u68c0\u67e5\u8fde\u63a5")
+            footer_color = RED
+        elif any(not self.entries.get(i) or not self.entries[i]["is_connected"]
+                 or not self.entries[i]["is_in_place"] for i in (1, 2)):
+            warning = "\u7535\u6c60\u672a\u8fde\u63a5 \u00b7 \u8bf7\u68c0\u67e5\u7535\u6c60"
+            footer_color = RED
+        elif any(i["error_code"] or not 0 <= i["energy"] <= 100 for i in self.entries.values()):
+            warning = "\u7535\u6c60\u53cd\u9988\u5f02\u5e38 \u00b7 \u8bf7\u68c0\u67e5"
+            footer_color = RED
+        elif min(i["energy"] for i in self.entries.values()) <= 10:
+            warning = "\u7535\u91cf\u4e25\u91cd\u4e0d\u8db3 \u00b7 \u8bf7\u53ca\u65f6\u5145\u7535"
+            footer_color = RED
+        elif min(i["energy"] for i in self.entries.values()) <= 20:
+            warning = "\u4f4e\u7535\u91cf \u00b7 \u8bf7\u5b89\u6392\u5145\u7535"
+            footer_color = AMBER
+        else:
+            warning = "\u7535\u6c60\u53cd\u9988\u6b63\u5e38"
+        c.create_line(margin, footer_y - 22, w - margin, footer_y - 22, fill="#d2ddd8")
+        self.text(margin, footer_y, warning, 21 if compact else 26, footer_color, weight="bold")
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--demo", action="store_true")
+    parser.add_argument("--windowed", action="store_true")
+    args = parser.parse_args()
+    if not args.demo:
+        config = json.loads(Path("/run/luna-battery-screen/display.json").read_text())
+        os.environ.update(config)
+    root = tk.Tk()
+    BatteryScreen(root, args.demo, args.windowed)
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,50 @@
+{
+  "name": "RECOVERED_START",
+  "source": "post_recovery_read_only_feedback",
+  "joint_units": "deg",
+  "pose": {
+    "arm0": [
+      90,
+      -90,
+      -90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -1.653
+    ],
+    "head": [
+      2.107,
+      -15.998,
+      0
+    ]
+  },
+  "target_point": "points/BOX_START_BEFORE_INCIDENT.json",
+  "recovery_evidence": "evidence/recovery-20261111-142111.jsonl",
+  "verification_evidence": "evidence/teaching-feedback-20261111-142448.json",
+  "maximum_error_from_target_deg": 0.001,
+  "is_user_taught_squat": false,
+  "sdk_disconnected": true,
+  "system_errors": {
+    "arm0": 0,
+    "arm1": 0,
+    "body": 0,
+    "head": 0
+  }
+}

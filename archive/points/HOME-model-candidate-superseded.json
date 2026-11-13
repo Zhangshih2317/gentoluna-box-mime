@@ -1,0 +1,769 @@
+{
+  "name": "SUPERSEDED_MODEL_HOME",
+  "status": "nominal_floor_horizontal_candidate_physical_validation_pending",
+  "execution_enabled": false,
+  "motion_commands_sent": 0,
+  "created_at": "2026-11-11T11:19:28.608258+08:00",
+  "feedback_collected_at": "2026-11-11T11:21:17.518277+08:00",
+  "joint_units": "degree",
+  "interpretation": {
+    "positive_90_where_compatible_with_floor_horizontal": [
+      "J1",
+      "J2",
+      "J3",
+      "J5"
+    ],
+    "J4": "-90 because +90 exceeds its +45 limit",
+    "J6": "0",
+    "J7": "solved separately for each arm; 90 conflicts with floor-horizontal",
+    "horizontal_axis": "bare SDK endpoint/flange local +Z axis",
+    "horizontal_plane": "local floor, modelled as Underpan_Base_link XY plane",
+    "ground_alignment_verified": false,
+    "nominal_floor_horizontal_verified_by_vendor_fk": true,
+    "palm_orientation_verified": false
+  },
+  "blockers": [
+    "Chassis-to-floor normal is assumed from the manufacturer model, not measured.",
+    "Self-collision, environment clearance and approach path are not verified.",
+    "Mounted hand/palm roll is not part of the flange-axis horizontal constraint."
+  ],
+  "body": {
+    "command": null,
+    "observed_feedback": {
+      "object": "BODY",
+      "dof": 6,
+      "axis_names": [
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5",
+        "B6"
+      ],
+      "state": "IDLE",
+      "state_code": 0,
+      "error": 0,
+      "positions_deg": [
+        -0.744,
+        9.281,
+        -17.364,
+        5.456,
+        -0.296,
+        -1.653
+      ],
+      "velocities_deg_s": [
+        -0.002,
+        -0.005,
+        0.017,
+        -0.0,
+        0.034,
+        -0.086
+      ],
+      "sensor_torques": [
+        4.46,
+        17.19,
+        43.83,
+        23.26,
+        0.642,
+        -0.288
+      ],
+      "joint_limits_deg": [
+        [
+          -30.0,
+          30.0
+        ],
+        [
+          -90.0,
+          90.0
+        ],
+        [
+          -140.0,
+          60.0
+        ],
+        [
+          -110.0,
+          55.0
+        ],
+        [
+          -30.0,
+          30.0
+        ],
+        [
+          -170.0,
+          170.0
+        ]
+      ],
+      "velocity_ratio": 10.0,
+      "acceleration_ratio": 10.0
+    },
+    "required_for_saved_home_deg": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -1.653
+    ],
+    "note": "Recompute wrist compensation if BODY posture or chassis tilt changes."
+  },
+  "head": {
+    "command": null
+  },
+  "arms": {
+    "arm0": {
+      "side": "left",
+      "target_joints_deg": [
+        90,
+        90,
+        90,
+        -90,
+        90,
+        0,
+        2.596357
+      ],
+      "T_underpan_arm_base": [
+        [
+          0.9985400504523614,
+          -0.04583683147610323,
+          0.02857888246286579,
+          17.880167368542125
+        ],
+        [
+          -0.029436436205323,
+          -0.018144125280909633,
+          0.9994019646475186,
+          231.41740621075897
+        ],
+        [
+          -0.045290880606640195,
+          -0.9987841486517605,
+          -0.019466908739013928,
+          1244.8757224492329
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "old_target_tilt_from_nominal_floor_deg": 87.1743271433633,
+      "flange_z_in_underpan": [
+        -0.9995913854423051,
+        0.02858429900368418,
+        -6.836973489985049e-09
+      ],
+      "tilt_from_nominal_floor_deg": 3.9172972561897233e-07,
+      "joint_limit_margin_deg": [
+        83.0,
+        28.0,
+        83.0,
+        55.0,
+        83.0,
+        60.0,
+        87.403643
+      ],
+      "hard_limits_pass": true,
+      "two_degree_limit_margin_pass": true,
+      "sdk_fk_xyzabc": [
+        -368.91069033538815,
+        -278.05894584887193,
+        158.60000610351562,
+        -177.40364297817518,
+        90.0,
+        0.0
+      ],
+      "sdk_fk_matrix_row_major": [
+        0.0,
+        -0.04529947160595284,
+        -0.9989734520357493,
+        -368.91069033538815,
+        0.0,
+        -0.9989734520357493,
+        0.04529947160595284,
+        -278.05894584887193,
+        -1.0,
+        0.0,
+        0.0,
+        158.60000610351562,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "T_underpan_tcp": [
+        [
+          -0.02857888246286579,
+          0.000556441107190274,
+          -0.9995913854423053,
+          -333.213979997032
+        ],
+        [
+          -0.9994019646475186,
+          0.019458954472102878,
+          0.028584299003684213,
+          405.82711625419984
+        ],
+        [
+          0.019466908739013928,
+          0.9998105017772853,
+          -6.836971875460665e-09,
+          1536.2174281395735
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "vendor_verified_tilt_from_nominal_floor_deg": 3.9172963311353923e-07,
+      "observed_feedback": {
+        "arm": "ARM0",
+        "state": "IDLE",
+        "state_code": 0,
+        "error": 0,
+        "raw_state": "IDLE",
+        "raw_state_code": 0,
+        "joints_deg": [
+          57.71,
+          -61.271,
+          -55.492,
+          -114.509,
+          -4.068,
+          2.437,
+          -0.986
+        ],
+        "velocities_deg_s": [
+          -0.03,
+          0.003,
+          -0.015,
+          0.002,
+          0.045,
+          -0.016,
+          -0.068
+        ],
+        "joint_sensor_torque": [
+          -8.28,
+          1.797,
+          -2.64,
+          -3.218,
+          -0.079,
+          -0.393,
+          0.137
+        ],
+        "joint_external_torque_estimate": [
+          -0.491,
+          0.062,
+          0.055,
+          -0.514,
+          -0.049,
+          -0.294,
+          0.078
+        ],
+        "joint_torque_command": [
+          1.0,
+          0.0,
+          -2.0,
+          -1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "base_force_estimate": [
+          -3.048,
+          -80.241,
+          -1.488,
+          2.124,
+          0.064,
+          -7.793
+        ],
+        "flange_force_sensor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_unit": "SDK_RAW_UNVERIFIED",
+        "torque_calibrated": false,
+        "feedback_unit_note": "力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改",
+        "velocity_ratio": 5.0,
+        "acceleration_ratio": 5.0,
+        "trajectory_state": 0,
+        "tool_kinematics": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tool_dynamics": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "joint_limits_deg": [
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -118.0,
+            118.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -145.0,
+            45.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -60.0,
+            60.0
+          ],
+          [
+            -90.0,
+            90.0
+          ]
+        ],
+        "tcp_xyzabc": [
+          355.77371696997534,
+          30.753420111308955,
+          51.688138387964045,
+          -132.09064007594927,
+          11.944561555457252,
+          -138.22729615917612
+        ],
+        "tcp_error": ""
+      },
+      "delta_from_observed_deg": [
+        32.29,
+        151.271,
+        145.492,
+        24.509,
+        94.068,
+        -2.437,
+        3.582357
+      ]
+    },
+    "arm1": {
+      "side": "right",
+      "target_joints_deg": [
+        90,
+        90,
+        90,
+        -90,
+        90,
+        0,
+        -2.596356
+      ],
+      "T_underpan_arm_base": [
+        [
+          0.9985400504523614,
+          0.04583662152267251,
+          -0.02857921919826119,
+          5.614038751981523
+        ],
+        [
+          -0.029436436205323,
+          0.018136783263626388,
+          -0.999402097914737,
+          -197.5259456179949
+        ],
+        [
+          -0.045290880606640195,
+          0.9987842916367055,
+          0.01945957126042473,
+          1253.2293450571688
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "old_target_tilt_from_nominal_floor_deg": 87.17449328403266,
+      "flange_z_in_underpan": [
+        -0.9995913759213059,
+        0.028584631950573536,
+        5.0554714417784395e-09
+      ],
+      "tilt_from_nominal_floor_deg": 2.896571770628219e-07,
+      "joint_limit_margin_deg": [
+        83.0,
+        28.0,
+        83.0,
+        55.0,
+        83.0,
+        60.0,
+        87.403644
+      ],
+      "hard_limits_pass": true,
+      "two_degree_limit_margin_pass": true,
+      "sdk_fk_xyzabc": [
+        -368.9106904077974,
+        -285.94105231149183,
+        158.60000610351562,
+        177.4036440308756,
+        90.0,
+        0.0
+      ],
+      "sdk_fk_matrix_row_major": [
+        0.0,
+        0.04529945325174723,
+        -0.9989734528680394,
+        -368.9106904077974,
+        0.0,
+        -0.9989734528680394,
+        -0.04529945325174723,
+        -285.94105231149183,
+        -1.0,
+        0.0,
+        0.0,
+        158.60000610351562,
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      "T_underpan_tcp": [
+        [
+          0.02857921919826119,
+          -0.0005562497348455798,
+          -0.9995913759213061,
+          -380.3972967921104
+        ],
+        [
+          0.999402097914737,
+          -0.01945161946656519,
+          0.02858463195057357,
+          -350.3577593354345
+        ],
+        [
+          -0.01945957126042473,
+          -0.9998106446154494,
+          5.055473066699489e-09,
+          987.4304918288292
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "vendor_verified_tilt_from_nominal_floor_deg": 2.8965727016394006e-07,
+      "observed_feedback": {
+        "arm": "ARM1",
+        "state": "Position",
+        "state_code": 1,
+        "error": 0,
+        "raw_state": "Position",
+        "raw_state_code": 1,
+        "joints_deg": [
+          -59.49,
+          -60.847,
+          60.365,
+          -113.859,
+          23.839,
+          35.713,
+          -61.368
+        ],
+        "velocities_deg_s": [
+          0.013,
+          0.038,
+          -0.026,
+          -0.002,
+          0.066,
+          -0.028,
+          -0.023
+        ],
+        "joint_sensor_torque": [
+          8.887,
+          2.931,
+          3.134,
+          -3.075,
+          -0.154,
+          -0.033,
+          0.267
+        ],
+        "joint_external_torque_estimate": [
+          1.24,
+          0.491,
+          0.394,
+          -0.403,
+          -0.067,
+          0.01,
+          0.309
+        ],
+        "joint_torque_command": [
+          163.0,
+          59.0,
+          83.0,
+          -82.0,
+          -14.0,
+          -1.0,
+          -40.0
+        ],
+        "base_force_estimate": [
+          -3.063,
+          80.272,
+          1.512,
+          -2.696,
+          -0.247,
+          7.668
+        ],
+        "flange_force_sensor": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "torque_unit": "SDK_RAW_UNVERIFIED",
+        "torque_calibrated": false,
+        "feedback_unit_note": "力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改",
+        "velocity_ratio": 20.0,
+        "acceleration_ratio": 20.0,
+        "trajectory_state": 0,
+        "tool_kinematics": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "tool_dynamics": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "joint_limits_deg": [
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -118.0,
+            118.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -145.0,
+            45.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -60.0,
+            60.0
+          ],
+          [
+            -90.0,
+            90.0
+          ]
+        ],
+        "tcp_xyzabc": [
+          383.1740262187031,
+          -45.36449922748194,
+          167.92996980845288,
+          61.28688560314985,
+          17.313192249361375,
+          98.0212792341171
+        ],
+        "tcp_error": ""
+      },
+      "delta_from_observed_deg": [
+        149.49,
+        150.847,
+        29.635,
+        23.859,
+        66.161,
+        -35.713,
+        58.771644
+      ]
+    }
+  },
+  "sources": {
+    "feedback": {
+      "path": "C:\\Users\\operator\\Documents\\ChatGPT\\luna\\evidence\\robot-status-20261111-112117.json",
+      "sha256": "8184dd6e9068fa6eefd3a10acf54032c79e4e69b495d8183725ee0efc472658e"
+    },
+    "vendor_fk": {
+      "path": "C:\\Users\\operator\\Documents\\ChatGPT\\luna\\evidence\\home-ground-vendor-verified.json",
+      "sha256": "dd0295538e0ae0c02d71a93138c4f628bb76d62f7bf7da79f35e34b3a57b289d"
+    },
+    "wrist_probes": {
+      "path": "C:\\Users\\operator\\Documents\\ChatGPT\\luna\\evidence\\home-ground-probes.json",
+      "sha256": "ff58aad001596ce316608464954edc7e01851fa5d1a983e68143718fb3e1cd1f"
+    },
+    "frame_source_manifest": {
+      "path": "C:\\Users\\operator\\Documents\\ChatGPT\\luna\\evidence\\ground-frame-source-manifest.json",
+      "sha256": "e33ca94ddeb7cc57c657eb4705c781c6ffde17fd9da813b4c5d51bb5d6ca25ac"
+    }
+  },
+  "updated_at": "2026-11-11T11:29:23.283653+08:00",
+  "ground_solution": {
+    "feedback_collected_at": "2026-11-11T11:21:17.518277+08:00",
+    "body_joints_deg": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -1.653
+    ],
+    "reference_frame": "Underpan_Base_link",
+    "ground_normal_in_reference_frame_assumed": [
+      0,
+      0,
+      1
+    ],
+    "physical_ground_alignment_verified": false,
+    "assumption": "Manufacturer chassis XY plane is parallel to the local floor.",
+    "horizontal_axis": "bare SDK endpoint/flange local +Z axis",
+    "palm_roll_constrained": false,
+    "wrist_model_holdout_pass": true,
+    "j7_90_axis_invariant_under_j6": true,
+    "motion_commands_sent": 0,
+    "arms": {
+      "arm0": {
+        "target_joints_deg": [
+          90,
+          90,
+          90,
+          -90,
+          90,
+          0,
+          2.596357
+        ],
+        "T_underpan_arm_base": [
+          [
+            0.9985400504523614,
+            -0.04583683147610323,
+            0.02857888246286579,
+            17.880167368542125
+          ],
+          [
+            -0.029436436205323,
+            -0.018144125280909633,
+            0.9994019646475186,
+            231.41740621075897
+          ],
+          [
+            -0.045290880606640195,
+            -0.9987841486517605,
+            -0.019466908739013928,
+            1244.8757224492329
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "old_target_tilt_from_nominal_floor_deg": 87.1743271433633,
+        "flange_z_in_underpan": [
+          -0.9995913854423051,
+          0.02858429900368418,
+          -6.836973489985049e-09
+        ],
+        "tilt_from_nominal_floor_deg": 3.9172972561897233e-07,
+        "joint_limit_margin_deg": [
+          83.0,
+          28.0,
+          83.0,
+          55.0,
+          83.0,
+          60.0,
+          87.403643
+        ]
+      },
+      "arm1": {
+        "target_joints_deg": [
+          90,
+          90,
+          90,
+          -90,
+          90,
+          0,
+          -2.596356
+        ],
+        "T_underpan_arm_base": [
+          [
+            0.9985400504523614,
+            0.04583662152267251,
+            -0.02857921919826119,
+            5.614038751981523
+          ],
+          [
+            -0.029436436205323,
+            0.018136783263626388,
+            -0.999402097914737,
+            -197.5259456179949
+          ],
+          [
+            -0.045290880606640195,
+            0.9987842916367055,
+            0.01945957126042473,
+            1253.2293450571688
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "old_target_tilt_from_nominal_floor_deg": 87.17449328403266,
+        "flange_z_in_underpan": [
+          -0.9995913759213059,
+          0.028584631950573536,
+          5.0554714417784395e-09
+        ],
+        "tilt_from_nominal_floor_deg": 2.896571770628219e-07,
+        "joint_limit_margin_deg": [
+          83.0,
+          28.0,
+          83.0,
+          55.0,
+          83.0,
+          60.0,
+          87.403644
+        ]
+      }
+    }
+  }
+}

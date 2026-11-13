@@ -1,0 +1,79 @@
+2026-11-12T16:43:09+08:00
+ 16:43:09 up 1 min,  0 users,  load average: 3.82, 1.21, 0.43
+Bus 002 Device 003: ID 2dee:4d22 MEIG LTE-A Module
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 002: ID 8087:0032 Intel Corp. AX210 Bluetooth
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 006 Device 002: ID 05e3:0626 Genesys Logic, Inc. USB3.1 Hub
+Bus 006 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 005 Device 004: ID 1a86:7523 QinHeng Electronics CH340 serial converter
+Bus 005 Device 003: ID 0403:6001 Future Technology Devices International, Ltd FT232 Serial (UART) IC
+Bus 005 Device 002: ID 05e3:0610 Genesys Logic, Inc. Hub
+Bus 005 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+Bus 004 Device 002: ID 8086:0b07 Intel Corp. RealSense D435
+Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 003 Device 004: ID 8888:8888 XF AIUI-USB-MC
+Bus 003 Device 002: ID 5958:dddd YXStar YXStar DEV HTD
+Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+lrwxrwxrwx 1 root root   7 Nov 12 16:42 /dev/luna-gripper-ch340 -> ttyUSB5
+lrwxrwxrwx 1 root root   7 Nov 12 16:42 /dev/luna-gripper-ftdi -> ttyUSB4
+
+/dev/serial/by-id/:
+total 0
+lrwxrwxrwx 1 root root 13 Nov 12 16:42 usb-1a86_USB_Serial-if00-port0 -> ../../ttyUSB5
+lrwxrwxrwx 1 root root 13 Nov 12 16:42 usb-FTDI_FT232R_USB_UART_BG011JUB-if00-port0 -> ../../ttyUSB4
+lrwxrwxrwx 1 root root 13 Nov 12 16:42 usb-MEIG_LTE-A_Module_89e1b802-if00-port0 -> ../../ttyUSB0
+lrwxrwxrwx 1 root root 13 Nov 12 16:42 usb-MEIG_LTE-A_Module_89e1b802-if01-port0 -> ../../ttyUSB1
+lrwxrwxrwx 1 root root 13 Nov 12 16:42 usb-MEIG_LTE-A_Module_89e1b802-if02-port0 -> ../../ttyUSB2
+lrwxrwxrwx 1 root root 13 Nov 12 16:42 usb-MEIG_LTE-A_Module_89e1b802-if03-port0 -> ../../ttyUSB3
+inactive
+/sys/class/hwmon/hwmon0
+pwmfan
+/sys/class/hwmon/hwmon1
+ina3221
+/sys/class/hwmon/hwmon1/in1_label:VDD_GPU_SOC
+/sys/class/hwmon/hwmon1/in2_label:VDD_CPU_CV
+/sys/class/hwmon/hwmon1/in3_label:VIN_SYS_5V0
+/sys/class/hwmon/hwmon1/in7_label:sum of shunt voltages
+/sys/class/hwmon/hwmon1/in1_input:19816
+/sys/class/hwmon/hwmon1/in2_input:19816
+/sys/class/hwmon/hwmon1/in3_input:4984
+/sys/class/hwmon/hwmon1/in4_input:240
+/sys/class/hwmon/hwmon1/in5_input:200
+/sys/class/hwmon/hwmon1/in6_input:2240
+/sys/class/hwmon/hwmon1/in7_input:440
+/sys/class/hwmon/hwmon1/curr1_input:120
+/sys/class/hwmon/hwmon1/curr2_input:100
+/sys/class/hwmon/hwmon1/curr3_input:1120
+/sys/class/hwmon/hwmon1/curr4_input:200
+/sys/class/hwmon/hwmon2
+ina3221
+/sys/class/hwmon/hwmon2/in2_label:VDDQ_VDD2_1V8AO
+/sys/class/hwmon/hwmon2/in7_label:sum of shunt voltages
+/sys/class/hwmon/hwmon2/in2_input:4976
+/sys/class/hwmon/hwmon2/in5_input:320
+/sys/class/hwmon/hwmon2/in7_input:360
+/sys/class/hwmon/hwmon2/curr2_input:160
+/sys/class/hwmon/hwmon2/curr4_input:160
+/sys/class/hwmon/hwmon3
+tmp451
+/sys/class/hwmon/hwmon4
+pwm_tach
+/sys/class/hwmon/hwmon5
+soctherm_oc
+/sys/class/hwmon/hwmon6
+iwlwifi_1
+Nov 12 16:42:14 vision kernel: usb 5-1: new high-speed USB device number 2 using xhci_hcd
+Nov 12 16:42:15 vision kernel: usb 5-1.1: new full-speed USB device number 3 using xhci_hcd
+Nov 12 16:42:15 vision kernel: usb 5-1.4: new full-speed USB device number 4 using xhci_hcd
+Nov 12 16:42:16 vision kernel: usbcore: registered new interface driver ftdi_sio
+Nov 12 16:42:16 vision kernel: usbserial: USB Serial support registered for FTDI USB Serial Device
+Nov 12 16:42:16 vision kernel: ftdi_sio 5-1.1:1.0: FTDI USB Serial Device converter detected
+Nov 12 16:42:16 vision kernel: usb 5-1.1: Detected FT232RL
+Nov 12 16:42:16 vision kernel: usb 5-1.1: FTDI USB Serial Device converter now attached to ttyUSB4
+Nov 12 16:42:16 vision kernel: Modules linked in: ftdi_sio hid_multitouch(+) uvcvideo(+) videobuf2_vmalloc qmi_wwan_m option cdc_wdm usb_wwan usbnet usbserial snd_soc_tegra210_admaif(O) snd_soc_tegra_pcm snd_soc_tegra210_ope(O) snd_soc_tegra186_dspk(O) snd_soc_tegra210_afc(O) snd_soc_tegra210_mixer(O) snd_soc_tegra186_asrc(O) snd_soc_tegra210_mvc(O) snd_soc_tegra186_arad(O) snd_soc_tegra210_dmic(O) snd_soc_tegra210_sfc(O) snd_soc_tegra210_amx(O) snd_soc_tegra210_adx(O) snd_soc_tegra210_i2s(O) iwlmvm mac80211 libarc4 snd_soc_tegra210_ahub(O) tegra210_adma nvvrs_pseq_rtc(O) rtk_btusb(O) snd_soc_tegra_machine_driver(O) btusb btrtl snd_soc_tegra_utils(O) tegra23x_perf_uncore(O) crct10dif_ce snd_soc_simple_card_utils tegra234_oc_event(O) btintel nvpmodel_clk_cap(O) mttcan(O) btbcm tegra_mce(O) tegra_cactmon_mc_all(O) can_dev snd_soc_max98090 nv_imx185(O) tztek_camera_driver(O) tztek_max9296(O) max9296_class(O) snd_soc_rt5640 tegra234_aon(O) tegra_aconnect snd_soc_rl6231 spidev at24 snd_hda_codec_hdmi
+Nov 12 16:42:16 vision kernel:  nvidia_vrs_pseq(O) tegra_pcie_edma(O) host1x_fence(O) nvidia(O) tegra_dce(O) nvhost_vi5(O) nvhost_isp5(O) nvhost_nvcsi_t194(O) tegra_camera(O) v4l2_dv_timings camera_notifier(O) nvhost_nvcsi(O) tegra_camera_platform(O) capture_ivc(O) tegra_camera_rtcpu(O) ivc_bus(O) hsp_mailbox_client(O) ivc_ext(O) v4l2_fwnode v4l2_async videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videobuf2_common governor_userspace videodev nvhost_pva(O) mc tsecriscv(O) nvhost_capture(O) tegra_drm(O) nvhost_nvdla(O) tegra_wmark(O) nvhwpm(O) host1x_nvhost(O) cec drm_kms_helper tegra_se(O) crypto_engine tpm_ftpm_tee nvidia_p2p(O) ina3221 nvgpu(O) governor_pod_scaling(O) mc_utils(O) host1x(O) nvmap(O) nvsciipc(O) oak_pci(O) nvethernet(O) nvpps(O) quota_v2 quota_tree fuse drm ip_tables x_tables ipv6 pwm_fan pwm_tegra tegra_bpmp_thermal tegra_xudc ucsi_ccg typec_ucsi typec nvme nvme_core phy_tegra194_p2u pcie_tegra194
+Nov 12 16:42:16 vision kernel: usbcore: registered new interface driver ch341
+Nov 12 16:42:16 vision kernel: usbserial: USB Serial support registered for ch341-uart
+Nov 12 16:42:16 vision kernel: ch341 5-1.4:1.0: ch341-uart converter detected
+Nov 12 16:42:16 vision kernel: usb 5-1.4: ch341-uart converter now attached to ttyUSB5

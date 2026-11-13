@@ -1,0 +1,199 @@
+"""Run as root on Orin: exclude the two adapters from BRLTTY and restore tty."""
+import datetime
+import fcntl
+import json
+from pathlib import Path
+import shutil
+import subprocess
+import time
+import sys
+
+CH340_PATH = "platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.1"
+
+
+def run(*args, check=True):
+    result = subprocess.run(args, text=True, capture_output=True, check=False)
+    print(json.dumps({"command": list(args), "code": result.returncode,
+                      "stdout": result.stdout, "stderr": result.stderr}), flush=True)
+    if check and result.returncode:
+        raise RuntimeError("Command failed: "+args[0])
+    return result
+
+
+def discover_devices():
+    devices = []
+    for vendor, product, driver, serial in (
+        ("0403", "6001", "ftdi_sio", "BG011JUB"),
+        ("1a86", "7523", "ch341", None),
+    ):
+        matches = []
+        for path in Path("/sys/bus/usb/devices").iterdir():
+            if not (path/"idVendor").exists():
+                continue
+            if ((path/"idVendor").read_text().strip() != vendor
+                    or (path/"idProduct").read_text().strip() != product):
+                continue
+            if serial:
+                if not (path/"serial").exists() or (path/"serial").read_text().strip() != serial:
+                    continue
+            else:
+                properties = run("udevadm", "info", "-q", "property", "-p", str(path)).stdout
+                props = dict(line.split("=", 1) for line in properties.splitlines() if "=" in line)
+                if props.get("ID_PATH") != CH340_PATH:
+                    continue
+            matches.append(path.name)
+        if len(matches) != 1:
+            raise RuntimeError("Expected one identified adapter: "+repr((vendor, matches)))
+        devices.append((matches[0], vendor, product, driver, serial))
+    return devices
+
+
+def rebind_controller():
+    controller = Path("/sys/bus/pci/devices/0000:01:00.0")
+    if ((controller/"vendor").read_text().strip() != "0x1912"
+            or (controller/"device").read_text().strip() != "0x0015"):
+        raise RuntimeError("Unexpected PCI controller identity")
+    driver = controller.joinpath("driver").resolve(strict=True)
+    if driver != Path("/sys/bus/pci/drivers/xhci_hcd"):
+        raise RuntimeError("Unexpected PCI driver")
+    if run("systemctl", "is-active", "brltty-udev.service", check=False).stdout.strip() != "inactive":
+        raise RuntimeError("BRLTTY must be inactive before controller recovery")
+    expected = {("1d6b", "0002"), ("1d6b", "0003"), ("05e3", "0610"),
+                ("05e3", "0626"), ("0403", "6001"), ("1a86", "7523")}
+    found = []
+    for path in Path("/sys/bus/usb/devices").iterdir():
+        if controller.resolve() not in path.resolve().parents or not (path/"idVendor").exists():
+            continue
+        identity = ((path/"idVendor").read_text().strip(),
+                    (path/"idProduct").read_text().strip())
+        if identity not in expected:
+            raise RuntimeError("Unrelated USB device on controller: "+str(path))
+        found.append(identity)
+        node = "/dev/bus/usb/%03d/%03d" % (
+            int((path/"busnum").read_text()), int((path/"devnum").read_text()))
+        if run("fuser", node, check=False).returncode != 1:
+            raise RuntimeError("USB device may be occupied: "+node)
+    if len(found) != 6 or set(found) != expected:
+        raise RuntimeError("Unexpected controller topology: "+repr(found))
+    for alias in ("/dev/luna-gripper-ftdi", "/dev/luna-gripper-ch340"):
+        path = Path(alias)
+        if path.exists() and run("fuser", str(path.resolve()), check=False).returncode != 1:
+            raise RuntimeError("Serial port may be occupied")
+    print(json.dumps({"event": "controller_rebind_start", "pci": controller.name,
+                      "usb_identities": found, "serial_data_sent": False}), flush=True)
+    try:
+        (driver/"unbind").write_text(controller.name)
+        time.sleep(.5)
+    finally:
+        if not (controller/"driver").exists():
+            (driver/"bind").write_text(controller.name)
+    run("udevadm", "settle", "--timeout=20")
+    deadline = time.monotonic()+15
+    while time.monotonic() < deadline:
+        if all(Path(p).exists() for p in ("/dev/luna-gripper-ftdi", "/dev/luna-gripper-ch340")):
+            print(json.dumps({"event": "controller_rebind_complete",
+                              "serial_data_sent": False}), flush=True)
+            return
+        time.sleep(.5)
+    raise RuntimeError("Controller rebound but serial aliases did not both return")
+
+
+def main():
+    devices = discover_devices()
+    if sys.argv[1:] == ["--rebind-controller"]:
+        rebind_controller()
+        return
+    if sys.argv[1:] == ["--reconnect-usb"]:
+        service = run("systemctl", "is-active", "brltty-udev.service", check=False)
+        if service.stdout.strip() != "inactive":
+            raise RuntimeError("Repair BRLTTY rules before reconnecting adapters")
+        for alias in ("/dev/luna-gripper-ftdi", "/dev/luna-gripper-ch340"):
+            path = Path(alias).resolve(strict=True)
+            if run("fuser", str(path), check=False).returncode != 1:
+                raise RuntimeError("Serial port may be occupied: "+str(path))
+        for name, _, _, _, _ in devices:
+            authorized = Path("/sys/bus/usb/devices")/name/"authorized"
+            try:
+                authorized.write_text("0")
+                time.sleep(.5)
+            finally:
+                authorized.write_text("1")
+            run("udevadm", "settle", "--timeout=10")
+            print(json.dumps({"event": "usb_reauthorized", "device": name,
+                              "serial_data_sent": False}), flush=True)
+        return
+    if sys.argv[1:] == ["--reset-ch340"]:
+        path = Path("/sys/bus/usb/devices")/devices[1][0]
+        bus = int((path/"busnum").read_text())
+        device = int((path/"devnum").read_text())
+        with open("/dev/bus/usb/%03d/%03d" % (bus, device), "wb", buffering=0) as usb:
+            # Linux USBDEVFS_RESET: reset only this adapter, not its parent hub.
+            fcntl.ioctl(usb.fileno(), 0x5514, 0)
+        run("udevadm", "settle", "--timeout=10")
+        print(json.dumps({"event": "ch340_usb_reset", "serial_data_sent": False}), flush=True)
+        return
+    source = Path("/usr/lib/udev/rules.d/85-brltty.rules")
+    override = Path("/etc/udev/rules.d/85-brltty.rules")
+    aliases = Path("/etc/udev/rules.d/99-luna-grippers.rules")
+    marker = "# Luna gripper adapters: exclude only these two physical devices."
+    if override.exists() and marker not in override.read_text():
+        raise RuntimeError("Existing administrator BRLTTY override requires review")
+    backup = Path("/var/backups")/(
+        "luna-gripper-usb-"+datetime.datetime.now().strftime("%Y%m%d-%H%M%S"))
+    backup.mkdir()
+    for path in (source, override, aliases):
+        if path.exists():
+            shutil.copy2(path, backup/(path.parent.name+"-"+path.name))
+    (backup/"service-before.txt").write_text(
+        run("systemctl", "status", "brltty-udev.service", check=False).stdout)
+    old = source.read_text()
+    if 'LABEL="brltty_device_end"' not in old:
+        raise RuntimeError("Unexpected vendor BRLTTY rule layout")
+    exclusions = marker+'\nSUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", IMPORT{builtin}="path_id"\n'
+    for name, vendor, product, _, serial in devices:
+        identity = (f'ATTR{{serial}}=="{serial}"' if serial
+                    else f'ENV{{ID_PATH}}=="{CH340_PATH}"')
+        exclusions += (
+            f'SUBSYSTEM=="usb", ATTR{{idVendor}}=="{vendor}", '
+            f'ATTR{{idProduct}}=="{product}", {identity}, '
+            'ENV{BRLTTY_BRAILLE_DRIVER}="", ENV{BRLTTY_BRAILLE_DEVICE}="", '
+            'ENV{BRLTTY_PID_FILE}="", ENV{SYSTEMD_WANTS}="", '
+            'GOTO="brltty_device_end"\n'
+        )
+    override.write_text(exclusions+old)
+    aliases.write_text(
+        '# Luna USB-RS485 aliases; physical left/right is not yet assigned.\n'
+        'SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", '
+        'ATTRS{serial}=="BG011JUB", SYMLINK+="luna-gripper-ftdi", '
+        'GROUP="dialout", MODE="0660", ENV{ID_MM_DEVICE_IGNORE}="1"\n'
+        'SUBSYSTEM=="tty", IMPORT{builtin}="path_id"\n'
+        f'SUBSYSTEM=="tty", ENV{{ID_PATH}}=="{CH340_PATH}:1.0", ATTRS{{idVendor}}=="1a86", '
+        'ATTRS{idProduct}=="7523", SYMLINK+="luna-gripper-ch340", '
+        'GROUP="dialout", MODE="0660", ENV{ID_MM_DEVICE_IGNORE}="1"\n'
+    )
+    run("udevadm", "control", "--reload-rules")
+    run("systemctl", "stop", "brltty-udev.service")
+    time.sleep(.3)
+    for name, _, _, driver, _ in devices:
+        run("udevadm", "trigger", "--action=change", "/sys/bus/usb/devices/"+name)
+        interface = Path("/sys/bus/usb/devices")/(name+":1.0")
+        link = interface/"driver"
+        if link.exists() and link.resolve().name != driver:
+            raise RuntimeError("USB interface still owned by "+str(link.resolve()))
+        if not link.exists():
+            Path("/sys/bus/usb/drivers/"+driver+"/bind").write_text(name+":1.0")
+    run("udevadm", "settle", "--timeout=10")
+    run("udevadm", "trigger", "--action=change", "--subsystem-match=tty")
+    run("udevadm", "settle", "--timeout=10")
+    for alias in ("/dev/luna-gripper-ftdi", "/dev/luna-gripper-ch340"):
+        path = Path(alias)
+        if not path.exists():
+            raise RuntimeError("Missing restored serial alias "+alias)
+        print(json.dumps({"alias": alias, "device": str(path.resolve())}), flush=True)
+    run("systemctl", "is-active", "brltty-udev.service", check=False)
+    print(json.dumps({"event": "repair_complete", "backup": str(backup),
+                      "serial_data_sent": False}), flush=True)
+
+
+if __name__ == "__main__":
+    main()

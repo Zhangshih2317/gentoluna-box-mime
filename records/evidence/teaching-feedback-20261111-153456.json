@@ -1,0 +1,10 @@
+{
+  "collected_at_local": "2026-11-11T15:34:57.122289+08:00",
+  "motion_commands_sent": 0,
+  "record_requested": null,
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"<stdin>\", line 11, in <module>\nRuntimeError: SDK link unavailable; disconnect teaching client first\n",
+  "exit_code": 1,
+  "events": [],
+  "error": "Read failed; inspect saved evidence"
+}

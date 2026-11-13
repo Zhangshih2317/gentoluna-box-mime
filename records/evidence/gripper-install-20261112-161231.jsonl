@@ -1,0 +1,9 @@
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0xffffb8b72d10>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /pypi/simple/minimalmodbus/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0xffffb8b737f0>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /pypi/simple/minimalmodbus/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0xffffb8b728f0>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /pypi/simple/minimalmodbus/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0xffffb8a022f0>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /pypi/simple/minimalmodbus/
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NewConnectionError('<pip._vendor.urllib3.connection.HTTPSConnection object at 0xffffb8b72920>: Failed to establish a new connection: [Errno -3] Temporary failure in name resolution')': /pypi/simple/minimalmodbus/
+ERROR: Could not find a version that satisfies the requirement minimalmodbus==2.1.1 (from versions: none)
+ERROR: No matching distribution found for minimalmodbus==2.1.1
+{"remote_exit_code": 1}

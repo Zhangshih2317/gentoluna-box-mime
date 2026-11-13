@@ -1,0 +1,28 @@
+2026-11-12T16:32:31+08:00
+5-1
+auto
+active
+0
+5-1.1
+on
+active
+2000
+5-1.4
+on
+active
+2000
+Nov 12 16:30:16 vision kernel: usb 5-1.4: USB disconnect, device number 4
+Nov 12 16:30:17 vision kernel: usb 5-1.4: new full-speed USB device number 5 using xhci_hcd
+Nov 12 16:30:17 vision kernel: ftdi_sio ttyUSB4: ftdi_set_termios FAILED to set databits/stopbits/parity
+Nov 12 16:30:18 vision kernel: ftdi_sio ttyUSB4: ftdi_set_termios urb failed to set baudrate
+Nov 12 16:30:23 vision kernel: ftdi_sio ttyUSB4: failed to set flow control: -110
+Nov 12 16:30:24 vision kernel: ch341 5-1.4:1.0: ch341-uart converter detected
+Nov 12 16:30:24 vision kernel: usb 5-1.4: ch341-uart converter now attached to ttyUSB5
+Nov 12 16:31:03 vision kernel: ftdi_sio ttyUSB4: ftdi_set_termios FAILED to set databits/stopbits/parity
+Nov 12 16:31:04 vision kernel: ftdi_sio ttyUSB4: ftdi_set_termios urb failed to set baudrate
+Nov 12 16:31:10 vision kernel: ftdi_sio ttyUSB4: failed to set flow control: -110
+Nov 12 16:31:14 vision kernel: usb 5-1.4: failed to send control message: -110
+Nov 12 16:31:15 vision kernel: usb 5-1.4: failed to send control message: -110
+Nov 12 16:31:16 vision kernel: usb 5-1.4: failed to receive control message: -110
+Nov 12 16:31:16 vision kernel: ch341-uart ttyUSB5: failed to read modem status: -110
+Nov 12 16:32:07 vision kernel: usb 4-2: Failed to query (GET_CUR) UVC control 1 on unit 3: -32 (exp. 1024).

@@ -1,0 +1,84 @@
+{
+  "name": "WAIST_TAUGHT_01",
+  "source": "manual_transcription_of_FXPlatform_realtime_data",
+  "captured_at_local": "2026-11-11T15:38:05+08:00",
+  "joint_units": "deg",
+  "user_reported_waist_turn_magnitude_deg": 45,
+  "baseline": "points/WAIST_TEACHING_BASELINE-20261111-153141.json",
+  "pose": {
+    "arm0": [
+      90,
+      -90,
+      -90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -45.651
+    ],
+    "head": [
+      2.108,
+      -15.998,
+      0
+    ]
+  },
+  "body_delta_from_baseline_deg": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    -43.998
+  ],
+  "identified_waist_axis": "B6",
+  "observed_direction": "negative_joint_direction",
+  "physical_left_right_direction": null,
+  "observed_relative_turn_deg": -43.998,
+  "body_repeated_ui_readings_match": true,
+  "body_speed_display_percent": 5,
+  "body_acceleration_display_percent": 5,
+  "modes_displayed": {
+    "arm0": "Position",
+    "arm1": "Position",
+    "body": "Position",
+    "head": "IDLE"
+  },
+  "system_errors_displayed": {
+    "arm0": 0,
+    "arm1": 0,
+    "body": 0,
+    "head": 0
+  },
+  "evidence": [
+    "evidence/waist-ui-20261111-153533.png",
+    "evidence/waist-ui-20261111-153805.png"
+  ],
+  "sdk_read_attempt": "evidence/teaching-feedback-20261111-153456.json",
+  "sdk_read_succeeded": false,
+  "sdk_fresh_frame_validation": false,
+  "trajectory_verified": false,
+  "motion_commands_sent_during_capture": 0,
+  "notes": [
+    "Arm readings come from the first screenshot; head comes from the second.",
+    "BODY realtime readings match in both screenshots at displayed precision.",
+    "The teaching application retained control; no motion or correction was commanded.",
+    "The user describes a 45-degree turn; recorded relative encoder change is -43.998 degrees.",
+    "This is an observed endpoint, not a validated executable trajectory."
+  ]
+}

@@ -1,0 +1,69 @@
+"""Explicit five-cycle test for the identified Windows FTDI gripper."""
+import argparse
+from datetime import datetime
+import signal
+import sys
+
+from check_gripper_windows import ROOT, vendor
+from serial.tools import list_ports
+
+sys.modules["vendor_gripper_sdk"] = vendor
+import check_gripper_sdk as core
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--execute", action="store_true", required=True)
+    parser.add_argument("--ignore-drop-alarm", action="store_true")
+    parser.add_argument("--speed", type=int, choices=range(1, 51), default=50)
+    args = parser.parse_args()
+    path = ROOT/"evidence"/("gripper-windows-execute-"+
+                           datetime.now().strftime("%Y%m%d-%H%M%S")+".jsonl")
+    print("Evidence: "+str(path), flush=True)
+    with path.open("w", encoding="utf-8") as log:
+        original_emit = core.emit
+
+        def emit(event, **data):
+            import json
+            from datetime import timezone
+            line = json.dumps({"event": event, "time": datetime.now(timezone.utc).isoformat(),
+                               **data})
+            log.write(line+"\n")
+            log.flush()
+            print(line, flush=True)
+
+        def interrupted(signum, frame):
+            raise KeyboardInterrupt("Signal %s" % signum)
+
+        core.emit = emit
+        handlers = {sig: signal.signal(sig, interrupted)
+                    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGBREAK)}
+        motor = None
+        try:
+            ports = [p for p in list_ports.comports()
+                     if p.vid == 0x0403 and p.pid == 0x6001
+                     and p.serial_number in ("BG011JUB", "BG011JUBA")]
+            if len(ports) != 1:
+                raise RuntimeError("Expected exactly one identified FTDI gripper")
+            port = ports[0]
+            emit("device_identity", port=port.device, hwid=port.hwid)
+            motor = vendor.MotorController(port.device, slave_id=1, baudrate=115200, timeout=.5)
+            motor.instrument.serial.write_timeout = .5
+            # Windows serial opens are exclusive; preflight verifies stationary feedback.
+            core.run_cycles([(port.device, motor)], allow_nonzero_start=True,
+                            speed=args.speed, ignore_drop_alarm=args.ignore_drop_alarm)
+            return 0
+        except BaseException as exc:
+            emit("execution_failed", error=type(exc).__name__+": "+str(exc))
+            return 1
+        finally:
+            if motor is not None:
+                motor.instrument.serial.close()
+                emit("serial_closed")
+            core.emit = original_emit
+            for sig, handler in handlers.items():
+                signal.signal(sig, handler)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

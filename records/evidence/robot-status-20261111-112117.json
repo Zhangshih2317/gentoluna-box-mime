@@ -1,0 +1,952 @@
+{
+  "collected_at": "2026-11-11T11:21:17.518277+08:00",
+  "motion_commands_sent": 0,
+  "inspect_only": false,
+  "success": true,
+  "stdout": "{\"kind\": \"before\", \"data\": {\"success\": true, \"connected\": true, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"\"}}\n{\"kind\": \"connect\", \"data\": {\"success\": true, \"connected\": true, \"expires_in\": 29.999993951998476, \"owner_client_id\": \"readonly-status-1794368071\", \"message\": \"已取得唯一硬件控制租约并连接 SDK\"}}\n{\"kind\": \"sample\", \"data\": {\"index\": 0, \"component\": \"arm0\", \"response\": {\"success\": true, \"message\": \"状态读取成功\", \"status\": {\"arm\": \"ARM0\", \"state\": \"IDLE\", \"state_code\": 0, \"error\": 0, \"raw_state\": \"IDLE\", \"raw_state_code\": 0, \"joints_deg\": [57.71, -61.271, -55.492, -114.509, -4.068, 2.437, -0.985], \"velocities_deg_s\": [0.013, 0.005, -0.023, 0.006, -0.021, -0.03, -0.048], \"joint_sensor_torque\": [-8.268, 1.817, -2.628, -3.218, -0.075, -0.416, 0.128], \"joint_external_torque_estimate\": [-0.487, 0.069, 0.067, -0.525, -0.048, -0.3, 0.054], \"joint_torque_command\": [0.0, 0.0, 0.0, 3.0, 0.0, 0.0, 0.0], \"base_force_estimate\": [-3.008, -80.298, -1.523, 2.123, 0.068, -7.802], \"flange_force_sensor\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"torque_unit\": \"SDK_RAW_UNVERIFIED\", \"torque_calibrated\": false, \"feedback_unit_note\": \"力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改\", \"velocity_ratio\": 5.0, \"acceleration_ratio\": 5.0, \"trajectory_state\": 0, \"tool_kinematics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"tool_dynamics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"joint_limits_deg\": [[-173.0, 173.0], [-118.0, 118.0], [-173.0, 173.0], [-145.0, 45.0], [-173.0, 173.0], [-60.0, 60.0], [-90.0, 90.0]], \"tcp_xyzabc\": [355.7742210812459, 30.75250567739848, 51.68924080880044, -132.0896401949965, 11.944561555457252, -138.22729615917612], \"tcp_error\": \"\"}}}}\n{\"kind\": \"sample\", \"data\": {\"index\": 0, \"component\": \"arm1\", \"response\": {\"success\": true, \"message\": \"状态读取成功\", \"status\": {\"arm\": \"ARM1\", \"state\": \"Position\", \"state_code\": 1, \"error\": 0, \"raw_state\": \"Position\", \"raw_state_code\": 1, \"joints_deg\": [-59.49, -60.847, 60.365, -113.859, 23.839, 35.713, -61.368], \"velocities_deg_s\": [0.019, 0.023, -0.003, -0.031, 0.008, -0.036, -0.028], \"joint_sensor_torque\": [8.9, 2.934, 3.137, -3.079, -0.16, -0.03, 0.266], \"joint_external_torque_estimate\": [1.205, 0.485, 0.387, -0.363, -0.027, 0.045, 0.297], \"joint_torque_command\": [162.0, 59.0, 83.0, -85.0, -13.0, 0.0, -42.0], \"base_force_estimate\": [-3.086, 80.296, 1.552, -2.7, -0.252, 7.668], \"flange_force_sensor\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"torque_unit\": \"SDK_RAW_UNVERIFIED\", \"torque_calibrated\": false, \"feedback_unit_note\": \"力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改\", \"velocity_ratio\": 20.0, \"acceleration_ratio\": 20.0, \"trajectory_state\": 0, \"tool_kinematics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"tool_dynamics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"joint_limits_deg\": [[-173.0, 173.0], [-118.0, 118.0], [-173.0, 173.0], [-145.0, 45.0], [-173.0, 173.0], [-60.0, 60.0], [-90.0, 90.0]], \"tcp_xyzabc\": [383.1740262187031, -45.36449922748194, 167.92996980845288, 61.28688560314985, 17.313192249361375, 98.0212792341171], \"tcp_error\": \"\"}}}}\n{\"kind\": \"sample\", \"data\": {\"index\": 0, \"component\": \"body\", \"response\": {\"success\": true, \"message\": \"状态读取成功\", \"status\": {\"object\": \"BODY\", \"dof\": 6, \"axis_names\": [\"B1\", \"B2\", \"B3\", \"B4\", \"B5\", \"B6\"], \"state\": \"IDLE\", \"state_code\": 0, \"error\": 0, \"positions_deg\": [-0.744, 9.281, -17.364, 5.456, -0.296, -1.653], \"velocities_deg_s\": [0.002, 0.025, -0.012, -0.028, 0.006, 0.042], \"sensor_torques\": [4.605, 16.99, 43.635, 23.19, 0.645, -0.327], \"joint_limits_deg\": [[-30.0, 30.0], [-90.0, 90.0], [-140.0, 60.0], [-110.0, 55.0], [-30.0, 30.0], [-170.0, 170.0]], \"velocity_ratio\": 10.0, \"acceleration_ratio\": 10.0}}}}\n{\"kind\": \"sample\", \"data\": {\"index\": 1, \"component\": \"arm0\", \"response\": {\"success\": true, \"message\": \"状态读取成功\", \"status\": {\"arm\": \"ARM0\", \"state\": \"IDLE\", \"state_code\": 0, \"error\": 0, \"raw_state\": \"IDLE\", \"raw_state_code\": 0, \"joints_deg\": [57.71, -61.271, -55.492, -114.509, -4.068, 2.437, -0.986], \"velocities_deg_s\": [-0.03, 0.003, -0.015, 0.002, 0.045, -0.016, -0.068], \"joint_sensor_torque\": [-8.28, 1.797, -2.64, -3.218, -0.079, -0.393, 0.137], \"joint_external_torque_estimate\": [-0.491, 0.062, 0.055, -0.514, -0.049, -0.294, 0.078], \"joint_torque_command\": [1.0, 0.0, -2.0, -1.0, 0.0, 0.0, 0.0], \"base_force_estimate\": [-3.048, -80.241, -1.488, 2.124, 0.064, -7.793], \"flange_force_sensor\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"torque_unit\": \"SDK_RAW_UNVERIFIED\", \"torque_calibrated\": false, \"feedback_unit_note\": \"力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改\", \"velocity_ratio\": 5.0, \"acceleration_ratio\": 5.0, \"trajectory_state\": 0, \"tool_kinematics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"tool_dynamics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"joint_limits_deg\": [[-173.0, 173.0], [-118.0, 118.0], [-173.0, 173.0], [-145.0, 45.0], [-173.0, 173.0], [-60.0, 60.0], [-90.0, 90.0]], \"tcp_xyzabc\": [355.77371696997534, 30.753420111308955, 51.688138387964045, -132.09064007594927, 11.944561555457252, -138.22729615917612], \"tcp_error\": \"\"}}}}\n{\"kind\": \"sample\", \"data\": {\"index\": 1, \"component\": \"arm1\", \"response\": {\"success\": true, \"message\": \"状态读取成功\", \"status\": {\"arm\": \"ARM1\", \"state\": \"Position\", \"state_code\": 1, \"error\": 0, \"raw_state\": \"Position\", \"raw_state_code\": 1, \"joints_deg\": [-59.49, -60.847, 60.365, -113.859, 23.839, 35.713, -61.368], \"velocities_deg_s\": [0.013, 0.038, -0.026, -0.002, 0.066, -0.028, -0.023], \"joint_sensor_torque\": [8.887, 2.931, 3.134, -3.075, -0.154, -0.033, 0.267], \"joint_external_torque_estimate\": [1.24, 0.491, 0.394, -0.403, -0.067, 0.01, 0.309], \"joint_torque_command\": [163.0, 59.0, 83.0, -82.0, -14.0, -1.0, -40.0], \"base_force_estimate\": [-3.063, 80.272, 1.512, -2.696, -0.247, 7.668], \"flange_force_sensor\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"torque_unit\": \"SDK_RAW_UNVERIFIED\", \"torque_calibrated\": false, \"feedback_unit_note\": \"力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改\", \"velocity_ratio\": 20.0, \"acceleration_ratio\": 20.0, \"trajectory_state\": 0, \"tool_kinematics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"tool_dynamics\": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], \"joint_limits_deg\": [[-173.0, 173.0], [-118.0, 118.0], [-173.0, 173.0], [-145.0, 45.0], [-173.0, 173.0], [-60.0, 60.0], [-90.0, 90.0]], \"tcp_xyzabc\": [383.1740262187031, -45.36449922748194, 167.92996980845288, 61.28688560314985, 17.313192249361375, 98.0212792341171], \"tcp_error\": \"\"}}}}\n{\"kind\": \"sample\", \"data\": {\"index\": 1, \"component\": \"body\", \"response\": {\"success\": true, \"message\": \"状态读取成功\", \"status\": {\"object\": \"BODY\", \"dof\": 6, \"axis_names\": [\"B1\", \"B2\", \"B3\", \"B4\", \"B5\", \"B6\"], \"state\": \"IDLE\", \"state_code\": 0, \"error\": 0, \"positions_deg\": [-0.744, 9.281, -17.364, 5.456, -0.296, -1.653], \"velocities_deg_s\": [-0.002, -0.005, 0.017, -0.0, 0.034, -0.086], \"sensor_torques\": [4.46, 17.19, 43.83, 23.26, 0.642, -0.288], \"joint_limits_deg\": [[-30.0, 30.0], [-90.0, 90.0], [-140.0, 60.0], [-110.0, 55.0], [-30.0, 30.0], [-170.0, 170.0]], \"velocity_ratio\": 10.0, \"acceleration_ratio\": 10.0}}}}\n{\"kind\": \"handoff\", \"data\": {\"success\": true, \"connected\": true, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"控制租约已交接，统一网关SDK连接保持\"}}\n",
+  "stderr": "",
+  "remote_exit_code": 0,
+  "events": [
+    {
+      "kind": "before",
+      "data": {
+        "success": true,
+        "connected": true,
+        "expires_in": 0.0,
+        "owner_client_id": "",
+        "message": ""
+      }
+    },
+    {
+      "kind": "connect",
+      "data": {
+        "success": true,
+        "connected": true,
+        "expires_in": 29.999993951998476,
+        "owner_client_id": "readonly-status-1794368071",
+        "message": "已取得唯一硬件控制租约并连接 SDK"
+      }
+    },
+    {
+      "kind": "sample",
+      "data": {
+        "index": 0,
+        "component": "arm0",
+        "response": {
+          "success": true,
+          "message": "状态读取成功",
+          "status": {
+            "arm": "ARM0",
+            "state": "IDLE",
+            "state_code": 0,
+            "error": 0,
+            "raw_state": "IDLE",
+            "raw_state_code": 0,
+            "joints_deg": [
+              57.71,
+              -61.271,
+              -55.492,
+              -114.509,
+              -4.068,
+              2.437,
+              -0.985
+            ],
+            "velocities_deg_s": [
+              0.013,
+              0.005,
+              -0.023,
+              0.006,
+              -0.021,
+              -0.03,
+              -0.048
+            ],
+            "joint_sensor_torque": [
+              -8.268,
+              1.817,
+              -2.628,
+              -3.218,
+              -0.075,
+              -0.416,
+              0.128
+            ],
+            "joint_external_torque_estimate": [
+              -0.487,
+              0.069,
+              0.067,
+              -0.525,
+              -0.048,
+              -0.3,
+              0.054
+            ],
+            "joint_torque_command": [
+              0.0,
+              0.0,
+              0.0,
+              3.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "base_force_estimate": [
+              -3.008,
+              -80.298,
+              -1.523,
+              2.123,
+              0.068,
+              -7.802
+            ],
+            "flange_force_sensor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "torque_unit": "SDK_RAW_UNVERIFIED",
+            "torque_calibrated": false,
+            "feedback_unit_note": "力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改",
+            "velocity_ratio": 5.0,
+            "acceleration_ratio": 5.0,
+            "trajectory_state": 0,
+            "tool_kinematics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "tool_dynamics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "joint_limits_deg": [
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -118.0,
+                118.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -145.0,
+                45.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -60.0,
+                60.0
+              ],
+              [
+                -90.0,
+                90.0
+              ]
+            ],
+            "tcp_xyzabc": [
+              355.7742210812459,
+              30.75250567739848,
+              51.68924080880044,
+              -132.0896401949965,
+              11.944561555457252,
+              -138.22729615917612
+            ],
+            "tcp_error": ""
+          }
+        }
+      }
+    },
+    {
+      "kind": "sample",
+      "data": {
+        "index": 0,
+        "component": "arm1",
+        "response": {
+          "success": true,
+          "message": "状态读取成功",
+          "status": {
+            "arm": "ARM1",
+            "state": "Position",
+            "state_code": 1,
+            "error": 0,
+            "raw_state": "Position",
+            "raw_state_code": 1,
+            "joints_deg": [
+              -59.49,
+              -60.847,
+              60.365,
+              -113.859,
+              23.839,
+              35.713,
+              -61.368
+            ],
+            "velocities_deg_s": [
+              0.019,
+              0.023,
+              -0.003,
+              -0.031,
+              0.008,
+              -0.036,
+              -0.028
+            ],
+            "joint_sensor_torque": [
+              8.9,
+              2.934,
+              3.137,
+              -3.079,
+              -0.16,
+              -0.03,
+              0.266
+            ],
+            "joint_external_torque_estimate": [
+              1.205,
+              0.485,
+              0.387,
+              -0.363,
+              -0.027,
+              0.045,
+              0.297
+            ],
+            "joint_torque_command": [
+              162.0,
+              59.0,
+              83.0,
+              -85.0,
+              -13.0,
+              0.0,
+              -42.0
+            ],
+            "base_force_estimate": [
+              -3.086,
+              80.296,
+              1.552,
+              -2.7,
+              -0.252,
+              7.668
+            ],
+            "flange_force_sensor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "torque_unit": "SDK_RAW_UNVERIFIED",
+            "torque_calibrated": false,
+            "feedback_unit_note": "力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改",
+            "velocity_ratio": 20.0,
+            "acceleration_ratio": 20.0,
+            "trajectory_state": 0,
+            "tool_kinematics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "tool_dynamics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "joint_limits_deg": [
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -118.0,
+                118.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -145.0,
+                45.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -60.0,
+                60.0
+              ],
+              [
+                -90.0,
+                90.0
+              ]
+            ],
+            "tcp_xyzabc": [
+              383.1740262187031,
+              -45.36449922748194,
+              167.92996980845288,
+              61.28688560314985,
+              17.313192249361375,
+              98.0212792341171
+            ],
+            "tcp_error": ""
+          }
+        }
+      }
+    },
+    {
+      "kind": "sample",
+      "data": {
+        "index": 0,
+        "component": "body",
+        "response": {
+          "success": true,
+          "message": "状态读取成功",
+          "status": {
+            "object": "BODY",
+            "dof": 6,
+            "axis_names": [
+              "B1",
+              "B2",
+              "B3",
+              "B4",
+              "B5",
+              "B6"
+            ],
+            "state": "IDLE",
+            "state_code": 0,
+            "error": 0,
+            "positions_deg": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "velocities_deg_s": [
+              0.002,
+              0.025,
+              -0.012,
+              -0.028,
+              0.006,
+              0.042
+            ],
+            "sensor_torques": [
+              4.605,
+              16.99,
+              43.635,
+              23.19,
+              0.645,
+              -0.327
+            ],
+            "joint_limits_deg": [
+              [
+                -30.0,
+                30.0
+              ],
+              [
+                -90.0,
+                90.0
+              ],
+              [
+                -140.0,
+                60.0
+              ],
+              [
+                -110.0,
+                55.0
+              ],
+              [
+                -30.0,
+                30.0
+              ],
+              [
+                -170.0,
+                170.0
+              ]
+            ],
+            "velocity_ratio": 10.0,
+            "acceleration_ratio": 10.0
+          }
+        }
+      }
+    },
+    {
+      "kind": "sample",
+      "data": {
+        "index": 1,
+        "component": "arm0",
+        "response": {
+          "success": true,
+          "message": "状态读取成功",
+          "status": {
+            "arm": "ARM0",
+            "state": "IDLE",
+            "state_code": 0,
+            "error": 0,
+            "raw_state": "IDLE",
+            "raw_state_code": 0,
+            "joints_deg": [
+              57.71,
+              -61.271,
+              -55.492,
+              -114.509,
+              -4.068,
+              2.437,
+              -0.986
+            ],
+            "velocities_deg_s": [
+              -0.03,
+              0.003,
+              -0.015,
+              0.002,
+              0.045,
+              -0.016,
+              -0.068
+            ],
+            "joint_sensor_torque": [
+              -8.28,
+              1.797,
+              -2.64,
+              -3.218,
+              -0.079,
+              -0.393,
+              0.137
+            ],
+            "joint_external_torque_estimate": [
+              -0.491,
+              0.062,
+              0.055,
+              -0.514,
+              -0.049,
+              -0.294,
+              0.078
+            ],
+            "joint_torque_command": [
+              1.0,
+              0.0,
+              -2.0,
+              -1.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "base_force_estimate": [
+              -3.048,
+              -80.241,
+              -1.488,
+              2.124,
+              0.064,
+              -7.793
+            ],
+            "flange_force_sensor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "torque_unit": "SDK_RAW_UNVERIFIED",
+            "torque_calibrated": false,
+            "feedback_unit_note": "力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改",
+            "velocity_ratio": 5.0,
+            "acceleration_ratio": 5.0,
+            "trajectory_state": 0,
+            "tool_kinematics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "tool_dynamics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "joint_limits_deg": [
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -118.0,
+                118.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -145.0,
+                45.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -60.0,
+                60.0
+              ],
+              [
+                -90.0,
+                90.0
+              ]
+            ],
+            "tcp_xyzabc": [
+              355.77371696997534,
+              30.753420111308955,
+              51.688138387964045,
+              -132.09064007594927,
+              11.944561555457252,
+              -138.22729615917612
+            ],
+            "tcp_error": ""
+          }
+        }
+      }
+    },
+    {
+      "kind": "sample",
+      "data": {
+        "index": 1,
+        "component": "arm1",
+        "response": {
+          "success": true,
+          "message": "状态读取成功",
+          "status": {
+            "arm": "ARM1",
+            "state": "Position",
+            "state_code": 1,
+            "error": 0,
+            "raw_state": "Position",
+            "raw_state_code": 1,
+            "joints_deg": [
+              -59.49,
+              -60.847,
+              60.365,
+              -113.859,
+              23.839,
+              35.713,
+              -61.368
+            ],
+            "velocities_deg_s": [
+              0.013,
+              0.038,
+              -0.026,
+              -0.002,
+              0.066,
+              -0.028,
+              -0.023
+            ],
+            "joint_sensor_torque": [
+              8.887,
+              2.931,
+              3.134,
+              -3.075,
+              -0.154,
+              -0.033,
+              0.267
+            ],
+            "joint_external_torque_estimate": [
+              1.24,
+              0.491,
+              0.394,
+              -0.403,
+              -0.067,
+              0.01,
+              0.309
+            ],
+            "joint_torque_command": [
+              163.0,
+              59.0,
+              83.0,
+              -82.0,
+              -14.0,
+              -1.0,
+              -40.0
+            ],
+            "base_force_estimate": [
+              -3.063,
+              80.272,
+              1.512,
+              -2.696,
+              -0.247,
+              7.668
+            ],
+            "flange_force_sensor": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "torque_unit": "SDK_RAW_UNVERIFIED",
+            "torque_calibrated": false,
+            "feedback_unit_note": "力矩和六维力字段为SDK原始值，禁止标注为N·m；完成独立标定后才可更改",
+            "velocity_ratio": 20.0,
+            "acceleration_ratio": 20.0,
+            "trajectory_state": 0,
+            "tool_kinematics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "tool_dynamics": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "joint_limits_deg": [
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -118.0,
+                118.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -145.0,
+                45.0
+              ],
+              [
+                -173.0,
+                173.0
+              ],
+              [
+                -60.0,
+                60.0
+              ],
+              [
+                -90.0,
+                90.0
+              ]
+            ],
+            "tcp_xyzabc": [
+              383.1740262187031,
+              -45.36449922748194,
+              167.92996980845288,
+              61.28688560314985,
+              17.313192249361375,
+              98.0212792341171
+            ],
+            "tcp_error": ""
+          }
+        }
+      }
+    },
+    {
+      "kind": "sample",
+      "data": {
+        "index": 1,
+        "component": "body",
+        "response": {
+          "success": true,
+          "message": "状态读取成功",
+          "status": {
+            "object": "BODY",
+            "dof": 6,
+            "axis_names": [
+              "B1",
+              "B2",
+              "B3",
+              "B4",
+              "B5",
+              "B6"
+            ],
+            "state": "IDLE",
+            "state_code": 0,
+            "error": 0,
+            "positions_deg": [
+              -0.744,
+              9.281,
+              -17.364,
+              5.456,
+              -0.296,
+              -1.653
+            ],
+            "velocities_deg_s": [
+              -0.002,
+              -0.005,
+              0.017,
+              -0.0,
+              0.034,
+              -0.086
+            ],
+            "sensor_torques": [
+              4.46,
+              17.19,
+              43.83,
+              23.26,
+              0.642,
+              -0.288
+            ],
+            "joint_limits_deg": [
+              [
+                -30.0,
+                30.0
+              ],
+              [
+                -90.0,
+                90.0
+              ],
+              [
+                -140.0,
+                60.0
+              ],
+              [
+                -110.0,
+                55.0
+              ],
+              [
+                -30.0,
+                30.0
+              ],
+              [
+                -170.0,
+                170.0
+              ]
+            ],
+            "velocity_ratio": 10.0,
+            "acceleration_ratio": 10.0
+          }
+        }
+      }
+    },
+    {
+      "kind": "handoff",
+      "data": {
+        "success": true,
+        "connected": true,
+        "expires_in": 0.0,
+        "owner_client_id": "",
+        "message": "控制租约已交接，统一网关SDK连接保持"
+      }
+    }
+  ],
+  "summary": {
+    "gateway": {
+      "success": true,
+      "connected": true,
+      "expires_in": 0.0,
+      "owner_client_id": "",
+      "message": ""
+    },
+    "motion_commands_sent": 0,
+    "components": {
+      "arm0": {
+        "state": "IDLE",
+        "error": 0,
+        "joints_deg": [
+          57.71,
+          -61.271,
+          -55.492,
+          -114.509,
+          -4.068,
+          2.437,
+          -0.986
+        ],
+        "velocities_deg_s": [
+          -0.03,
+          0.003,
+          -0.015,
+          0.002,
+          0.045,
+          -0.016,
+          -0.068
+        ],
+        "velocity_ratio": 5.0,
+        "acceleration_ratio": 5.0,
+        "joint_limits_deg": [
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -118.0,
+            118.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -145.0,
+            45.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -60.0,
+            60.0
+          ],
+          [
+            -90.0,
+            90.0
+          ]
+        ]
+      },
+      "arm1": {
+        "state": "Position",
+        "error": 0,
+        "joints_deg": [
+          -59.49,
+          -60.847,
+          60.365,
+          -113.859,
+          23.839,
+          35.713,
+          -61.368
+        ],
+        "velocities_deg_s": [
+          0.013,
+          0.038,
+          -0.026,
+          -0.002,
+          0.066,
+          -0.028,
+          -0.023
+        ],
+        "velocity_ratio": 20.0,
+        "acceleration_ratio": 20.0,
+        "joint_limits_deg": [
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -118.0,
+            118.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -145.0,
+            45.0
+          ],
+          [
+            -173.0,
+            173.0
+          ],
+          [
+            -60.0,
+            60.0
+          ],
+          [
+            -90.0,
+            90.0
+          ]
+        ]
+      },
+      "body": {
+        "state": "IDLE",
+        "error": 0,
+        "positions_deg": [
+          -0.744,
+          9.281,
+          -17.364,
+          5.456,
+          -0.296,
+          -1.653
+        ],
+        "velocities_deg_s": [
+          -0.002,
+          -0.005,
+          0.017,
+          -0.0,
+          0.034,
+          -0.086
+        ],
+        "velocity_ratio": 10.0,
+        "acceleration_ratio": 10.0,
+        "joint_limits_deg": [
+          [
+            -30.0,
+            30.0
+          ],
+          [
+            -90.0,
+            90.0
+          ],
+          [
+            -140.0,
+            60.0
+          ],
+          [
+            -110.0,
+            55.0
+          ],
+          [
+            -30.0,
+            30.0
+          ],
+          [
+            -170.0,
+            170.0
+          ]
+        ]
+      }
+    },
+    "handoff": {
+      "success": true,
+      "connected": true,
+      "expires_in": 0.0,
+      "owner_client_id": "",
+      "message": "控制租约已交接，统一网关SDK连接保持"
+    }
+  }
+}

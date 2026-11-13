@@ -1,0 +1,82 @@
+"""One-time guarded recovery to the recorded pre-incident pose."""
+
+import argparse
+import importlib.util
+import json
+from datetime import datetime
+from pathlib import Path
+import sys
+import uuid
+
+from robot_status import DEFAULT_CONNECTOR, ROOT
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--execute", action="store_true")
+    args = parser.parse_args()
+    target = json.loads((ROOT/"points/BOX_START_BEFORE_INCIDENT.json").read_text("utf-8"))
+    spec = importlib.util.spec_from_file_location("recovery_connector", DEFAULT_CONNECTOR)
+    connector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(connector)
+    source = "import sys,types,json,os\n"
+    source += "print(json.dumps({'event':'process','pid':os.getpid()}),flush=True)\n"
+    for name in ("box_motion_plan", "box_motion_robot"):
+        text = (ROOT/"tools"/(name+".py")).read_text("utf-8")
+        source += f"module=types.ModuleType({name!r})\nsys.modules[{name!r}]=module\n"
+        source += f"exec({text!r},module.__dict__)\n"
+    source += "TARGET="+repr(target["pose"])+"\n"
+    source += "EXECUTE="+repr(args.execute)+"\n"
+    source += (ROOT/"tools/recover_box_start_robot.py").read_text("utf-8")
+    token = uuid.uuid4().hex
+    command = ("bash -lc 'source /home/nvidia/gento-test-baseline/gento-test-env.sh"
+               " && exec env LUNA_RECOVERY_RUN="+token+" python3 -u - 2>&1'")
+    path = ROOT/"evidence"/("recovery-"+datetime.now().strftime("%Y%m%d-%H%M%S")+".jsonl")
+    path.parent.mkdir(exist_ok=True)
+    print("Evidence: "+str(path), flush=True)
+    pid = None
+    with connector.connect() as client, path.open("x", encoding="utf-8") as log:
+        stdin, stdout, stderr = client.exec_command(command, timeout=600)
+        try:
+            stdin.write(source.encode())
+            stdin.flush()
+            stdin.channel.shutdown_write()
+            for line in stdout:
+                log.write(line)
+                log.flush()
+                print(line, end="", flush=True)
+                if line.startswith("{"):
+                    event = json.loads(line)
+                    if event.get("event") == "process":
+                        pid = int(event["pid"])
+            code = stdout.channel.recv_exit_status()
+            log.write(json.dumps({"remote_exit_code": code})+"\n")
+            return code
+        except BaseException:
+            if pid is not None:
+                stop = (
+                    "import os,signal\n"
+                    f"pid={pid!r}\n"
+                    f"token={('LUNA_RECOVERY_RUN='+token).encode()!r}\n"
+                    "try:\n"
+                    "    with open('/proc/%d/environ'%pid,'rb') as f: env=f.read().split(b'\\0')\n"
+                    "    if token not in env: raise RuntimeError('Process token mismatch')\n"
+                    "    os.kill(pid,signal.SIGTERM)\n"
+                    "except FileNotFoundError: pass\n"
+                )
+                with connector.connect() as stop_client:
+                    si, so, se = stop_client.exec_command("python3 -", timeout=15)
+                    si.write(stop.encode())
+                    si.flush()
+                    si.channel.shutdown_write()
+                    so.read()
+                stdout.channel.settimeout(15)
+                for line in stdout:
+                    log.write(line)
+                    log.flush()
+                    print(line, end="", flush=True)
+            raise
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

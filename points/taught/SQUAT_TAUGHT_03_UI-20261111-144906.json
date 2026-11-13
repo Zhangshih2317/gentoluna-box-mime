@@ -1,0 +1,133 @@
+{
+  "name": "SQUAT_TAUGHT_03",
+  "source": "user_manual_teaching_fxplatform_realtime_display",
+  "source_displayed_at_local": "2026-11-11T14:49:06+08:00",
+  "joint_units": "deg",
+  "pose": {
+    "arm0": [
+      90,
+      -90,
+      -90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      70.281,
+      -127.364,
+      55,
+      -0.296,
+      -1.651
+    ],
+    "head": [
+      2.108,
+      -15.998,
+      0
+    ]
+  },
+  "previous_taught_point": "points/taught/SQUAT_TAUGHT_02_UI-20261111-143743.json",
+  "baseline_point": "points/RECOVERED_START_20261111.json",
+  "body_delta_from_previous_point_deg": [
+    0,
+    30,
+    -47,
+    14.544,
+    0,
+    0
+  ],
+  "body_delta_from_baseline_deg": [
+    0,
+    61,
+    -110,
+    49.544,
+    0,
+    0.002
+  ],
+  "principal_changed_body_axes_since_previous_point": [
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "user_observation": {
+    "pose": "squat",
+    "depth": "approximately at the squat limit according to the user",
+    "mechanical_endstop_independently_verified": false,
+    "torso_orientation_independently_measured": false
+  },
+  "displayed_position_command_input": [
+    -0.744,
+    70.281,
+    -127.364,
+    70.456,
+    -0.296,
+    -1.651
+  ],
+  "input_minus_feedback_deg": [
+    0,
+    0,
+    0,
+    15.456,
+    0,
+    0
+  ],
+  "input_note": "Editable Position Cmd is not proof of an accepted or executed command. B4 actual feedback is 55.000, not 70.456.",
+  "displayed_settings": {
+    "arm0": {
+      "mode": "Position",
+      "motion": "Stopped",
+      "error": 0,
+      "speed_percent": 3,
+      "acceleration_percent": 3
+    },
+    "arm1": {
+      "mode": "Position",
+      "motion": "Stopped",
+      "error": 0,
+      "speed_percent": 3,
+      "acceleration_percent": 3
+    },
+    "body": {
+      "mode": "Position",
+      "error": 0,
+      "speed_percent": 5,
+      "acceleration_percent": 5
+    },
+    "head": {
+      "mode": "IDLE",
+      "error": 0
+    }
+  },
+  "capture_quality": {
+    "method": "visual transcription of Realtime Data, not Position Cmd",
+    "body_observations_local": [
+      "2026-11-11T14:48:47+08:00",
+      "2026-11-11T14:49:06+08:00"
+    ],
+    "body_displays_identical": true,
+    "display_resolution_deg": 0.001,
+    "simultaneous_full_robot_snapshot": false,
+    "sdk_frame_freshness_verified": false,
+    "joint_velocity_feedback_captured": false,
+    "sdk_connection_attempted_this_capture": false,
+    "connection_retained_by": "FXPlatform"
+  },
+  "evidence": [
+    "evidence/squat-03-body-2026-11-11T06-49-06-367Z.png",
+    "evidence/squat-03-arms-body-2026-11-11T06-49-06-367Z.png"
+  ],
+  "measurement_preserved_without_clamping": true,
+  "trajectory_validated": false,
+  "motion_commands_sent": 0,
+  "mode_changes_sent": 0
+}

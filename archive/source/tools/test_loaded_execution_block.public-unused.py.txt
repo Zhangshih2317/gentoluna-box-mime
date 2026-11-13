@@ -1,0 +1,46 @@
+"""Box-mime and return-home execution both pass the former entry lock."""
+
+import importlib.util
+from pathlib import Path
+import unittest
+from unittest.mock import patch
+
+
+class Tests(unittest.TestCase):
+    def setUp(self):
+        root = Path(__file__).resolve().parents[1]
+        spec = importlib.util.spec_from_file_location("blocked_entry", root/"run_box_mime_taught.py")
+        self.entry = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(self.entry)
+
+    def test_box_mime_execution_passes_the_block(self):
+        source = self.entry.source_for(True, home_only=False)
+        compile(source, "<box-mime>", "exec")
+        self.assertIn("sys.modules['box_mime_taught_robot'].run(", source)
+        self.assertIn(",True,", source)
+        with patch("sys.argv", ["entry.py", "--execute"]), \
+                patch("builtins.print") as printed, \
+                patch.object(self.entry.importlib.util, "spec_from_file_location",
+                             side_effect=RuntimeError("connector reached")):
+            with self.assertRaisesRegex(RuntimeError, "connector reached"):
+                self.entry.main(home_only=False)
+        self.assertTrue(any("搬箱执行已放开" in " ".join(map(str, call.args))
+                            for call in printed.call_args_list))
+
+    def test_return_home_execution_passes_the_block(self):
+        source = self.entry.source_for(True, home_only=True)
+        compile(source, "<return-home>", "exec")
+        self.assertIn("module.run(", source)
+        self.assertIn(",True,", source)
+        with patch("sys.argv", ["entry.py", "--execute"]), \
+                patch("builtins.print") as printed, \
+                patch.object(self.entry.importlib.util, "spec_from_file_location",
+                             side_effect=RuntimeError("connector reached")):
+            with self.assertRaisesRegex(RuntimeError, "connector reached"):
+                self.entry.main(home_only=True)
+        self.assertTrue(any("回 HOME 执行已放开" in " ".join(map(str, call.args))
+                            for call in printed.call_args_list))
+
+
+if __name__ == "__main__":
+    unittest.main()

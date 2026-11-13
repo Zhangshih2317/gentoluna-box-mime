@@ -1,0 +1,132 @@
+"""Read Luna feedback through the existing ROS gateway without motion commands."""
+
+import argparse
+import importlib.util
+import json
+import os
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+import sys
+
+
+ROOT = Path(__file__).resolve().parents[1]
+DEFAULT_CONNECTOR = (
+    Path.home()
+    / "Documents/Codex/2026-11-03/he/work/inspect_luna_robot.py"
+)
+REMOTE_COMMAND = (
+    "bash -lc 'source /home/nvidia/gento-test-baseline/gento-test-env.sh"
+    " && PYTHONIOENCODING=utf-8 python3"
+    " /home/nvidia/gento-test-baseline/robot_status_check.py"
+)
+
+
+def parse_events(text):
+    return [
+        json.loads(line)
+        for line in text.splitlines()
+        if line.strip().startswith("{")
+    ]
+
+
+def summarize(events, inspect_only=False):
+    failures = [
+        event for event in events
+        if event["kind"] in ("error", "release_error")
+    ]
+    if failures:
+        raise RuntimeError(json.dumps(failures, ensure_ascii=False))
+    before = next((e["data"] for e in events if e["kind"] == "before"), None)
+    if not before or not before.get("success") or not before.get("connected"):
+        raise RuntimeError("Gateway did not confirm an established SDK connection")
+    summary = {"gateway": before, "motion_commands_sent": 0}
+    if inspect_only:
+        return summary
+    latest, counts = {}, {}
+    for event in events:
+        if event["kind"] != "sample":
+            continue
+        data = event["data"]
+        response = data["response"]
+        if not response.get("success"):
+            raise RuntimeError("Gateway rejected a status query")
+        state = response["status"]
+        name = data["component"]
+        counts[name] = counts.get(name, 0) + 1
+        latest[name] = {
+            key: state[key]
+            for key in (
+                "state", "error", "joints_deg", "positions_deg",
+                "velocities_deg_s", "velocity_ratio", "acceleration_ratio",
+                "joint_limits_deg",
+            )
+            if key in state
+        }
+    if any(counts.get(name, 0) < 2 for name in ("arm0", "arm1", "body")):
+        raise RuntimeError("Incomplete feedback: expected two samples per component")
+    handoff = next((e["data"] for e in events if e["kind"] == "handoff"), None)
+    if (
+        not handoff or not handoff.get("success")
+        or not handoff.get("connected") or handoff.get("owner_client_id")
+    ):
+        raise RuntimeError("Lease handoff with retained SDK connection was not confirmed")
+    summary.update(components=latest, handoff=handoff)
+    return summary
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--inspect-only", action="store_true",
+                        help="Inspect the connection and lease without acquiring it")
+    parser.add_argument("--connector", type=Path, default=DEFAULT_CONNECTOR,
+                        help="Existing local SSH connector exposing connect()")
+    parser.add_argument("--output", type=Path,
+                        help="Save raw feedback and a local collection timestamp")
+    args = parser.parse_args()
+    stamp = datetime.now(timezone(timedelta(hours=8)))
+    output = args.output or ROOT / "evidence" / (
+        "robot-status-" + stamp.strftime("%Y%m%d-%H%M%S") + ".json"
+    )
+    report = {
+        "collected_at": stamp.isoformat(),
+        "motion_commands_sent": 0,
+        "inspect_only": args.inspect_only,
+        "success": False,
+    }
+    try:
+        if not args.connector.is_file():
+            raise RuntimeError(
+                "Local SSH connector missing; supply --connector PATH. "
+                "The colleague's gentoluna SSH alias is not configured on this PC."
+            )
+        # Reuse the already verified local authentication setup; copy no credentials.
+        spec = importlib.util.spec_from_file_location("luna_ssh", args.connector)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        command = REMOTE_COMMAND + (" --inspect-only" if args.inspect_only else "") + "'"
+        with module.connect() as client:
+            _, stdout, stderr = client.exec_command(command, timeout=90)
+            report["stdout"] = stdout.read().decode("utf-8", errors="replace")
+            report["stderr"] = stderr.read().decode("utf-8", errors="replace")
+            report["remote_exit_code"] = stdout.channel.recv_exit_status()
+        report["events"] = parse_events(report["stdout"])
+        if report["remote_exit_code"] != 0:
+            raise RuntimeError("Remote check failed; see the saved events and stderr")
+        report["summary"] = summarize(report["events"], args.inspect_only)
+        report["success"] = True
+        print(json.dumps(report["summary"], ensure_ascii=False, indent=2))
+    except Exception as exc:
+        report["error"] = str(exc)
+        print("Status check failed: " + str(exc), file=sys.stderr)
+    finally:
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
+        print("Evidence: " + str(output.resolve()))
+    return 0 if report["success"] else 1
+
+
+if __name__ == "__main__":
+    os.environ["PYTHONIOENCODING"] = "utf-8"
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    raise SystemExit(main())

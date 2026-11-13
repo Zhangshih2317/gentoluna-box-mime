@@ -1,0 +1,249 @@
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+from battery_audio import (
+    BatteryAlertPolicy, BatteryAudio, ChargingAlertPolicy, alert_level, charging_state,
+)
+
+
+def battery(percent=20, **changes):
+    return dict(dict(id=1, energy=percent, is_connected=True, is_in_place=True,
+                     is_charging=False, error_code=0), **changes)
+
+
+class AlertPolicyTests(unittest.TestCase):
+    def setUp(self):
+        self.policy = BatteryAlertPolicy()
+        self.frame = 0
+
+    def observe(self, entries, frames=3, fresh=True):
+        for _ in range(frames):
+            self.frame += 1
+            self.policy.observe(entries, fresh, (self.frame, 0))
+
+    def test_requires_three_distinct_frames(self):
+        entries = {1: battery()}
+        self.policy.observe(entries, True, (1, 0))
+        for _ in range(10):
+            self.policy.observe(entries, True, (1, 0))
+        self.assertIsNone(self.policy.next_alert(entries, True, 50))
+        self.policy.observe(entries, True, (2, 0))
+        self.policy.observe(entries, True, (3, 0))
+        self.assertEqual(self.policy.next_alert(entries, True, 51), (1, 1))
+
+    def test_low_repeat_interval(self):
+        entries = {1: battery()}
+        self.observe(entries)
+        self.policy.started(1, 1, 10)
+        self.assertIsNone(self.policy.next_alert(entries, True, 309))
+        self.assertEqual(self.policy.next_alert(entries, True, 310), (1, 1))
+
+    def test_critical_escalates_without_waiting_five_minutes(self):
+        self.policy.started(1, 1, 10)
+        entries = {1: battery(10)}
+        self.observe(entries)
+        self.assertEqual(self.policy.next_alert(entries, True, 13), (1, 2))
+        self.policy.started(1, 2, 13)
+        self.assertIsNone(self.policy.next_alert(entries, True, 72))
+        self.assertEqual(self.policy.next_alert(entries, True, 73), (1, 2))
+
+    def test_charging_stale_missing_invalid_and_fault_suppress(self):
+        for changes in ({"is_charging": True}, {"is_connected": False},
+                        {"is_in_place": False}, {"error_code": 1},
+                        {"energy": -1}, {"energy": 101}, {"energy": None},
+                        {"energy": float("nan")}):
+            with self.subTest(changes=changes):
+                entries = {1: battery(5, **changes)}
+                self.observe(entries)
+                self.assertIsNone(self.policy.next_alert(entries, True, 1000))
+        self.observe({})
+        self.assertIsNone(self.policy.next_alert({}, True, 1000))
+        entries = {1: battery(5)}
+        self.observe(entries)
+        self.assertIsNone(self.policy.next_alert(entries, False, 1000))
+        self.observe(entries, fresh=False)
+        self.observe(entries, frames=1)
+        self.assertIsNone(self.policy.next_alert(entries, True, 1000))
+
+    def test_hysteresis_prevents_threshold_spam(self):
+        self.policy.started(1, 1, 10)
+        self.observe({1: battery(21)})
+        entries = {1: battery(20)}
+        self.observe(entries)
+        self.assertIsNone(self.policy.next_alert(entries, True, 20))
+        self.observe({1: battery(23)})
+        self.observe(entries)
+        self.assertEqual(self.policy.next_alert(entries, True, 25), (1, 1))
+
+    def test_critical_battery_takes_priority(self):
+        entries = {1: battery(20), 2: battery(5, id=2)}
+        self.observe(entries)
+        self.assertEqual(self.policy.next_alert(entries, True, 10), (2, 2))
+
+    def test_playback_failure_retries_after_thirty_seconds(self):
+        entries = {1: battery(5)}
+        self.observe(entries)
+        self.policy.failed(1, 10)
+        self.assertIsNone(self.policy.next_alert(entries, True, 39))
+        self.assertEqual(self.policy.next_alert(entries, True, 40), (1, 2))
+
+
+class ChargingPolicyTests(unittest.TestCase):
+    def setUp(self):
+        self.policy = ChargingAlertPolicy()
+        self.time = 0
+
+    def entries(self, first=False, second=False):
+        return {1: battery(70, is_charging=first),
+                2: battery(80, id=2, is_charging=second)}
+
+    def observe(self, entries, frames=6, fresh=True):
+        for _ in range(frames):
+            self.policy.observe(entries, fresh, (self.time, 0), self.time)
+            self.time += 1
+
+    def test_startup_only_establishes_baseline(self):
+        for state in (False, True):
+            with self.subTest(charging=state):
+                self.policy = ChargingAlertPolicy()
+                entries = self.entries(state)
+                self.observe(entries)
+                self.assertIs(self.policy.confirmed, state)
+                self.assertIsNone(self.policy.next_event(entries, True, self.time))
+
+    def test_start_and_stop_are_announced_once(self):
+        self.observe(self.entries())
+        entries = self.entries(True)
+        self.observe(entries)
+        self.assertIs(self.policy.next_event(entries, True, self.time), True)
+        self.policy.started()
+        self.observe(entries, frames=20)
+        self.assertIsNone(self.policy.next_event(entries, True, self.time))
+        entries = self.entries()
+        self.observe(entries)
+        self.assertIs(self.policy.next_event(entries, True, self.time), False)
+        self.policy.started()
+        self.observe(entries, frames=20)
+        self.assertIsNone(self.policy.next_event(entries, True, self.time))
+
+    def test_short_bounce_does_not_trigger(self):
+        self.observe(self.entries())
+        self.observe(self.entries(True), frames=3)
+        self.observe(self.entries())
+        self.assertIs(self.policy.confirmed, False)
+        self.assertIsNone(self.policy.next_event(self.entries(), True, self.time))
+
+    def test_duplicate_stamps_do_not_confirm_change(self):
+        self.observe(self.entries())
+        entries = self.entries(True)
+        for now in range(10, 30):
+            self.policy.observe(entries, True, (100, 0), now)
+        self.assertIs(self.policy.confirmed, False)
+        self.assertIsNone(self.policy.next_event(entries, True, 30))
+
+    def test_switching_between_batteries_is_not_a_disconnect(self):
+        self.observe(self.entries(True, False))
+        self.observe(self.entries(False, True))
+        entries = self.entries(True, True)
+        self.observe(entries)
+        self.assertIs(self.policy.confirmed, True)
+        self.assertIsNone(self.policy.next_event(entries, True, self.time))
+
+    def test_missing_fault_or_stale_feedback_is_not_disconnect(self):
+        self.observe(self.entries(True))
+        for entries, fresh in [
+            ({1: battery(70)}, True),
+            ({1: battery(70, is_connected=False), 2: battery(80, id=2)}, True),
+            ({1: battery(70, error_code=1), 2: battery(80, id=2)}, True),
+            (self.entries(), False),
+        ]:
+            self.observe(entries, fresh=fresh)
+            self.assertIsNone(charging_state(entries, fresh))
+            self.assertIsNone(self.policy.next_event(entries, fresh, self.time))
+        self.observe(self.entries(True))
+        self.assertIsNone(self.policy.next_event(self.entries(True), True, self.time))
+
+    def test_superseded_event_is_not_played(self):
+        self.observe(self.entries())
+        self.observe(self.entries(True))
+        self.observe(self.entries(), frames=1)
+        self.assertIsNone(self.policy.next_event(self.entries(), True, self.time))
+
+    def test_failed_charge_event_can_retry(self):
+        self.observe(self.entries())
+        entries = self.entries(True)
+        self.observe(entries)
+        self.policy.started()
+        self.policy.failed(True, 20)
+        self.assertIsNone(self.policy.next_event(entries, True, 49))
+        self.assertIs(self.policy.next_event(entries, True, 50), True)
+
+
+class PlaybackTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        for level in ("low", "critical"):
+            Path(self.directory.name, f"battery-1-{level}.wav").touch()
+        for state in ("started", "stopped"):
+            Path(self.directory.name, f"charging-{state}.wav").touch()
+        self.audio = BatteryAudio(self.directory.name)
+
+    @patch("battery_audio.subprocess.Popen")
+    def test_nonblocking_playback_and_charging_cancellation(self, player):
+        process = player.return_value
+        process.poll.return_value = None
+        process.returncode = -9
+        entries = {1: battery(20)}
+        for frame in range(3):
+            self.audio.update(entries, True, (frame, 0), frame)
+        self.assertEqual(player.call_count, 1)
+        command = player.call_args.args[0]
+        self.assertIn("--volume=65536", command)
+        self.audio.update(entries, True, (3, 0), 3)
+        self.assertEqual(player.call_count, 1)
+        process.wait.assert_not_called()
+        self.audio.update({1: battery(20, is_charging=True)}, True, (4, 0), 4)
+        process.kill.assert_called_once()
+        self.assertIsNone(self.audio.process)
+
+    @patch("battery_audio.subprocess.Popen")
+    def test_failed_player_does_not_break_screen(self, player):
+        player.side_effect = OSError("audio unavailable")
+        entries = {1: battery(5)}
+        for frame in range(5):
+            self.audio.update(entries, True, (frame, 0), frame)
+        self.assertEqual(player.call_count, 1)
+        self.assertEqual(self.audio.status()["state"], "failed")
+        self.assertIn("audio unavailable", self.audio.status()["last_error"])
+
+    def test_thresholds(self):
+        self.assertEqual(alert_level(battery(21), True), 0)
+        self.assertEqual(alert_level(battery(20), True), 1)
+        self.assertEqual(alert_level(battery(10), True), 2)
+
+    @patch("battery_audio.subprocess.Popen")
+    def test_charging_playback_and_obsolete_clip_cancellation(self, player):
+        process = player.return_value
+        process.poll.return_value = None
+        process.returncode = -9
+        entries = {1: battery(70), 2: battery(80, id=2)}
+        for frame in range(6):
+            self.audio.update(entries, True, (frame, 0), frame)
+        player.assert_not_called()
+        charging = {1: battery(70, is_charging=True), 2: battery(80, id=2)}
+        for frame in range(6, 12):
+            self.audio.update(charging, True, (frame, 0), frame)
+        self.assertEqual(player.call_count, 1)
+        self.assertTrue(player.call_args.args[0][-1].endswith("charging-started.wav"))
+        for frame in range(12, 18):
+            self.audio.update(entries, True, (frame, 0), frame)
+        process.kill.assert_called_once()
+        self.assertEqual(player.call_count, 2)
+        self.assertTrue(player.call_args.args[0][-1].endswith("charging-stopped.wav"))
+
+
+if __name__ == "__main__":
+    unittest.main()

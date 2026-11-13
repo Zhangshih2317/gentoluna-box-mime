@@ -1,0 +1,258 @@
+"""Offline checks for the read-only adapter; never import the real motor SDK."""
+import importlib.util
+import itertools
+from pathlib import Path
+import sys
+import types
+import unittest
+from unittest.mock import Mock, patch
+
+fake_sdk = types.ModuleType("vendor_gripper_sdk")
+fake_sdk.MotorController = type("MotorController", (), {})
+spec = importlib.util.spec_from_file_location(
+    "gripper_readonly_test_subject", Path(__file__).with_name("check_gripper_sdk.py"))
+subject = importlib.util.module_from_spec(spec)
+with patch.dict(sys.modules, {"vendor_gripper_sdk": fake_sdk,
+                             "fcntl": types.ModuleType("fcntl"),
+                             "termios": types.ModuleType("termios")}):
+    spec.loader.exec_module(subject)
+
+
+class Tests(unittest.TestCase):
+    def test_inspection_disables_both_vendor_write_paths(self):
+        motor = subject.ReadOnlyMotor()
+        for method, args in ((motor._write_register, (0x0108, 1)),
+                             (motor._write_registers, (0x0102, [0, 9000]))):
+            with self.assertRaisesRegex(RuntimeError, "disabled"):
+                method(*args)
+
+    def test_feedback_uses_only_documented_read_registers(self):
+        motor = Mock()
+        motor._read_registers.side_effect = [[0x8015, 0, 0], [0, 9000, 0, 25]]
+        result = subject.snapshot(motor)
+        self.assertEqual([c.args for c in motor._read_registers.call_args_list],
+                         [(0x0401, 3), (0x0418, 4)])
+        self.assertEqual(result["position_raw"], 9000)
+        self.assertEqual(result["current_raw"], 25)
+        self.assertTrue(result["position_reached"])
+        self.assertTrue(result["enabled_status_bit"])
+        self.assertFalse(result["force_reached"])
+        self.assertEqual(len(motor.mock_calls), 2)
+
+    def test_signed_position(self):
+        self.assertEqual(subject.signed32(0, 9000), 9000)
+        self.assertEqual(subject.signed32(65535, 65535), -1)
+        self.assertEqual(subject.signed32(32768, 0), -2147483648)
+
+    def test_single_port_execution_rejected_before_open(self):
+        with patch.object(sys, "argv", ["check", "--execute", "--port", subject.PORTS[0]]), \
+                patch.object(subject, "check_identity") as identify, \
+                self.assertRaises(SystemExit):
+            subject.main()
+        identify.assert_not_called()
+
+    def motor(self):
+        motor = Mock()
+        motor.target = 0
+        def stage(**kwargs):
+            self.assertFalse(kwargs["trigger"])
+            motor.target = kwargs["position_mm"]
+            motor.speed = kwargs["speed_pct"]
+            motor.force = kwargs["force_pct"]
+        motor.speed = 50
+        motor.force = 25
+        motor.temp_move.side_effect = stage
+        motor._read_registers.side_effect = lambda addr, n: (
+            [1, 0] if addr == 0x0100 else [0, motor.target, motor.speed, motor.force, 60, 60])
+        return motor
+
+    def state(self, motor):
+        return {"position_raw": motor.target, "position_reached": True,
+                "zero_speed": True, "speed_raw": 0, "fault": 0, "alarm": 0}
+
+    def test_five_cycles_use_sdk_and_verify_each_endpoint(self):
+        motors = [(p, self.motor()) for p in subject.PORTS]
+        with patch.object(subject, "validate_start", return_value={}), \
+                patch.object(subject, "snapshot", side_effect=self.state), \
+                patch.object(subject, "emit") as emit, \
+                patch.object(subject.time, "sleep"), \
+                patch.object(subject.time, "monotonic", side_effect=itertools.count(0, .2)):
+            subject.run_cycles(motors)
+        for _,motor in motors:
+            self.assertEqual([c.kwargs["position_mm"] for c in motor.temp_move.call_args_list],
+                             [9000, 0]*5)
+            self.assertEqual(motor.trigger_motion.call_count, 10)
+            motor._write_register.assert_not_called()
+        self.assertEqual(sum(c.args[0] == "target_verified" for c in emit.call_args_list), 10)
+        self.assertEqual(sum(c.args[0] == "sdk_test_complete" for c in emit.call_args_list), 1)
+
+    def test_parameter_mismatch_stops_both_without_triggering(self):
+        motors = [(p, self.motor()) for p in subject.PORTS]
+        motors[1][1]._read_registers.side_effect = lambda addr,n: (
+            [1, 0] if addr == 0x0100 else [0, 1, 50, 25, 60, 60])
+        with patch.object(subject, "validate_start", return_value={}), \
+                patch.object(subject, "snapshot", side_effect=self.state), \
+                patch.object(subject, "emit"), \
+                self.assertRaisesRegex(RuntimeError, "readback mismatch"):
+            subject.run_cycles(motors)
+        for _,motor in motors:
+            motor.trigger_motion.assert_not_called()
+            motor._write_register.assert_called_once_with(0x0108, 3)
+
+    def test_close_both_once_at_force_thirty_without_reopening(self):
+        motors = [(p, self.motor()) for p in subject.PORTS]
+        with patch.object(subject, "validate_start", return_value={}), \
+                patch.object(subject, "snapshot", side_effect=self.state), \
+                patch.object(subject, "emit"), patch.object(subject.time, "sleep"), \
+                patch.object(subject.time, "monotonic", side_effect=itertools.count(0, .2)):
+            subject.run_cycles(motors, allow_nonzero_start=True, speed=10, force=30,
+                               cycles=1, targets=(9000,), ignore_drop_alarm=True)
+        for _, motor in motors:
+            motor.temp_move.assert_called_once_with(position_mm=9000, speed_pct=10,
+                                                   force_pct=30, accel=60, decel=60,
+                                                   trigger=False)
+            motor.trigger_motion.assert_called_once_with()
+            motor._write_register.assert_not_called()
+
+    def test_force_outside_authorized_range_sends_no_writes(self):
+        for force in (0, 31):
+            motor = self.motor()
+            with self.assertRaises(ValueError):
+                subject.run_cycles([("test", motor)], force=force)
+            self.assertEqual(motor.mock_calls, [])
+
+    def test_single_open_from_closed_stays_open(self):
+        motors = [(p, self.motor()) for p in subject.PORTS]
+        for _, motor in motors:
+            motor.target = 9000
+        with patch.object(subject, "validate_start", return_value={}), \
+                patch.object(subject, "snapshot", side_effect=self.state), \
+                patch.object(subject, "emit"), patch.object(subject.time, "sleep"), \
+                patch.object(subject.time, "monotonic", side_effect=itertools.count(0, .2)):
+            subject.run_cycles(motors, allow_nonzero_start=True, speed=10, force=30,
+                               cycles=1, targets=(0,), ignore_drop_alarm=True)
+        for _, motor in motors:
+            motor.temp_move.assert_called_once_with(position_mm=0, speed_pct=10,
+                                                   force_pct=30, accel=60, decel=60,
+                                                   trigger=False)
+            motor.trigger_motion.assert_called_once_with()
+
+    def test_preflight_failure_sends_no_writes(self):
+        motors = [(p, self.motor()) for p in subject.PORTS]
+        with patch.object(subject, "validate_start", side_effect=[{}, RuntimeError("alarm")]), \
+                patch.object(subject, "emit"), self.assertRaises(RuntimeError):
+            subject.run_cycles(motors)
+        for _,motor in motors:
+            self.assertEqual(motor.mock_calls, [])
+
+    def test_alarm_or_out_of_bounds_feedback_rejected(self):
+        for update in ({"fault": 64}, {"alarm": 4096}, {"position_raw": 9100}):
+            state = self.state(self.motor())
+            state.update(update)
+            with self.assertRaises(RuntimeError):
+                subject.validate_feedback(state)
+
+    def test_drop_exception_preserves_other_faults_and_raw_feedback(self):
+        state = self.state(self.motor())
+        state["alarm"] = 0x1000
+        subject.validate_feedback(state, ignore_drop_alarm=True)
+        self.assertEqual(state["alarm"], 0x1000)
+        with self.assertRaises(RuntimeError):
+            subject.validate_feedback(state)
+        for update in ({"alarm":0x1001}, {"fault":0x40}, {"position_raw":9100}):
+            invalid = dict(state, **update)
+            with self.assertRaises(RuntimeError):
+                subject.validate_feedback(invalid, ignore_drop_alarm=True)
+
+    def test_five_cycles_with_drop_bit_preserve_arrival_checks(self):
+        motor = self.motor()
+        def feedback(m):
+            return dict(self.state(m), alarm=0x1000)
+        with patch.object(subject, "validate_start", return_value={}), \
+                patch.object(subject, "snapshot", side_effect=feedback), \
+                patch.object(subject, "emit") as emit, patch.object(subject.time, "sleep"), \
+                patch.object(subject.time, "monotonic", side_effect=itertools.count(0, .2)):
+            subject.run_cycles([("test",motor)], True, speed=10, ignore_drop_alarm=True)
+        self.assertEqual(motor.trigger_motion.call_count, 10)
+        self.assertEqual(sum(c.args[0]=="target_verified" for c in emit.call_args_list),10)
+        motor._write_register.assert_not_called()
+
+    def test_bad_enable_or_range_blocks_start(self):
+        model = b"CTAG2F90D".ljust(32, b"\0")
+        words = [int.from_bytes(model[i:i+2], "big") for i in range(0,32,2)]
+        for enabled, maximum in ((0,9000),(1,1000),(1,9000)):
+            motor = Mock()
+            motor._read_registers.side_effect = [[enabled,0], [0,0,0,maximum], [1,6,1],words]
+            motor._read_register.side_effect = [0,1]
+            motor.target=0
+            with patch.object(subject, "snapshot", side_effect=self.state):
+                if enabled == 1 and maximum == 9000:
+                    subject.validate_start(motor)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        subject.validate_start(motor)
+            motor.temp_move.assert_not_called()
+
+    def test_nonzero_start_requires_explicit_option_and_stationary_state(self):
+        model = b"CTAG2F90D".ljust(32, b"\0")
+        words = [int.from_bytes(model[i:i+2], "big") for i in range(0,32,2)]
+        for require_zero, speed, accepted in ((True,0,False),(False,0,True),(False,10,False)):
+            motor = Mock()
+            motor._read_registers.side_effect = [[1,0], [0,0,0,9000], [1,6,1], words]
+            motor._read_register.side_effect = [0,1]
+            motor.target = 2506
+            state = self.state(motor)
+            state["speed_raw"] = speed
+            with patch.object(subject, "snapshot", return_value=state):
+                if accepted:
+                    subject.validate_start(motor, require_zero=require_zero)
+                else:
+                    with self.assertRaises(RuntimeError):
+                        subject.validate_start(motor, require_zero=require_zero)
+            motor.temp_move.assert_not_called()
+
+    def test_single_gripper_runs_ten_verified_targets(self):
+        motor = self.motor()
+        with patch.object(subject, "validate_start", return_value={}) as preflight, \
+                patch.object(subject, "snapshot", side_effect=self.state), \
+                patch.object(subject, "emit") as emit, \
+                patch.object(subject.time, "sleep"), \
+                patch.object(subject.time, "monotonic", side_effect=itertools.count(0, .2)):
+            subject.run_cycles([("COM4", motor)], allow_nonzero_start=True)
+        preflight.assert_called_once_with(motor, require_zero=False)
+        self.assertEqual(motor.trigger_motion.call_count, 10)
+        self.assertEqual(sum(c.args[0] == "target_verified" for c in emit.call_args_list), 10)
+
+    def test_recovery_resets_once_and_stops_after_failed_diagnostic(self):
+        motor = self.motor()
+        initial = {"feedback": {"alarm": 0x1000}}
+        with patch.object(subject, "validate_start", return_value=initial), \
+                patch.object(subject, "snapshot", return_value={"position_raw":5161}), \
+                patch.object(subject, "run_cycles", side_effect=RuntimeError("alarm")) as run, \
+                patch.object(subject.time, "sleep"), patch.object(subject, "emit"), \
+                self.assertRaises(RuntimeError):
+            subject.recover_empty_gripper("test", motor)
+        motor._write_register.assert_called_once_with(0x0110, 1)
+        run.assert_called_once_with([("test", motor)], allow_nonzero_start=True,
+                                    speed=10, cycles=1, targets=(4661,))
+
+    def test_recovery_requires_exact_drop_alarm(self):
+        motor = self.motor()
+        with patch.object(subject, "validate_start", return_value={"feedback":{"alarm":0}}), \
+                patch.object(subject, "emit"), self.assertRaises(RuntimeError):
+            subject.recover_empty_gripper("test", motor)
+        motor._write_register.assert_not_called()
+
+    def test_low_speed_target_and_readback_match(self):
+        motor = self.motor()
+        with patch.object(subject, "validate_start", return_value={}), \
+                patch.object(subject, "snapshot", side_effect=self.state), \
+                patch.object(subject, "emit"), patch.object(subject.time, "sleep"), \
+                patch.object(subject.time, "monotonic", side_effect=itertools.count(0, .2)):
+            subject.run_cycles([("test", motor)], True, speed=10, cycles=1, targets=(4661,))
+        motor.temp_move.assert_called_once_with(position_mm=4661, speed_pct=10, force_pct=25,
+                                               accel=60, decel=60, trigger=False)
+
+
+if __name__ == "__main__":
+    unittest.main()

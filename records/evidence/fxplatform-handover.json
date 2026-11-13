@@ -1,0 +1,9 @@
+{
+  "collected_at": "2026-11-11T04:41:52.327267+00:00",
+  "exit_code": 0,
+  "stdout": "{\"operation\": \"inspect\", \"result\": {\"success\": true, \"connected\": true, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"\"}}\n{\"operation\": \"acquire\", \"result\": {\"success\": true, \"connected\": true, \"expires_in\": 29.999994175999745, \"owner_client_id\": \"fxplatform-handover-43bde68ae15d4ee0beb7eefdeb0cf53b\", \"message\": \"\\u5df2\\u53d6\\u5f97\\u552f\\u4e00\\u786c\\u4ef6\\u63a7\\u5236\\u79df\\u7ea6\\u5e76\\u8fde\\u63a5 SDK\"}}\n{\"operation\": \"release\", \"result\": {\"success\": true, \"connected\": false, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"SDK\\u8fde\\u63a5\\u548c\\u63a7\\u5236\\u79df\\u7ea6\\u5df2\\u91ca\\u653e\\uff0c\\u5176\\u4ed6\\u5ba2\\u6237\\u7aef\\u73b0\\u5728\\u53ef\\u4ee5\\u8fde\\u63a5\"}}\n{\"operation\": \"inspect\", \"result\": {\"success\": true, \"connected\": false, \"expires_in\": 0.0, \"owner_client_id\": \"\", \"message\": \"\"}}\n",
+  "stderr": "",
+  "operation": "release SDK for FXPlatform",
+  "stop_before_release": true,
+  "target_motion_commands_sent": 0
+}

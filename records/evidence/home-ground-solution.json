@@ -1,0 +1,132 @@
+{
+  "feedback_collected_at": "2026-11-11T11:21:17.518277+08:00",
+  "body_joints_deg": [
+    -0.744,
+    9.281,
+    -17.364,
+    5.456,
+    -0.296,
+    -1.653
+  ],
+  "reference_frame": "Underpan_Base_link",
+  "ground_normal_in_reference_frame_assumed": [
+    0,
+    0,
+    1
+  ],
+  "physical_ground_alignment_verified": false,
+  "assumption": "Manufacturer chassis XY plane is parallel to the local floor.",
+  "horizontal_axis": "bare SDK endpoint/flange local +Z axis",
+  "palm_roll_constrained": false,
+  "wrist_model_holdout_pass": true,
+  "j7_90_axis_invariant_under_j6": true,
+  "motion_commands_sent": 0,
+  "arms": {
+    "arm0": {
+      "target_joints_deg": [
+        90,
+        90,
+        90,
+        -90,
+        90,
+        0,
+        2.596357
+      ],
+      "T_underpan_arm_base": [
+        [
+          0.9985400504523614,
+          -0.04583683147610323,
+          0.02857888246286579,
+          17.880167368542125
+        ],
+        [
+          -0.029436436205323,
+          -0.018144125280909633,
+          0.9994019646475186,
+          231.41740621075897
+        ],
+        [
+          -0.045290880606640195,
+          -0.9987841486517605,
+          -0.019466908739013928,
+          1244.8757224492329
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "old_target_tilt_from_nominal_floor_deg": 87.1743271433633,
+      "flange_z_in_underpan": [
+        -0.9995913854423051,
+        0.02858429900368418,
+        -6.836973489985049e-09
+      ],
+      "tilt_from_nominal_floor_deg": 3.9172972561897233e-07,
+      "joint_limit_margin_deg": [
+        83.0,
+        28.0,
+        83.0,
+        55.0,
+        83.0,
+        60.0,
+        87.403643
+      ]
+    },
+    "arm1": {
+      "target_joints_deg": [
+        90,
+        90,
+        90,
+        -90,
+        90,
+        0,
+        -2.596356
+      ],
+      "T_underpan_arm_base": [
+        [
+          0.9985400504523614,
+          0.04583662152267251,
+          -0.02857921919826119,
+          5.614038751981523
+        ],
+        [
+          -0.029436436205323,
+          0.018136783263626388,
+          -0.999402097914737,
+          -197.5259456179949
+        ],
+        [
+          -0.045290880606640195,
+          0.9987842916367055,
+          0.01945957126042473,
+          1253.2293450571688
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "old_target_tilt_from_nominal_floor_deg": 87.17449328403266,
+      "flange_z_in_underpan": [
+        -0.9995913759213059,
+        0.028584631950573536,
+        5.0554714417784395e-09
+      ],
+      "tilt_from_nominal_floor_deg": 2.896571770628219e-07,
+      "joint_limit_margin_deg": [
+        83.0,
+        28.0,
+        83.0,
+        55.0,
+        83.0,
+        60.0,
+        87.403644
+      ]
+    }
+  }
+}

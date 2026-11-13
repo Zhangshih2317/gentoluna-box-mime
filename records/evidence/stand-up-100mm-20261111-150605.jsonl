@@ -1,0 +1,10 @@
+{"event": "local_request", "execute": false, "plan_sha256": "629cc05e2dd2b4dec9cca1f79ad44d72629f3b96395a28a8c16fb819f4701a10"}
+{"event": "process", "pid": 2523093}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+{"event": "initial_feedback", "time": "2026-11-11T07:19:19.188926+00:00", "pose": {"arm0": [90.0, -90.0, -90.0, -90.0, 0.0, 0.0, -0.0], "arm1": [-90.0, -90.0, 90.0, -90.0, -0.0, -0.0, 0.0], "body": [-0.744, 70.281, -127.364, 55.0, -0.296, -1.651], "head": [2.108, -15.998, 0.0]}, "target": {"arm0": [90.0, -90.0, -90.0, -90.0, 0.0, 0.0, 0.0], "arm1": [-90.0, -90.0, 90.0, -90.0, 0.0, 0.0, 0.0], "body": [-0.744, 57.26343087826936, -104.93223496478042, 45.58580408651106, -0.296, -1.651], "head": [2.107, -15.998, 0.0]}, "execute": false}
+{"event": "vendor_fk_verified", "time": "2026-11-11T07:19:26.610202+00:00", "configurations": 2, "maximum_position_component_error_mm": 0.004066371013834669, "maximum_rotation_element_error": 1.1020088688954983e-05, "frame_parameters": {"0": {"L0.DH.Alpha": 0.0, "L0.DH.A": 0.0, "L0.DH.D": 158.60000610351562, "L0.DH.Theta": 0.0, "FLANGE.Alpha": 90.0, "FLANGE.A": 0.0, "FLANGE.D": 87.0, "FLANGE.Theta": 90.0}, "1": {"L0.DH.Alpha": 0.0, "L0.DH.A": 0.0, "L0.DH.D": 158.60000610351562, "L0.DH.Theta": 0.0, "FLANGE.Alpha": 90.0, "FLANGE.A": 0.0, "FLANGE.D": 87.0, "FLANGE.Theta": 90.0}}}
+{"event": "geometry_verified", "time": "2026-11-11T07:19:37.109193+00:00", "samples": 346, "minimum_flange_spacing_mm": 429.19263889381136, "displacement_mm": [6.380201922340234e-09, 1.2985979540997648, 100.00000000201248], "continuous_collision_detection": false, "external_obstacles_checked": false}
+{"event": "preflight_complete", "time": "2026-11-11T07:19:37.515737+00:00", "motion_commands_sent": 0, "mode_changes_sent": 0}
+{"event": "sdk_disconnected", "time": "2026-11-11T07:19:37.516078+00:00"}
+{"remote_exit_code": 0}

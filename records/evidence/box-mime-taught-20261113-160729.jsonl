@@ -1,0 +1,13 @@
+{"event": "request", "execute": false, "velocity_percent": null, "acceleration_percent": null, "controller_ratios": {"arm0": {"speed_percent": 100.0, "acceleration_percent": 100.0}, "arm1": {"speed_percent": 100.0, "acceleration_percent": 100.0}, "body": {"speed_percent": 10.0, "acceleration_percent": 5.0}}, "squat_depth_cm": 30.0, "prepare_cache": false, "full_preflight": false, "cache_head_deg": null, "motion_style": "continuous"}
+{"event": "process", "pid": 2843615}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+{"event": "recovery_failed", "time": "2026-11-13T08:21:04.325736+00:00", "error": "Unknown arm pose; manual HOME recovery required"}
+{"event": "sdk_disconnected", "time": "2026-11-13T08:21:04.326054+00:00"}
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "<string>", line 57, in <module>
+  File "<string>", line 538, in run
+  File "<string>", line 186, in build_stages
+ValueError: Unknown arm pose; manual HOME recovery required
+{"remote_exit_code": 1, "completion_confirmed": false}

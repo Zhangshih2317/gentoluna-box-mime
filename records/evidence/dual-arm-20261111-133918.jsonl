@@ -1,0 +1,30 @@
+{"event": "remote_process", "pid": 2086408, "run_id": "[REDACTED]"}
+{"event": "plan", "time": "2026-11-11T05:52:31.941659+00:00", "home": [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]], "targets": [[[90, -90, -90, -90, 25, 20, 25], [-90, -90, 90, -90, -25, 20, -25]], [[90, -90, -90, -90, -5, -10, -5], [-90, -90, 90, -90, 5, -10, 5]], [[90, -90, -90, -90, 20, 15, 30], [-90, -90, 90, -90, -20, 15, -30]], [[90, -90, -90, -90, -10, -15, 0], [-90, -90, 90, -90, 10, -15, 0]], [[90, -90, -90, -90, 15, 10, -25], [-90, -90, 90, -90, -15, 10, 25]], [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]]], "speed_percent": 60.0, "acceleration_percent": 5.0, "planner_velocity": 0.12, "planner_acceleration": 0.01, "execute": false, "continuous": true}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+[INFO][L1] FX_L1_System_GetSDKVersion: SDK version is 0x00040402
+[INFO][L1] FX_L1_System_GetControllerVersion: Controller version is 0x00040404
+{"event": "connected", "time": "2026-11-11T05:52:32.059378+00:00", "sdk": "00040402", "controller": "00040404"}
+{"event": "initial_feedback", "time": "2026-11-11T05:52:32.211635+00:00", "arms": [{"joints_deg": [90.0, -90.0, -90.0, -90.0, -0.0, 0.0, -0.0], "velocities_deg_s": [0.01, -0.005, -0.028, 0.012, -0.086, 0.016, -0.018], "ratios": [5.0, 5.0], "trajectory_state": 0, "state": {"cur": 1, "cmd": 1, "err": 0}}, {"joints_deg": [-90.0, -90.0, 90.0, -90.0, -0.0, 0.0, 0.0], "velocities_deg_s": [-0.066, -0.015, -0.019, 0.053, 0.038, -0.054, 0.025], "ratios": [5.0, 5.0], "trajectory_state": 0, "state": {"cur": 1, "cmd": 1, "err": 0}}], "body": [-0.744, 9.281, -17.364, 5.456, -0.296, -1.653], "head": [2.107, -15.998, 0.0], "frame_serial": 554075}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.174388+00:00", "segment": 1, "arm": 0, "peak_deg_s": 21.600000000000108}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.176410+00:00", "segment": 1, "arm": 1, "peak_deg_s": 21.600000000000108}
+{"event": "planned", "time": "2026-11-11T05:52:35.176809+00:00", "number": 1, "target": [[90, -90, -90, -90, 25, 20, 25], [-90, -90, 90, -90, -25, 20, -25]], "point_count": 73, "native_point_counts": [73, 73], "upload_point_counts": []}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.178828+00:00", "segment": 2, "arm": 0, "peak_deg_s": 21.600000000000286}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.180764+00:00", "segment": 2, "arm": 1, "peak_deg_s": 21.600000000000286}
+{"event": "planned", "time": "2026-11-11T05:52:35.181160+00:00", "number": 2, "target": [[90, -90, -90, -90, -5, -10, -5], [-90, -90, 90, -90, 5, -10, 5]], "point_count": 85, "native_point_counts": [85, 85], "upload_point_counts": []}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.183271+00:00", "segment": 3, "arm": 0, "peak_deg_s": 21.600000000000286}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.185278+00:00", "segment": 3, "arm": 1, "peak_deg_s": 21.600000000000286}
+{"event": "planned", "time": "2026-11-11T05:52:35.185711+00:00", "number": 3, "target": [[90, -90, -90, -90, 20, 15, 30], [-90, -90, 90, -90, -20, 15, -30]], "point_count": 97, "native_point_counts": [97, 97], "upload_point_counts": []}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.187537+00:00", "segment": 4, "arm": 0, "peak_deg_s": 21.600000000000197}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.189333+00:00", "segment": 4, "arm": 1, "peak_deg_s": 21.600000000000197}
+{"event": "planned", "time": "2026-11-11T05:52:35.189728+00:00", "number": 4, "target": [[90, -90, -90, -90, -10, -15, 0], [-90, -90, 90, -90, 10, -15, 0]], "point_count": 85, "native_point_counts": [85, 85], "upload_point_counts": []}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.196508+00:00", "segment": 5, "arm": 0, "peak_deg_s": 21.600000000000108}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.200979+00:00", "segment": 5, "arm": 1, "peak_deg_s": 21.600000000000108}
+{"event": "planned", "time": "2026-11-11T05:52:35.201381+00:00", "number": 5, "target": [[90, -90, -90, -90, 15, 10, -25], [-90, -90, 90, -90, -15, 10, 25]], "point_count": 73, "native_point_counts": [73, 73], "upload_point_counts": []}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.202822+00:00", "segment": 6, "arm": 0, "peak_deg_s": 21.600000000000286}
+{"event": "trajectory_checked", "time": "2026-11-11T05:52:35.204244+00:00", "segment": 6, "arm": 1, "peak_deg_s": 21.600000000000286}
+{"event": "planned", "time": "2026-11-11T05:52:35.204496+00:00", "number": 6, "target": [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]], "point_count": 73, "native_point_counts": [73, 73], "upload_point_counts": []}
+{"event": "continuous_planned", "time": "2026-11-11T05:52:35.220455+00:00", "count": 531, "nominal_seconds": 10.62, "waypoint_sample_indices": [72, 156, 252, 336, 408, 480], "peak_deg_s": [21.600000000000286, 21.600000000000286], "intermediate_hold_points": 0, "final_hold_points": 50, "synchronous_start_commands": 1}
+{"event": "preflight_complete", "time": "2026-11-11T05:52:35.220682+00:00", "motion_commands_sent": 0}
+{"event": "sdk_disconnected", "time": "2026-11-11T05:52:35.220885+00:00"}
+{"remote_exit_code": 0}

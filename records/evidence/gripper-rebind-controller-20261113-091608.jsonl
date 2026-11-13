@@ -1,0 +1,13 @@
+{"command": ["udevadm", "info", "-q", "property", "-p", "/sys/bus/usb/devices/5-1.1"], "code": 0, "stdout": "DEVPATH=/devices/platform/bus@0/14180000.pcie/pci0000:00/0000:00:00.0/0000:01:00.0/usb5/5-1/5-1.1\nDEVNAME=/dev/bus/usb/005/003\nDEVTYPE=usb_device\nDRIVER=usb\nPRODUCT=1a86/7523/264\nTYPE=255/0/0\nBUSNUM=005\nDEVNUM=003\nMAJOR=189\nMINOR=514\nSUBSYSTEM=usb\nUSEC_INITIALIZED=27922407\nID_VENDOR=1a86\nID_VENDOR_ENC=1a86\nID_VENDOR_ID=1a86\nID_MODEL=USB_Serial\nID_MODEL_ENC=USB\\x20Serial\nID_MODEL_ID=7523\nID_REVISION=0264\nID_SERIAL=1a86_USB_Serial\nID_BUS=usb\nID_USB_INTERFACES=:ff0102:\nID_VENDOR_FROM_DATABASE=QinHeng Electronics\nID_MODEL_FROM_DATABASE=CH340 serial converter\nID_PATH=platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.1\nID_PATH_TAG=platform-14180000_pcie-pci-0000_01_00_0-usb-0_1_1\nID_MM_DEVICE_MANUAL_SCAN_ONLY=1\nTAGS=:snap_cups_ippeveprinter:snap_cups_cupsd:systemd:\nCURRENT_TAGS=:snap_cups_ippeveprinter:snap_cups_cupsd:\n", "stderr": ""}
+{"command": ["systemctl", "is-active", "brltty-udev.service"], "code": 3, "stdout": "inactive\n", "stderr": ""}
+{"command": ["fuser", "/dev/bus/usb/005/001"], "code": 1, "stdout": "", "stderr": ""}
+{"command": ["fuser", "/dev/bus/usb/005/004"], "code": 1, "stdout": "", "stderr": ""}
+{"command": ["fuser", "/dev/bus/usb/005/002"], "code": 1, "stdout": "", "stderr": ""}
+{"command": ["fuser", "/dev/bus/usb/005/003"], "code": 1, "stdout": "", "stderr": ""}
+{"command": ["fuser", "/dev/bus/usb/006/001"], "code": 1, "stdout": "", "stderr": ""}
+{"command": ["fuser", "/dev/bus/usb/006/002"], "code": 1, "stdout": "", "stderr": ""}
+{"command": ["fuser", "/dev/ttyUSB5"], "code": 1, "stdout": "", "stderr": ""}
+{"event": "controller_rebind_start", "pci": "0000:01:00.0", "usb_identities": [["1d6b", "0002"], ["0403", "6001"], ["05e3", "0610"], ["1a86", "7523"], ["1d6b", "0003"], ["05e3", "0626"]], "serial_data_sent": false}
+{"command": ["udevadm", "settle", "--timeout=20"], "code": 0, "stdout": "", "stderr": ""}
+{"event": "controller_rebind_complete", "serial_data_sent": false}
+{"remote_exit_code": 0}

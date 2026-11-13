@@ -1,0 +1,270 @@
+"""Native targets, asynchronous joints, delayed arrival and hard fault checks."""
+
+import copy
+import math
+import sys
+import unittest
+from unittest.mock import Mock, patch
+
+from box_motion_plan import delta
+from native_arm_motion import (NativeArrival, envelope_samples, envelope_sample_count,
+                               read_native_limits)
+from test_box_mime_continuous import Clock
+import test_mime_speed_setting
+
+
+class Tests(unittest.TestCase):
+    def setUp(self):
+        self.helpers = test_mime_speed_setting.Tests()
+        self.helpers.setUp()
+        self.home = self.helpers.fixture.home
+        self.stage = next(s for s in self.helpers.fixture.stages
+                          if s["name"] == "embrace_empty_space")
+        self.limits = {key: [{"VelMax": 180., "AccMax": 450. if j < 2 else 900.}
+                            for j in range(7)] for key in ("arm0", "arm1")}
+
+    def velocities(self):
+        return {key: [0.]*len(values) for key, values in self.home.items()}
+
+    def test_envelope_samples_cover_independent_joint_progress(self):
+        samples = list(envelope_samples(self.stage))
+        self.assertEqual(len(samples), envelope_sample_count(self.stage))
+        self.assertEqual(len(samples), 3025)
+        corner = copy.deepcopy(self.stage["start"])
+        corner["arm0"][2] = self.stage["target"]["arm0"][2]
+        corner["arm1"][3] = self.stage["target"]["arm1"][3]
+        self.assertIn(corner, samples)
+        self.assertIn(self.stage["target"], samples)
+        self.assertTrue(all(s["body"] == self.stage["start"]["body"] for s in samples))
+
+    def test_arrival_allows_independent_progress_and_requires_two_spaced_frames(self):
+        policy = NativeArrival(self.stage, 10.)
+        actual = copy.deepcopy(self.stage["start"])
+        actual["arm0"] = self.stage["target"]["arm0"].copy()
+        self.assertEqual(policy.update(actual, self.velocities(), 1, 1.), "waiting_for_arrival")
+        actual = self.stage["target"]
+        fast = self.velocities()
+        fast["arm0"][2] = .16
+        self.assertEqual(policy.update(actual, fast, 2, 2.), "waiting_for_arrival")
+        self.assertEqual(policy.update(actual, self.velocities(), 2, 2.1), "waiting_for_arrival")
+        self.assertEqual(policy.update(actual, self.velocities(), 3, 2.11), "complete")
+
+    def test_stationary_body_and_endpoint_envelope_remain_checked(self):
+        for key, joint, value in (("body", 0, self.stage["start"]["body"][0]+2.001),
+                                  ("arm0", 2, self.stage["target"]["arm0"][2]+2.001)):
+            actual = copy.deepcopy(self.stage["start"])
+            actual[key][joint] = value
+            with self.assertRaises(RuntimeError):
+                NativeArrival(self.stage, 10.).update(actual, self.velocities(), 1, 1.)
+
+    def test_overdue_arrival_keeps_waiting_and_can_complete_later(self):
+        policy = NativeArrival(self.stage, 10.)
+        self.assertEqual(policy.update(self.stage["start"], self.velocities(), 1, 11.),
+                         "waiting_for_arrival_overdue")
+        self.assertEqual(policy.update(self.stage["target"], self.velocities(), 2, 12.),
+                         "waiting_for_arrival_overdue")
+        self.assertEqual(policy.update(self.stage["target"], self.velocities(), 3, 12.1),
+                         "complete")
+
+    def test_all_groups_accept_two_degree_position_error(self):
+        policy = NativeArrival(self.stage, 10.)
+        actual = copy.deepcopy(self.stage["target"])
+        for key in actual:
+            actual[key][0] += 2.
+        self.assertEqual(policy.update(actual, self.velocities(), 1, 1.),
+                         "waiting_for_arrival")
+        self.assertEqual(policy.update(actual, self.velocities(), 2, 1.1), "complete")
+
+    def test_stationary_arm_outside_two_degree_envelope_still_rejects(self):
+        for error, duration in ((2.001, 0.), (2.1, .501)):
+            with self.subTest(error=error, duration=duration):
+                policy = NativeArrival(self.stage, 10.)
+                actual = copy.deepcopy(self.stage["target"])
+                actual["arm0"][6] = error
+                with self.assertRaisesRegex(RuntimeError, "stationary axis"):
+                    policy.update(actual, self.velocities(), 2, 1.+duration)
+                self.assertEqual(policy.guard_details["joint"], 7)
+                self.assertAlmostEqual(policy.guard_details["error_deg"], error)
+
+    def test_missing_live_parameters_do_not_get_invented_defaults(self):
+        robot = Mock()
+        robot.param_get_float.return_value = (0, float("nan"))
+        with self.assertRaisesRegex(RuntimeError, "parameter"):
+            read_native_limits(robot)
+        robot.runtime_set_joint_pos_cmd.assert_not_called()
+
+    def simulate(self, plan, control, delay=0., wrong_echo=False, fault=False, hold_drift=0.,
+                 whole_body_offset=0.):
+        ratios = plan.controller_settings()
+        robot = self.helpers.robot(
+            ratios["arm0"]["speed_percent"], state=self.home,
+            acceleration=ratios["arm0"]["acceleration_percent"],
+            body_speed=ratios["body"]["speed_percent"],
+            body_acceleration=ratios["body"]["acceleration_percent"])
+        clock = Clock()
+        runner = control.MimeRunner(robot, lambda: None)
+        runner.command = copy.deepcopy(self.home)
+        runner.enabled = {"arm0", "arm1", "body"}
+        runner.native_limits = self.limits
+        targets = copy.deepcopy(robot.pose)
+        pending, writes = {}, []
+        original_rt = robot.get_rt_dict
+
+        def send(obj, values):
+            key = {0: "arm0", 1: "arm1", 3: "body"}[obj]
+            targets[key] = list(values)
+            writes.append((runner.stage["name"], key, list(values),
+                           runner.native_stage is not None, clock.now))
+            if runner.native_stage is not None:
+                pending[key] = (clock.now+(delay if key == "arm1" else 0.),
+                                list(robot.pose[key]), list(values))
+            else:
+                pending.pop(key, None)
+                robot.pose[key] = list(values)
+            return 0
+
+        def rt():
+            speeds = {key: [0.]*7 for key in ("arm0", "arm1")}
+            for key, (began, start, target) in pending.items():
+                elapsed = max(0., clock.now-began)
+                for j, (a, b) in enumerate(zip(start, target)):
+                    distance = abs(b-a)
+                    robot.pose[key][j] = a+math.copysign(min(distance, 90.*elapsed), b-a)
+                    speeds[key][j] = (math.copysign(90., b-a)
+                                      if 0 < elapsed < distance/90. else 0.)
+                if 0 < elapsed < .2:
+                    robot.pose[key][6] += hold_drift
+            result = original_rt()
+            for i, key in enumerate(("arm0", "arm1")):
+                result["arms"][i]["cmd"]["joint_pos"] = list(targets[key])
+                result["arms"][i]["fb"]["fb_vel"] = speeds[key]
+            if runner.native_stage:
+                if wrong_echo:
+                    result["arms"][0]["cmd"]["joint_pos"] = [0.]*7
+                if fault:
+                    result["arms"][1]["state"]["err"] = 123
+            for arm in result["arms"]:
+                arm["fb"]["fb_pos"] = list(arm["fb"]["fb_pos"])
+                arm["fb"]["fb_pos"][0] += whole_body_offset
+            for key in ("body", "head"):
+                result[key]["fb_pos"] = list(result[key]["fb_pos"])
+                result[key]["fb_pos"][0] += whole_body_offset
+            return result
+
+        robot.runtime_set_joint_pos_cmd.side_effect = send
+        robot.get_rt_dict = rt
+        stages = plan.build_stages(self.home, self.home, self.helpers.fixture.squat,
+                                   self.helpers.fixture.waist)
+        return runner, robot, clock, stages, writes
+
+    def test_actual_generated_entry_sends_one_target_per_arm_and_waits_for_delayed_arm(self):
+        for delay in (0., 2.):
+            with self.subTest(delay=delay), self.helpers.remote_modules(None, native=True) as (plan, control, _):
+                runner, robot, clock, stages, writes = self.simulate(plan, control, delay)
+                with patch("time.monotonic", clock.monotonic), patch("time.sleep", clock.sleep), \
+                        patch.object(control, "emit"), patch("native_arm_motion.emit"):
+                    final = runner.stream_stages_with_wait(stages)
+                self.assertLess(delta(final, self.home), .03)
+                native = [w for w in writes if w[3]]
+                self.assertEqual(len(native), 8)
+                for stage in stages:
+                    if stage["name"] in ("open_before_crouch", "embrace_empty_space",
+                                         "open_arms_standing", "arms_home"):
+                        calls = [w for w in native if w[0] == stage["name"]]
+                        self.assertEqual([w[1] for w in calls], ["arm0", "arm1"])
+                        for _, key, value, _, _ in calls:
+                            self.assertEqual(value, stage["target"][key])
+                samples = [r for r in runner.response_samples
+                           if r.get("motion_style") == "native_position"]
+                self.assertGreater(max(abs(v) for r in samples
+                                       for v in r["velocity_deg_s"]["arm0"]), 18.)
+                for name in {r["stage"] for r in samples}:
+                    completed = next(r for r in samples
+                                     if r["stage"] == name and r["action"] == "complete")
+                    self.assertGreaterEqual(completed["elapsed_seconds"], delay)
+                    self.assertLess(completed["elapsed_seconds"], delay+1.)
+                robot.emergency_stop.assert_not_called()
+                robot.switch_to_idle.assert_not_called()
+
+    def test_native_echo_and_hardware_faults_still_reject(self):
+        for wrong_echo, fault, message in ((True, False, "echo mismatch"),
+                                           (False, True, "Unexpected state")):
+            with self.subTest(message=message), self.helpers.remote_modules(None, native=True) as (plan, control, _):
+                runner, robot, clock, stages, _ = self.simulate(
+                    plan, control, wrong_echo=wrong_echo, fault=fault)
+                with patch("time.monotonic", clock.monotonic), patch("time.sleep", clock.sleep), \
+                        patch.object(control, "emit"), patch("native_arm_motion.emit"):
+                    with self.assertRaisesRegex(RuntimeError, message):
+                        runner.stream_stages_with_wait(stages)
+
+    def test_generated_entry_waits_for_brief_arm_hold_drift_without_aborting_flow(self):
+        with self.helpers.remote_modules(None, native=True) as (plan, control, _):
+            runner, robot, clock, stages, writes = self.simulate(
+                plan, control, hold_drift=.08)
+            with patch("time.monotonic", clock.monotonic), patch("time.sleep", clock.sleep), \
+                    patch.object(control, "emit"), patch("native_arm_motion.emit"):
+                final = runner.stream_stages_with_wait(stages)
+            self.assertLess(delta(final, self.home), .03)
+            self.assertTrue(any(s.get("motion_style") == "native_position"
+                                and abs(s["actual"]["arm0"][6]-.08) < 1e-9
+                                for s in runner.response_samples))
+            self.assertEqual(len([w for w in writes if w[3]]), 8)
+            robot.emergency_stop.assert_not_called()
+            robot.switch_to_idle.assert_not_called()
+
+    def test_rejecting_native_frame_is_saved_with_joint_and_error(self):
+        with self.helpers.remote_modules(None, native=True) as (plan, control, _):
+            runner, _, clock, stages, _ = self.simulate(plan, control, hold_drift=2.1)
+            with patch("time.monotonic", clock.monotonic), patch("time.sleep", clock.sleep), \
+                    patch.object(control, "emit"), patch("native_arm_motion.emit"):
+                with self.assertRaisesRegex(RuntimeError, "stationary axis"):
+                    runner.stream_stages_with_wait(stages)
+            failure = runner.response_samples[-1]
+            self.assertEqual(failure["action"], "guard_rejected")
+            self.assertEqual(failure["guard_details"]["joint"], 7)
+            self.assertEqual(failure["guard_details"]["error_deg"], 2.1)
+            self.assertEqual(failure["actual"]["arm0"][6], 2.1)
+
+    def test_generated_whole_body_flow_and_final_confirmation_accept_residuals(self):
+        with self.helpers.remote_modules(None, native=True) as (plan, control, _):
+            runner, robot, clock, stages, _ = self.simulate(
+                plan, control, whole_body_offset=1.5)
+            with patch("time.monotonic", clock.monotonic), patch("time.sleep", clock.sleep), \
+                    patch.object(control, "emit"), patch("native_arm_motion.emit"):
+                runner.stream_stages_with_wait(stages)
+                final = runner.wait_target(self.home)
+            self.assertAlmostEqual(delta(final, self.home), 1.5)
+            for key in final:
+                self.assertAlmostEqual(final[key][0]-self.home[key][0], 1.5)
+            robot.emergency_stop.assert_not_called()
+            robot.switch_to_idle.assert_not_called()
+
+    def test_native_velocity_guard_does_not_allow_above_live_limit(self):
+        with self.helpers.remote_modules(None, native=True) as (plan, control, _):
+            robot = self.helpers.robot(100., state=self.stage["start"],
+                                      acceleration=100., body_speed=10.)
+            runner = control.MimeRunner(robot, lambda: None)
+            runner.native_limits, runner.native_stage = self.limits, self.stage
+            runner.max_feedback_speed = 180.6
+            original = robot.get_rt_dict
+            def rt():
+                result = original()
+                result["arms"][0]["fb"]["fb_vel"][2] = 181.
+                return result
+            robot.get_rt_dict = rt
+            with self.assertRaisesRegex(RuntimeError, "velocity"):
+                runner.read()
+
+    def test_old_shared_path_cache_cannot_authorize_native_mode(self):
+        with self.helpers.remote_modules(None, native=True) as (plan, _, _):
+            cache = sys.modules["box_mime_cache"]
+            stages = plan.build_stages(self.home, self.home, self.helpers.fixture.squat,
+                                       self.helpers.fixture.waist)
+            certificate = {"schema": "luna_mime_geometry_cache_v1", "code_id": "code",
+                           "model_files": {}, "stages": stages, "report": {}}
+            with self.assertRaisesRegex(RuntimeError, "Native arm envelope"):
+                cache.verify_binding(certificate, "code", {}, stages)
+
+
+if __name__ == "__main__":
+    unittest.main()

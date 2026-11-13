@@ -1,0 +1,42 @@
+{
+  "name": "SQUAT_TAUGHT",
+  "source": "user_manual_teaching",
+  "captured_at_local": "2026-11-11T15:02:01.690505+08:00",
+  "joint_units": "deg",
+  "pose": {
+    "arm0": [
+      90.0,
+      -90.0,
+      -90.0,
+      -90.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "arm1": [
+      -90.0,
+      -90.0,
+      90.0,
+      -90.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "body": [
+      -0.744,
+      70.281,
+      -127.364,
+      55.0,
+      -0.296,
+      -1.651
+    ],
+    "head": [
+      2.107,
+      -15.998,
+      0.0
+    ]
+  },
+  "evidence": "C:\\Users\\operator\\Documents\\ChatGPT\\luna\\evidence\\teaching-feedback-20261111-150201.json",
+  "trajectory_validated": false,
+  "motion_commands_sent": 0
+}

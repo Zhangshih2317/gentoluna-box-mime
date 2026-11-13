@@ -1,0 +1,33 @@
+{"event": "remote_process", "pid": 1822014, "run_id": "[REDACTED]"}
+{"event": "plan", "time": "2026-11-11T05:28:59.540906+00:00", "home": [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]], "targets": [[[90, -90, -90, -90, 25, 20, 25], [-90, -90, 90, -90, -25, 20, -25]], [[90, -90, -90, -90, -5, -10, -5], [-90, -90, 90, -90, 5, -10, 5]], [[90, -90, -90, -90, 20, 15, 30], [-90, -90, 90, -90, -20, 15, -30]], [[90, -90, -90, -90, -10, -15, 0], [-90, -90, 90, -90, 10, -15, 0]], [[90, -90, -90, -90, 15, 10, -25], [-90, -90, 90, -90, -15, 10, 25]], [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]]], "speed_percent": 5.0, "acceleration_percent": 5.0, "execute": true}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+[INFO][L1] FX_L1_System_GetSDKVersion: SDK version is 0x00040402
+[INFO][L1] FX_L1_System_GetControllerVersion: Controller version is 0x00040404
+{"event": "connected", "time": "2026-11-11T05:28:59.656390+00:00", "sdk": "00040402", "controller": "00040404"}
+{"event": "initial_feedback", "time": "2026-11-11T05:28:59.809367+00:00", "arms": [{"joints_deg": [90.0, -90.0, -90.0, -90.0, 0.0, 0.0, 0.0], "velocities_deg_s": [0.029, 0.044, 0.018, 0.015, -0.052, -0.001, 0.008], "ratios": [5.0, 5.0], "trajectory_state": 1, "state": {"cur": 1, "cmd": 1, "err": 0}}, {"joints_deg": [-90.0, -90.0, 90.0, -90.0, -0.0, 0.0, 0.0], "velocities_deg_s": [-0.047, 0.01, 0.003, 0.023, 0.019, -0.035, 0.029], "ratios": [5.0, 5.0], "trajectory_state": 0, "state": {"cur": 1, "cmd": 1, "err": 0}}], "body": [-0.744, 9.281, -17.364, 5.456, -0.296, -1.653], "head": [2.108, -15.998, 0.0], "frame_serial": 276532}
+{"event": "incomplete_upload_detected", "time": "2026-11-11T05:28:59.809583+00:00", "arm": 0, "action": "Reinitialize with the first validated upload only after RUN"}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.778681+00:00", "segment": 1, "arm": 0, "peak_deg_s": 1.8000000000000682}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.792574+00:00", "segment": 1, "arm": 1, "peak_deg_s": 1.8000000000000682}
+{"event": "planned", "time": "2026-11-11T05:29:02.798554+00:00", "number": 1, "target": [[90, -90, -90, -90, 25, 20, 25], [-90, -90, 90, -90, -25, 20, -25]], "point_count": 760, "native_point_counts": [710, 710], "upload_point_counts": [240, 241, 241, 191]}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.814802+00:00", "segment": 2, "arm": 0, "peak_deg_s": 1.8000000000000682}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.832282+00:00", "segment": 2, "arm": 1, "peak_deg_s": 1.8000000000000682}
+{"event": "planned", "time": "2026-11-11T05:29:02.839078+00:00", "number": 2, "target": [[90, -90, -90, -90, -5, -10, -5], [-90, -90, 90, -90, 5, -10, 5]], "point_count": 899, "native_point_counts": [849, 849], "upload_point_counts": [230, 231, 231, 231, 180]}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.858359+00:00", "segment": 3, "arm": 0, "peak_deg_s": 1.8000000000000682}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.876943+00:00", "segment": 3, "arm": 1, "peak_deg_s": 1.8000000000000682}
+{"event": "planned", "time": "2026-11-11T05:29:02.884841+00:00", "number": 3, "target": [[90, -90, -90, -90, 20, 15, 30], [-90, -90, 90, -90, -20, 15, -30]], "point_count": 1038, "native_point_counts": [988, 988], "upload_point_counts": [223, 224, 224, 224, 224, 174]}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.900937+00:00", "segment": 4, "arm": 0, "peak_deg_s": 1.8000000000000682}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.916900+00:00", "segment": 4, "arm": 1, "peak_deg_s": 1.8000000000000682}
+{"event": "planned", "time": "2026-11-11T05:29:02.923450+00:00", "number": 4, "target": [[90, -90, -90, -90, -10, -15, 0], [-90, -90, 90, -90, 10, -15, 0]], "point_count": 899, "native_point_counts": [849, 849], "upload_point_counts": [230, 231, 231, 231, 180]}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.936720+00:00", "segment": 5, "arm": 0, "peak_deg_s": 1.800000000000157}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.950167+00:00", "segment": 5, "arm": 1, "peak_deg_s": 1.800000000000157}
+{"event": "planned", "time": "2026-11-11T05:29:02.955726+00:00", "number": 5, "target": [[90, -90, -90, -90, 15, 10, -25], [-90, -90, 90, -90, -15, 10, 25]], "point_count": 760, "native_point_counts": [710, 710], "upload_point_counts": [240, 241, 241, 191]}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.969660+00:00", "segment": 6, "arm": 0, "peak_deg_s": 1.8000000000000682}
+{"event": "trajectory_checked", "time": "2026-11-11T05:29:02.983394+00:00", "segment": 6, "arm": 1, "peak_deg_s": 1.8000000000000682}
+{"event": "planned", "time": "2026-11-11T05:29:02.988992+00:00", "number": 6, "target": [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]], "point_count": 760, "native_point_counts": [710, 710], "upload_point_counts": [240, 241, 241, 191]}
+{"event": "speed_verified", "time": "2026-11-11T05:29:02.989992+00:00", "speed_percent": 5.0, "acceleration_percent": 5.0}
+[INFO][L1] [Thread1]FX_L1_Runtime_StopTraj: Set command Runtime_StopTraj success with obj_mask=0x03
+{"event": "stop_both", "time": "2026-11-11T05:29:03.006219+00:00", "returned_mask": 3, "confirmed": true}
+{"event": "sdk_disconnected", "time": "2026-11-11T05:29:03.006891+00:00"}
+{"event": "failed", "time": "2026-11-11T05:29:03.007241+00:00", "error": "RuntimeError: ARM0 upload of 240 points failed: -10 (SDK upload error); no run retry"}
+{"remote_exit_code": 1}

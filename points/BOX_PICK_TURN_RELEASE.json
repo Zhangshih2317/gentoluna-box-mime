@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "name": "BOX_PICK_TURN_RELEASE",
+  "recorded_date_local": "2026-11-11",
+  "timezone": "Asia/Shanghai",
+  "status": "superseded_by_empty_handed_mime",
+  "superseded_by": "BOX_MIME.json",
+  "executable": false,
+  "motion_commands_sent": 0,
+  "units": {
+    "angle": "deg",
+    "length": "mm",
+    "mass": "kg"
+  },
+  "intent": {
+    "sequence": [
+      "crouch",
+      "embrace_box",
+      "stand",
+      "turn_waist",
+      "open_arms",
+      "hold"
+    ],
+    "turn_magnitude_deg": 45,
+    "turn_direction": null,
+    "turn_reference_provisional": "relative_waist_joint_displacement_from_standing_grasp",
+    "turn_reference_confirmed": false,
+    "release_mode_provisional": "open_and_drop_without_throw_impulse",
+    "release_mode_confirmed": false,
+    "crouch_after_standing": false,
+    "automatic_return_home": false
+  },
+  "inputs": {
+    "box_dimensions_mm": null,
+    "box_mass_kg": null,
+    "box_initial_pose": null,
+    "pose_reference_frame": null,
+    "tool_type": null,
+    "support_or_grasp_method": null,
+    "release_zone": null,
+    "standing_body_deg": null,
+    "crouched_body_deg": null,
+    "embrace_arm0_deg": null,
+    "embrace_arm1_deg": null,
+    "release_arm0_deg": null,
+    "release_arm1_deg": null,
+    "velocity_limits": null,
+    "acceleration_limits": null,
+    "controller_ratios": null,
+    "contact_confirmation_method": null,
+    "release_confirmation_method": null
+  },
+  "candidate_body_mapping": {
+    "source": "reference/robot_frames/calibration_transforms/calibration_data/calibration_matrices.json",
+    "crouch_pitch_sdk_slots_zero_based": [
+      1,
+      2,
+      3
+    ],
+    "waist_sdk_slot_zero_based": 5,
+    "hardware_validated_for_this_action": false,
+    "unresolved_model_controller_limit_differences": [
+      "B1",
+      "B4"
+    ]
+  },
+  "phases": [
+    {
+      "id": "prepare",
+      "next": "crouch",
+      "gate": "geometry_limits_load_space_and_control_verified"
+    },
+    {
+      "id": "crouch",
+      "next": "embrace",
+      "gate": "crouch_and_pregrasp_reached_without_contact_conflict"
+    },
+    {
+      "id": "embrace",
+      "next": "stand",
+      "gate": "box_support_confirmed_not_only_joint_arrival"
+    },
+    {
+      "id": "stand",
+      "next": "turn",
+      "gate": "standing_reached_box_lifted_and_grasp_stable"
+    },
+    {
+      "id": "turn",
+      "next": "release",
+      "gate": "relative_turn_reached_and_settled_grasp_stable"
+    },
+    {
+      "id": "release",
+      "next": "hold",
+      "body": "hold_post_turn_standing_pose",
+      "gate": "box_detached_from_all_tools"
+    },
+    {
+      "id": "hold",
+      "next": null,
+      "body": "hold_post_turn_standing_pose",
+      "arms": "hold_verified_open_pose"
+    }
+  ],
+  "failure_policy": {
+    "advance_to_next_phase": false,
+    "automatic_release": false,
+    "automatic_return_home": false,
+    "automatic_disable_or_brake_unlock": false,
+    "response": "validated_load_preserving_stop_strategy_required"
+  },
+  "required_validation": [
+    "resolve_body_axis_and_limit_discrepancies",
+    "verify_current_tool_and_box_geometry",
+    "validate_body_and_arm_trajectory_synchronization_and_stop",
+    "validate_full_path_collision_clearance_including_box_and_tools",
+    "validate_load_capacity_and_stability",
+    "validate_grasp_and_release_detection",
+    "validate_no_crouch_after_standing",
+    "validate_empty_motion_before_loaded_motion"
+  ]
+}

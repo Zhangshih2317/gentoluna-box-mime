@@ -1,0 +1,130 @@
+"""Build the historical SDK-frame-only candidate, not the ground HOME."""
+
+import argparse
+from datetime import datetime, timedelta, timezone
+import hashlib
+import json
+import math
+from pathlib import Path
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load(path):
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--feedback", type=Path, required=True)
+    parser.add_argument("--fk", type=Path, required=True)
+    args = parser.parse_args()
+    feedback, fk = load(args.feedback), load(args.fk)
+    if not feedback["success"] or fk["exit_code"] != 0:
+        raise ValueError("Successful feedback and kinematics evidence are required")
+    if not any(
+        e["kind"] == "handoff" and e["data"]["success"]
+        and not e["data"]["owner_client_id"]
+        for e in fk["events"]
+    ):
+        raise ValueError("Kinematics lease handoff was not confirmed")
+    samples = {
+        e["data"]["component"]: e["data"]["response"]["status"]
+        for e in feedback["events"] if e["kind"] == "sample"
+    }
+    results = {
+        e["data"]["input"]["name"]: e["data"]
+        for e in fk["events"] if e["kind"] == "fk"
+    }
+    point = {
+        "name": "HOME",
+        "status": "candidate_requires_geometry_and_clearance_validation",
+        "execution_enabled": False,
+        "motion_commands_sent": 0,
+        "created_at": datetime.now(timezone(timedelta(hours=8))).isoformat(),
+        "feedback_collected_at": feedback["collected_at"],
+        "joint_units": "degree",
+        "interpretation": {
+            "positive_90_where_available": ["J1", "J2", "J3", "J5", "J7"],
+            "J4": "-90 chosen because +90 exceeds the observed +45 limit",
+            "J6": "0 chosen; +/-90 is outside its observed +/-60 limits",
+            "horizontal_axis": "TCP/flange local Z axis",
+            "horizontal_plane": "SDK FK reference-frame XY plane",
+            "ground_alignment_verified": False,
+            "palm_orientation_verified": False,
+        },
+        "blockers": [
+            "J7 equals the +90 degree hard limit on both arms; zero limit margin.",
+            "Ground alignment of the SDK reference frame is not verified.",
+            "Self-collision, environment clearance and approach paths are not checked.",
+            "Mounted tool/palm orientation and TCP calibration are not verified.",
+        ],
+        "body": {"command": None, "observed_feedback": samples["body"]},
+        "head": {"command": None},
+        "arms": {},
+        "sources": {
+            name: {
+                "path": str(path.resolve()),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            for name, path in (("feedback", args.feedback), ("kinematics", args.fk))
+        },
+    }
+    for arm, side in ((0, "left"), (1, "right")):
+        live = samples[f"arm{arm}"]
+        result = results[f"{side}_90_candidate"]
+        current_result = results[f"{side}_current"]
+        target = result["input"]["joints_deg"]
+        pose = result["response"]
+        if not pose["success"] or not current_result["response"]["success"]:
+            raise ValueError("Vendor FK failed")
+        if target != [90, 90, 90, -90, 90, 0, 90]:
+            raise ValueError("Unexpected candidate")
+        if max(abs(a-b) for a, b in zip(
+            current_result["input"]["joints_deg"], live["joints_deg"]
+        )) > 0.01:
+            raise ValueError("FK and live feedback do not describe the same snapshot")
+        if max(abs(a-b) for a, b in zip(
+            current_result["response"]["xyzabc"], live["tcp_xyzabc"]
+        )) > 0.01:
+            raise ValueError("Current SDK FK disagrees with reported TCP pose")
+        margins = []
+        for q, (low, high) in zip(target, live["joint_limits_deg"]):
+            if not all(math.isfinite(v) for v in (q, low, high)) or not low <= q <= high:
+                raise ValueError("Candidate violates a joint limit")
+            margins.append(min(q-low, high-q))
+        matrix = pose["matrix_row_major"]
+        if len(matrix) != 16 or not all(math.isfinite(v) for v in matrix):
+            raise ValueError("Invalid FK matrix")
+        # Column Z gives the flange axis in the SDK reference frame.
+        axis = [matrix[2], matrix[6], matrix[10]]
+        if abs(sum(v*v for v in axis) - 1.0) > 1e-6:
+            raise ValueError("FK did not return a unit flange axis")
+        tilt = math.degrees(math.asin(min(1.0, abs(axis[2]))))
+        if tilt > 0.01:
+            raise ValueError("Candidate flange axis is not horizontal in the FK frame")
+        point["arms"][f"arm{arm}"] = {
+            "side": side,
+            "target_joints_deg": target,
+            "delta_from_observed_deg": [
+                round(q-start, 6) for q, start in zip(target, live["joints_deg"])
+            ],
+            "joint_limit_margin_deg": margins,
+            "hard_limits_pass": True,
+            "two_degree_limit_margin_pass": all(v >= 2 for v in margins),
+            "sdk_fk_xyzabc": pose["xyzabc"],
+            "sdk_fk_matrix_row_major": matrix,
+            "flange_z_axis_in_sdk_frame": axis,
+            "flange_axis_tilt_from_sdk_xy_deg": tilt,
+            "observed_feedback": live,
+        }
+    output = ROOT / "points" / "HOME-sdk-frame-only.json"
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps(point, ensure_ascii=False, indent=2), encoding="utf-8")
+    print("Saved " + str(output))
+    print("Vendor FK and hard limits checked; execution_enabled=false.")
+
+
+if __name__ == "__main__":
+    main()

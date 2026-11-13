@@ -1,0 +1,13 @@
+{"event": "request", "execute": false, "velocity_percent": 20.0, "acceleration_percent": 5.0, "prepare_cache": false, "full_preflight": false, "motion_style": "continuous"}
+{"event": "process", "pid": 657842}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 2ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+{"event": "recovery_failed", "time": "2026-11-13T04:43:14.707712+00:00", "error": "Standing BODY posture required for wrist recovery"}
+{"event": "sdk_disconnected", "time": "2026-11-13T04:43:14.708176+00:00"}
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "<string>", line 45, in <module>
+  File "<string>", line 80, in run
+  File "<string>", line 23, in build_home_stages
+ValueError: Standing BODY posture required for wrist recovery
+{"remote_exit_code": 1, "completion_confirmed": false}

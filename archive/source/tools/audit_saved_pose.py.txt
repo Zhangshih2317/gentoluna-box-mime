@@ -1,0 +1,135 @@
+"""Audit a saved pose against the installed model, without importing robot SDK."""
+
+import argparse
+from datetime import datetime, timedelta, timezone
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import sys
+
+from robot_status import DEFAULT_CONNECTOR, ROOT
+from teach_pose import validate_recording
+
+
+REMOTE = r'''
+import copy,hashlib,json,math,pathlib,sys,xml.etree.ElementTree as ET
+sys.path.insert(0,"/home/nvidia/tianji-robot-SDK/robot")
+from collision_guard import CollisionChecker,JointState
+model=pathlib.Path("/home/nvidia/gento-web-8760/releases/1.0.35/frontend/robot/gento_luna_full.urdf")
+root=ET.parse(model).getroot()
+limits={}
+for name in ("Arm_L6_Joint","Arm_R6_Joint"):
+    joint=root.find("./joint[@name='%s']"%name)
+    limit=joint.find("limit")
+    limits[name]={key:math.degrees(float(limit.attrib[key])) for key in ("lower","upper")}
+checker=CollisionChecker(model)
+try:
+    def convert(p):
+        return JointState(tuple(p["arm0"]),tuple(p["arm1"]),tuple(p["body"]),
+                          (p["head"][1],p["head"][0]))
+    state=convert(POSE)
+    report=checker.check_state(state).to_dict()
+    candidate=None
+    if HOME is not None and report["safe"]:
+        current=copy.deepcopy(POSE)
+        stages=[]
+        target=copy.deepcopy(current)
+        target["body"]=HOME["body"][:]
+        stages.append(("body_to_home",copy.deepcopy(target)))
+        for key in ("arm0","arm1"):
+            target[key][4:]=HOME[key][4:]
+            stages.append((key+"_wrist_home",copy.deepcopy(target)))
+            target[key]=HOME[key][:]
+            stages.append((key+"_home",copy.deepcopy(target)))
+        candidate={"description":"BODY first, then one wrist and arm at a time",
+                   "motion_authorized":False,"maximum_sample_step_deg":0.25,
+                   "stages":[],"safe_in_bare_arm_model":True}
+        for name,target in stages:
+            print(json.dumps({"event":"candidate_progress","stage":name}),flush=True)
+            check=checker.check_trajectory([convert(current),convert(target)],0.25)
+            candidate["stages"].append({"name":name,"start":current,"target":target,"check":check})
+            if not check["safe"]:
+                candidate["safe_in_bare_arm_model"]=False
+                break
+            current=target
+    print(json.dumps({"event":"saved_pose_model_audit","model":str(model),
+                      "model_sha256":hashlib.sha256(model.read_bytes()).hexdigest(),
+                      "wrist_limits_deg":limits,"report":report,
+                      "candidate_recovery":candidate,
+                      "installed_grippers_modeled":False,"hardware_connected":False,
+                      "motion_commands_sent":0}),flush=True)
+finally:
+    checker.close()
+'''
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("evidence", type=Path)
+    parser.add_argument("--candidate-home", action="store_true",
+                        help="Model-only BODY-first candidate; never enables execution")
+    args = parser.parse_args()
+    raw = args.evidence.read_bytes()
+    saved = json.loads(raw)
+    samples = [event for event in saved["events"] if event["event"] == "sample"]
+    pose = validate_recording(samples)
+    last = samples[-1]
+    stamp = datetime.now(timezone(timedelta(hours=8)))
+    result = {
+        "audit_time": stamp.isoformat(),
+        "snapshot_time": saved["collected_at_local"],
+        "snapshot": str(args.evidence.resolve()),
+        "snapshot_sha256": hashlib.sha256(raw).hexdigest(),
+        "pose": pose,
+        "hardware_connected": False,
+        "motion_commands_sent": 0,
+        "controller_set_feedback": {
+            "arm0": last["sg"]["arms"][0]["set"],
+            "arm1": last["sg"]["arms"][1]["set"],
+            "body": last["sg"]["body"]["set"],
+        },
+    }
+    destination = ROOT/"evidence"/("saved-pose-audit-"+stamp.strftime("%Y%m%d-%H%M%S")+".json")
+    spec = importlib.util.spec_from_file_location("audit_connector", DEFAULT_CONNECTOR)
+    connector = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(connector)
+    home = (json.loads((ROOT/"points/BOX_START_BEFORE_INCIDENT.json").read_text("utf-8"))["pose"]
+            if args.candidate_home else None)
+    try:
+        with connector.connect() as client:
+            stdin, stdout, stderr = client.exec_command("python3 -", timeout=45)
+            stdin.write(("POSE="+repr(pose)+"\nHOME="+repr(home)+"\n"+REMOTE).encode("utf-8"))
+            stdin.flush()
+            stdin.channel.shutdown_write()
+            lines = []
+            for line in stdout:
+                lines.append(line)
+                if '"candidate_progress"' in line:
+                    print(line.rstrip(), flush=True)
+            result["stdout"] = "".join(lines)
+            result["stderr"] = stderr.read().decode("utf-8", errors="replace")
+            result["exit_code"] = stdout.channel.recv_exit_status()
+        events = [json.loads(line) for line in result["stdout"].splitlines()
+                  if line.startswith("{")]
+        audits = [event for event in events if event.get("event") == "saved_pose_model_audit"]
+        if result["exit_code"] or len(audits) != 1:
+            raise RuntimeError("Model audit failed; inspect evidence")
+        result["model_audit"] = audits[0]
+        result["audit_completed"] = True
+        result["motion_authorized"] = False
+        print(json.dumps(audits[0], indent=2))
+        return 0
+    except Exception as error:
+        result["error"] = str(error)
+        result["audit_completed"] = False
+        print(str(error), file=sys.stderr)
+        return 1
+    finally:
+        destination.parent.mkdir(exist_ok=True)
+        destination.write_text(json.dumps(result, indent=2), encoding="utf-8")
+        print("Evidence: "+str(destination))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

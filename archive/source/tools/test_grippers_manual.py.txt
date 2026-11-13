@@ -1,0 +1,55 @@
+"""Offline entry-point checks; no SSH or serial access."""
+import importlib.util
+from pathlib import Path
+import sys
+import types
+import unittest
+from unittest.mock import Mock, patch
+
+
+spec = importlib.util.spec_from_file_location(
+    "manual_grippers", Path(__file__).resolve().parents[1] / "run_grippers.py")
+subject = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(subject)
+
+
+class Tests(unittest.TestCase):
+    def test_exit_menu_does_not_connect(self):
+        with patch("builtins.input", return_value="0"), patch("builtins.print"), \
+                patch.object(subject, "run_action") as run:
+            self.assertEqual(subject.main([]), 0)
+        run.assert_not_called()
+
+    def test_explicit_actions_and_parameters(self):
+        for action in ("open", "close", "status"):
+            with patch.object(subject, "run_action", return_value=0) as run, \
+                    patch("builtins.print"):
+                self.assertEqual(subject.main([action, "--speed", "12", "--force", "29"]), 0)
+            run.assert_called_once_with(action, 12, 29)
+
+    def test_menu_defaults_and_no_automatic_reversal(self):
+        with patch("builtins.input", side_effect=["2", "0"]), patch("builtins.print"), \
+                patch.object(subject, "run_action", return_value=0) as run:
+            self.assertEqual(subject.main([]), 0)
+        run.assert_called_once_with("close", 10, 30)
+
+    def test_failure_exits_without_retry(self):
+        with patch("builtins.input", return_value="1"), patch("builtins.print"), \
+                patch.object(subject, "run_action", return_value=1) as run:
+            self.assertEqual(subject.main([]), 1)
+        run.assert_called_once_with("open", 10, 30)
+
+    def test_remote_mapping_and_policy(self):
+        runner = types.ModuleType("run_gripper_remote")
+        runner.main = Mock(return_value=0)
+        with patch.dict(sys.modules, {"run_gripper_remote": runner}):
+            for action, mode in (("open", "open"), ("close", "close"), ("status", "inspect")):
+                self.assertEqual(subject.run_action(action, 10, 30), 0)
+                expected = [mode, "--speed", "10", "--force", "30"]
+                if action != "status":
+                    expected.append("--ignore-drop-alarm")
+                runner.main.assert_called_with(expected)
+
+
+if __name__ == "__main__":
+    unittest.main()

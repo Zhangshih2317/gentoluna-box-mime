@@ -1,0 +1,75 @@
+{
+  "schema": "luna_home_recovery_reference_v1",
+  "scope": "preflight_only",
+  "joint_units": "deg",
+  "source": "evidence/teaching-feedback-20261113-152221.json",
+  "preflight_evidence": "evidence/return-home-20261113-152331.jsonl",
+  "execution_evidence": "evidence/return-home-20261113-152331.jsonl",
+  "previous_reference": "points/HOME_RECOVERY_PREFLIGHT_REFERENCE-20261113-before-152221.json",
+  "start": {
+    "arm0": [
+      90.002,
+      -90.0,
+      -78.004,
+      -79.999,
+      -0.0,
+      26.914,
+      -0.0
+    ],
+    "arm1": [
+      -90.0,
+      -90.0,
+      78.0,
+      -80.0,
+      0.004,
+      30.978,
+      -0.0
+    ],
+    "body": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -8.44
+    ],
+    "head": [
+      2.107,
+      -16.002,
+      0.0
+    ]
+  },
+  "home": {
+    "arm0": [
+      90,
+      -90,
+      -90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -1.653
+    ],
+    "head": [
+      2.108,
+      -15.998,
+      0.0
+    ]
+  }
+}

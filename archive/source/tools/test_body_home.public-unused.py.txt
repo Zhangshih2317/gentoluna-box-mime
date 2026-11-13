@@ -1,0 +1,70 @@
+"""HOME path and 5 percent BODY-only control regressions."""
+
+import copy
+import json
+from pathlib import Path
+import unittest
+from unittest.mock import patch
+
+from body_home_robot import HomeRunner, make_waypoints
+from box_motion_plan import delta
+from test_stand_up import FakeRobot
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class Tests(unittest.TestCase):
+    def setUp(self):
+        self.start = json.loads((ROOT/"points/STAND_UP_100MM.json").read_text())["target"]
+        self.home = json.loads((ROOT/"points/BOX_START_BEFORE_INCIDENT.json").read_text())["pose"]
+
+    def test_path_goes_to_saved_home_with_small_inward_steps(self):
+        target, points = make_waypoints(self.start, self.home)
+        prior = self.start
+        for index, point in enumerate(points):
+            self.assertLessEqual(delta(prior, point["pose"]), .200001 if index == 0 else .5)
+            self.assertLess(point["pose"]["body"][1], prior["body"][1])
+            self.assertGreater(point["pose"]["body"][2], prior["body"][2])
+            self.assertLess(point["pose"]["body"][3], prior["body"][3])
+            self.assertEqual(point["pose"]["arm0"], self.start["arm0"])
+            self.assertEqual(point["pose"]["arm1"], self.start["arm1"])
+            prior = point["pose"]
+        self.assertLess(delta(prior, target), 1e-10)
+        self.assertEqual(target["body"], self.home["body"])
+
+    def test_bad_start_or_waist_turn_rejected(self):
+        for key, joint in (("body", 5), ("arm0", 2), ("head", 0)):
+            changed = copy.deepcopy(self.start)
+            changed[key][joint] += 1
+            with self.assertRaises(RuntimeError):
+                make_waypoints(changed, self.home)
+
+    def test_enable_idle_body_uses_five_percent_and_does_not_reset(self):
+        robot = FakeRobot(self.start)
+        robot.body_mode = 0
+        original_sg = robot.get_sg_dict
+        def sg():
+            result = original_sg()
+            result["body"]["set"] = {"vel_ratio": 5., "acc_ratio": 5.}
+            return result
+        robot.get_sg_dict = sg
+        robot.switch_to_position_mode.side_effect = lambda *args: setattr(robot, "body_mode", 1) or 0
+        runner = HomeRunner(robot, self.start, self.home)
+        with patch("body_home_robot.time.sleep"), patch("body_home_robot.emit"):
+            runner.enable_body()
+        robot.switch_to_position_mode.assert_called_once_with(3, 2000, 5., 5.)
+        robot.reset_error.assert_not_called()
+        runner.send(self.start)
+        robot.runtime_set_joint_pos_cmd.assert_called_once_with(3, self.start["body"])
+
+    def test_disable_fault_is_rejected_without_reset(self):
+        robot = FakeRobot(self.start)
+        robot.body_mode, robot.error = 100, 110
+        runner = HomeRunner(robot, self.start, self.home)
+        with self.assertRaises(RuntimeError):
+            runner.read()
+        robot.reset_error.assert_not_called()
+
+
+if __name__ == "__main__":
+    unittest.main()

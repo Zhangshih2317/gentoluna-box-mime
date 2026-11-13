@@ -1,0 +1,179 @@
+"""Return BODY from the completed 100 mm rise to saved HOME at 5 percent."""
+
+import copy
+import math
+import re
+import sys
+import time
+
+from box_motion_plan import collision_samples, delta, interpolate, pose
+from box_motion_robot import Geometry, SDK_ROOT, emit, require_zero
+from recover_box_start_robot import Recovery, validate_limits
+from stand_up_robot import displacement_mm, model_transform
+
+RATIO = 5.
+
+
+def make_waypoints(start, home):
+    start, home = pose(**start), pose(**home)
+    validate_limits(start)
+    validate_limits(home)
+    if delta(start, home, ("arm0", "arm1", "head")) > .03:
+        raise RuntimeError("Arms/head must already be at HOME")
+    if any(abs(start["body"][i]-home["body"][i]) > .03 for i in (0, 4, 5)):
+        raise RuntimeError("B1/B5/B6 are not near HOME; waist turn is not authorized here")
+    target = copy.deepcopy(start)
+    target["body"] = home["body"]
+    size = delta(start, target)
+    if size < .03 or size > 90:
+        raise RuntimeError("Unexpected return distance")
+    if not (target["body"][1] < start["body"][1]
+            and target["body"][2] > start["body"][2]
+            and target["body"][3] < start["body"][3]):
+        raise RuntimeError("Target does not unfold the current squat")
+    first = interpolate(start, target, min(1., .2/size))
+    result = [{"pose": first, "seconds": 2.}]
+    count = max(1, math.ceil(delta(first, target)/.49))
+    for index in range(1, count+1):
+        point = interpolate(first, target, index/count)
+        validate_limits(point)
+        result.append({"pose": point, "seconds": 1.})
+    return target, result
+
+
+class HomeRunner(Recovery):
+    def __init__(self, robot, start, target):
+        super().__init__(robot)
+        self.start, self.target = start, target
+        self.command = copy.deepcopy(start)
+        self.previous_pose, self.previous_time = None, None
+
+    def read(self, allow_disabled=False):
+        state, rt, sg = super().read(allow_disabled=False)
+        if delta(state, self.start, ("arm0", "arm1", "head")) > .05:
+            raise RuntimeError("Unexpected arm/head movement")
+        if any(abs(state["body"][i]-self.start["body"][i]) > .05 for i in (0, 4, 5)):
+            raise RuntimeError("Unexpected B1/B5/B6 movement")
+        if self.enabled:
+            if any(abs(sg["body"]["set"][key]-RATIO) > .1 for key in ("vel_ratio", "acc_ratio")):
+                raise RuntimeError("BODY ratio is not 5 percent")
+            if abs(sum(state["body"][1:4])-sum(self.command["body"][1:4])) > .2:
+                raise RuntimeError("Torso pitch differs from commanded compensation")
+        now = time.monotonic()
+        if self.previous_time is not None:
+            if delta(state, self.previous_pose) > 1.5*(now-self.previous_time)+.04:
+                raise RuntimeError("Measured joint jump")
+        self.previous_pose, self.previous_time = state, now
+        return state, rt, sg
+
+    def send(self, command):
+        self.command = copy.deepcopy(command)
+        super().send(command)
+
+    def enable_body(self):
+        before = self.stationary()
+        _, rt, _ = self.read()
+        self.changed = True
+        if rt["body"]["state"]["cur"] == 0:
+            require_zero(self.robot.switch_to_position_mode(3, 2000, RATIO, RATIO), "BODY Position")
+        elif rt["body"]["state"]["cur"] == 1:
+            require_zero(self.robot.runtime_set_speed_ratio(3, RATIO, RATIO), "BODY 5 percent")
+        else:
+            raise RuntimeError("Automatic reset is prohibited")
+        deadline = time.monotonic()+1.
+        while True:
+            current, _, sg = self.read()
+            if delta(current, before) > .02:
+                raise RuntimeError("Pose drift entering BODY Position")
+            if all(abs(sg["body"]["set"][key]-RATIO) <= .1 for key in ("vel_ratio", "acc_ratio")):
+                break
+            if time.monotonic() > deadline:
+                raise RuntimeError("BODY 5 percent update not confirmed")
+            time.sleep(.02)
+        self.enabled.add("body")
+        emit("body_ready", pose=current, velocity_ratio=RATIO, acceleration_ratio=RATIO)
+
+
+def check_path(geometry, robot, start, target, waypoints):
+    geometry.verify_sdk(robot, [{"start": start, "target": target}])
+    initial = model_transform(geometry, start)
+    previous, last_z, minimum, samples = start, initial[2][3], math.inf, 0
+    for point in waypoints:
+        for sample in collision_samples({"start": previous, "target": point["pose"]}, .1):
+            separation, _ = geometry.check(sample)
+            current = model_transform(geometry, sample)
+            if current[2][3] < last_z-1e-8:
+                raise RuntimeError("HOME path would lower the body")
+            change = displacement_mm(initial, current)
+            if abs(change[0]) > 30 or abs(change[1]) > 5:
+                raise RuntimeError("HOME path exceeds checked horizontal corridor")
+            trace = sum(initial[k][i]*current[k][i] for k in range(3) for i in range(3))
+            rotation = math.degrees(math.acos(max(-1., min(1., (trace-1)/2))))
+            if rotation > 1.:
+                raise RuntimeError("HOME path changes torso rotation by more than one degree")
+            samples += 1
+            minimum, last_z = min(minimum, separation), current[2][3]
+        previous = point["pose"]
+    emit("home_path_verified", samples=samples, minimum_flange_spacing_mm=minimum,
+         model_displacement_mm=change, controller_ratio_percent=RATIO,
+         segments=len(waypoints), continuous_collision_detection=False,
+         external_obstacles_checked=False)
+
+
+def run(expected_start, home, execute):
+    import fcntl
+    sys.path.insert(0, SDK_ROOT+"/PYTHON_SDK")
+    from GentoRobot import GentoRobot
+    robot, runner, geometry = GentoRobot(), None, None
+    with open("/tmp/gento_sdk_6_6_7_190.lock", "a+") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        try:
+            robot.link(6, 6, 7, 190)
+            if not robot._connected:
+                raise RuntimeError("SDK unavailable; disconnect other controller")
+            runner = HomeRunner(robot, expected_start, home)
+            start = runner.stationary()
+            if delta(start, expected_start) > .03:
+                raise RuntimeError("Robot is not at the completed 100 mm rise point")
+            target, waypoints = make_waypoints(start, home)
+            runner.start, runner.target = start, target
+            for obj, width in ((0, 7), (1, 7), (3, 6)):
+                result, text = robot.get_servo_error_codes(obj)
+                codes = re.findall(r"0x([0-9a-fA-F]{4})", text)
+                if result or len(codes) != width or any(int(c, 16) for c in codes):
+                    raise RuntimeError("Servo diagnostic rejection")
+            emit("home_initial", pose=start, target=target, execute=execute)
+            geometry = Geometry()
+            check_path(geometry, robot, start, target, waypoints)
+            if delta(runner.stationary(), start) > .02:
+                raise RuntimeError("Pose changed during preflight")
+            if not execute:
+                emit("preflight_complete", motion_commands_sent=0, mode_changes_sent=0)
+                return
+            runner.enable_body()
+            current = runner.stationary()
+            runner.segment(current, current, ("body",), .5)
+            for index, point in enumerate(waypoints, 1):
+                current = runner.segment(current, point["pose"], ("body",), point["seconds"])
+                if index == 1 or index % 10 == 0 or index == len(waypoints):
+                    emit("home_progress", segment=index, total=len(waypoints), pose=current)
+            final = runner.stationary()
+            if delta(final, home) > .03:
+                raise RuntimeError("HOME arrival mismatch")
+            require_zero(robot.switch_to_idle(3, 2000), "BODY IDLE after HOME")
+            runner.enabled.remove("body")
+            final = runner.stationary()
+            if delta(final, home) > .03:
+                raise RuntimeError("HOME pose drift after IDLE")
+            emit("home_complete", pose=final, maximum_error_deg=delta(final, home),
+                 controller_ratio_percent=RATIO)
+        except BaseException as error:
+            if runner:
+                runner.emergency(error)
+            raise
+        finally:
+            if robot._connected:
+                robot.unlink()
+                emit("sdk_disconnected")
+            if geometry:
+                geometry.close()

@@ -1,0 +1,140 @@
+"""Read the identified FTDI gripper on Windows; never write Modbus registers."""
+import argparse
+from contextlib import redirect_stdout
+from datetime import datetime, timezone
+import importlib.util
+import io
+import json
+from pathlib import Path
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT/"reference/gripper-wheels/minimalmodbus-2.1.1-py3-none-any.whl"))
+from serial.tools import list_ports
+from run_gripper_remote import SDK
+
+spec = importlib.util.spec_from_file_location("gripper_vendor_windows", SDK)
+vendor = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(vendor)
+
+
+class ReadOnlyMotor(vendor.MotorController):
+    def _write_register(self, *args, **kwargs):
+        raise RuntimeError("Register writes are disabled")
+
+    def _write_registers(self, *args, **kwargs):
+        raise RuntimeError("Register writes are disabled")
+
+
+def signed32(words):
+    value = (words[0] << 16) | words[1]
+    return value - (1 << 32) if value & (1 << 31) else value
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--scan", action="store_true")
+    args = parser.parse_args()
+    logpath = ROOT/"evidence"/(
+        "gripper-windows-"+datetime.now().strftime("%Y%m%d-%H%M%S")+".jsonl")
+    print("Evidence: "+str(logpath), flush=True)
+    with logpath.open("w", encoding="utf-8") as log:
+        def emit(event, **values):
+            line = json.dumps({"event": event, "time": datetime.now(timezone.utc).isoformat(),
+                               **values})
+            print(line, flush=True)
+            log.write(line+"\n")
+            log.flush()
+
+        ports = [p for p in list_ports.comports()
+                 if p.vid == 0x0403 and p.pid == 0x6001
+                 and p.serial_number in ("BG011JUB", "BG011JUBA")]
+        if len(ports) != 1:
+            raise RuntimeError("Expected exactly one identified FTDI adapter")
+        port = ports[0]
+        emit("device_identity", port=port.device, hwid=port.hwid,
+             serial=port.serial_number, description=port.description)
+        motor = None
+        try:
+            motor = ReadOnlyMotor(port.device, slave_id=1, baudrate=115200, timeout=1)
+            motor.instrument.serial.write_timeout = 1
+            motor.instrument.debug = True
+            emit("serial_open", settings=motor.instrument.serial.get_settings())
+
+            def read(address, count):
+                trace = io.StringIO()
+                try:
+                    with redirect_stdout(trace):
+                        value = motor._read_registers(address, count)
+                    emit("register_read", address=address, values=value)
+                    return value
+                finally:
+                    emit("sdk_trace", text=trace.getvalue())
+
+            responded = False
+            if args.scan:
+                motor.instrument.serial.timeout = .2
+                for baud, parity, stopbits, addresses in (
+                    (115200, "N", 1, range(1, 17)),
+                    (115200, "E", 1, (1, 2)), (115200, "O", 1, (1, 2)),
+                    (115200, "N", 2, (1, 2)),
+                    *((baud, "N", 1, (1, 2)) for baud in (9600, 19200, 38400, 57600, 230400)),
+                ):
+                    uart = motor.instrument.serial
+                    uart.baudrate, uart.parity, uart.stopbits = baud, parity, stopbits
+                    emit("probe_parameters", baudrate=baud, parity=parity,
+                         stopbits=stopbits, addresses=list(addresses))
+                    for slave in addresses:
+                        motor.instrument.address = slave
+                        try:
+                            read(0x0401, 3)
+                            emit("probe_response", slave_id=slave, baudrate=baud,
+                                 parity=parity, stopbits=stopbits)
+                            responded = True
+                            break
+                        except Exception as exc:
+                            emit("probe_failed", slave_id=slave,
+                                 error=type(exc).__name__+": "+str(exc))
+                    if responded:
+                        break
+            else:
+                for sample in range(3):
+                    try:
+                        state = read(0x0401, 3)
+                        emit("status", sample=sample+1, status=state[0],
+                             fault=state[1], alarm=state[2])
+                        responded = True
+                        break
+                    except Exception as exc:
+                        emit("read_failed", sample=sample+1,
+                             error=type(exc).__name__+": "+str(exc))
+                        time.sleep(.2)
+            if responded:
+                for label, address, count in (
+                    ("model", 0x0B00, 16), ("communication", 0x0A00, 3),
+                    ("enable_mode", 0x0100, 2), ("user_limits", 0x0504, 4),
+                ):
+                    values = read(address, count)
+                    emit("configuration", label=label, values=values)
+                for sample in range(3):
+                    state = read(0x0401, 3)
+                    values = read(0x0418, 4)
+                    emit("feedback", sample=sample+1, status=state[0], fault=state[1],
+                         alarm=state[2], position_raw=signed32(values[:2]),
+                         speed_raw=values[2], current_raw=values[3])
+                    time.sleep(.2)
+            emit("inspection_complete", responded=responded, write_register_commands=0)
+            return 0 if responded else 1
+        except Exception as exc:
+            emit("inspection_failed", error=type(exc).__name__+": "+str(exc),
+                 write_register_commands=0)
+            return 1
+        finally:
+            if motor is not None:
+                motor.instrument.serial.close()
+                emit("serial_closed")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

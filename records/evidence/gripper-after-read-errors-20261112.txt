@@ -1,0 +1,116 @@
+2026-11-12T16:28:18+08:00
+inactive
+Nov 12 16:17:17 vision kernel: option 2-3:1.3: device disconnected
+Nov 12 16:17:17 vision kernel: qmap_unregister_device(wwan0_1)
+Nov 12 16:17:17 vision kernel: qmi_wwan_m 2-3:1.5 wwan0: unregister 'qmi_wwan_m' usb-3610000.usb-3, RMNET/USB device
+Nov 12 16:17:36 vision kernel: usb 2-3: new SuperSpeed Plus Gen 2x1 USB device number 5 using tegra-xusb
+Nov 12 16:17:36 vision kernel: usb 2-3: LPM exit latency is zeroed, disabling LPM.
+Nov 12 16:17:36 vision kernel: option 2-3:1.0: GSM modem (1-port) converter detected
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB0
+Nov 12 16:17:36 vision kernel: option 2-3:1.1: GSM modem (1-port) converter detected
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB1
+Nov 12 16:17:36 vision kernel: option 2-3:1.2: GSM modem (1-port) converter detected
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB2
+Nov 12 16:17:36 vision kernel: option 2-3:1.3: GSM modem (1-port) converter detected
+Nov 12 16:17:36 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB3
+Nov 12 16:17:37 vision kernel: qmi_wwan_m 2-3:1.5: cdc-wdm0: USB WDM device
+Nov 12 16:17:37 vision kernel: qmi_wwan_m 2-3:1.5: Meig LTE-A Module work on RawIP mode
+Nov 12 16:17:37 vision kernel: zqy meig bridge mode open 
+Nov 12 16:17:37 vision kernel: zqy driver bind to set qmap
+Nov 12 16:17:37 vision kernel: zqy add drv->driver_info->data is:2335,size is:2335
+Nov 12 16:17:37 vision kernel: zqy drive bind qmap_version is:9
+Nov 12 16:17:37 vision kernel: qmap_mode is:1
+Nov 12 16:17:37 vision kernel: qmi_wwan_m 2-3:1.5: rx_urb_size = 31744
+Nov 12 16:17:37 vision kernel: qmi_wwan_m 2-3:1.5 wwan0: register 'qmi_wwan_m' at usb-3610000.usb-3, RMNET/USB device, [MAC_REDACTED]
+Nov 12 16:17:37 vision kernel: net wwan0: qmap_register_device wwan0_1
+Nov 12 16:18:17 vision kernel: usb 2-3: USB disconnect, device number 5
+Nov 12 16:18:17 vision kernel: option1 ttyUSB0: GSM modem (1-port) converter now disconnected from ttyUSB0
+Nov 12 16:18:17 vision kernel: option 2-3:1.0: device disconnected
+Nov 12 16:18:17 vision kernel: option1 ttyUSB1: GSM modem (1-port) converter now disconnected from ttyUSB1
+Nov 12 16:18:17 vision kernel: option 2-3:1.1: device disconnected
+Nov 12 16:18:17 vision kernel: option1 ttyUSB2: GSM modem (1-port) converter now disconnected from ttyUSB2
+Nov 12 16:18:17 vision kernel: option 2-3:1.2: device disconnected
+Nov 12 16:18:17 vision kernel: option1 ttyUSB3: GSM modem (1-port) converter now disconnected from ttyUSB3
+Nov 12 16:18:17 vision kernel: option 2-3:1.3: device disconnected
+Nov 12 16:18:17 vision kernel: qmap_unregister_device(wwan0_1)
+Nov 12 16:18:17 vision kernel: qmi_wwan_m 2-3:1.5 wwan0: unregister 'qmi_wwan_m' usb-3610000.usb-3, RMNET/USB device
+Nov 12 16:18:37 vision kernel: usb 2-3: new SuperSpeed Plus Gen 2x1 USB device number 6 using tegra-xusb
+Nov 12 16:18:37 vision kernel: usb 2-3: LPM exit latency is zeroed, disabling LPM.
+Nov 12 16:18:37 vision kernel: option 2-3:1.0: GSM modem (1-port) converter detected
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB0
+Nov 12 16:18:37 vision kernel: option 2-3:1.1: GSM modem (1-port) converter detected
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB1
+Nov 12 16:18:37 vision kernel: option 2-3:1.2: GSM modem (1-port) converter detected
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB2
+Nov 12 16:18:37 vision kernel: option 2-3:1.3: GSM modem (1-port) converter detected
+Nov 12 16:18:37 vision kernel: usb 2-3: GSM modem (1-port) converter now attached to ttyUSB3
+Nov 12 16:18:37 vision kernel: qmi_wwan_m 2-3:1.5: cdc-wdm0: USB WDM device
+Nov 12 16:18:37 vision kernel: qmi_wwan_m 2-3:1.5: Meig LTE-A Module work on RawIP mode
+Nov 12 16:18:37 vision kernel: zqy meig bridge mode open 
+Nov 12 16:18:37 vision kernel: zqy driver bind to set qmap
+Nov 12 16:18:37 vision kernel: zqy add drv->driver_info->data is:2335,size is:2335
+Nov 12 16:18:37 vision kernel: zqy drive bind qmap_version is:9
+Nov 12 16:18:37 vision kernel: qmap_mode is:1
+Nov 12 16:18:37 vision kernel: qmi_wwan_m 2-3:1.5: rx_urb_size = 31744
+Nov 12 16:18:37 vision kernel: qmi_wwan_m 2-3:1.5 wwan0: register 'qmi_wwan_m' at usb-3610000.usb-3, RMNET/USB device, [MAC_REDACTED]
+Nov 12 16:18:37 vision kernel: net wwan0: qmap_register_device wwan0_1
+Nov 12 16:20:21 vision kernel: NVRM rpcRmApiControl_dce: NVRM_RPC_DCE: Failed RM ctrl call cmd:0x731341 result 0xffff:
+Nov 12 16:20:30 vision kernel: NVRM rpcRmApiControl_dce: NVRM_RPC_DCE: Failed RM ctrl call cmd:0x731341 result 0xffff:
+Nov 12 16:25:48 vision kernel: ftdi_sio 5-1.1:1.0: FTDI USB Serial Device converter detected
+Nov 12 16:25:48 vision kernel: usb 5-1.1: Detected FT232RL
+Nov 12 16:25:48 vision kernel: usb 5-1.1: FTDI USB Serial Device converter now attached to ttyUSB4
+Nov 12 16:25:48 vision kernel: ch341 5-1.4:1.0: ch341-uart converter detected
+Nov 12 16:25:48 vision kernel: usb 5-1.4: ch341-uart converter now attached to ttyUSB5
+Nov 12 16:28:02 vision kernel: usb 5-1.4: failed to send control message: -110
+Nov 12 16:28:03 vision kernel: usb 5-1.4: failed to send control message: -110
+Nov 12 16:28:04 vision kernel: usb 5-1.4: failed to receive control message: -110
+Nov 12 16:28:04 vision kernel: ch341-uart ttyUSB5: failed to read modem status: -110
+lrwxrwxrwx 1 root root 7 Nov 12 16:25 /dev/luna-gripper-ch340 -> ttyUSB5
+lrwxrwxrwx 1 root root 7 Nov 12 16:25 /dev/luna-gripper-ftdi -> ttyUSB4
+/:  Bus 06.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 5000M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 5000M
+/:  Bus 05.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/2p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Hub, Driver=hub/4p, 480M
+        |__ Port 1: Dev 3, If 0, Class=Vendor Specific Class, Driver=ftdi_sio, 12M
+        |__ Port 4: Dev 4, If 0, Class=Vendor Specific Class, Driver=ch341, 12M
+/:  Bus 04.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/4p, 5000M
+    |__ Port 2: Dev 2, If 0, Class=Video, Driver=uvcvideo, 5000M
+    |__ Port 2: Dev 2, If 1, Class=Video, Driver=uvcvideo, 5000M
+    |__ Port 2: Dev 2, If 2, Class=Video, Driver=uvcvideo, 5000M
+    |__ Port 2: Dev 2, If 3, Class=Video, Driver=uvcvideo, 5000M
+    |__ Port 2: Dev 2, If 4, Class=Video, Driver=uvcvideo, 5000M
+/:  Bus 03.Port 1: Dev 1, Class=root_hub, Driver=xhci_hcd/4p, 480M
+    |__ Port 1: Dev 2, If 0, Class=Human Interface Device, Driver=usbhid, 12M
+    |__ Port 1: Dev 2, If 1, Class=Human Interface Device, Driver=usbhid, 12M
+    |__ Port 3: Dev 4, If 0, Class=Audio, Driver=snd-usb-audio, 12M
+    |__ Port 3: Dev 4, If 1, Class=Audio, Driver=snd-usb-audio, 12M
+/:  Bus 02.Port 1: Dev 1, Class=root_hub, Driver=tegra-xusb/4p, 10000M
+    |__ Port 3: Dev 6, If 0, Class=Vendor Specific Class, Driver=option, 10000M
+    |__ Port 3: Dev 6, If 1, Class=Vendor Specific Class, Driver=option, 10000M
+    |__ Port 3: Dev 6, If 2, Class=Vendor Specific Class, Driver=option, 10000M
+    |__ Port 3: Dev 6, If 3, Class=Vendor Specific Class, Driver=option, 10000M
+    |__ Port 3: Dev 6, If 4, Class=Vendor Specific Class, Driver=, 10000M
+    |__ Port 3: Dev 6, If 5, Class=Vendor Specific Class, Driver=qmi_wwan_m, 10000M
+/:  Bus 01.Port 1: Dev 1, Class=root_hub, Driver=tegra-xusb/4p, 480M
+    |__ Port 3: Dev 2, If 0, Class=Wireless, Driver=btusb, 12M
+    |__ Port 3: Dev 2, If 1, Class=Wireless, Driver=btusb, 12M
+MINOR=515
+SUBSYSTEM=usb
+USEC_INITIALIZED=26460295
+ID_VENDOR=1a86
+ID_VENDOR_ENC=1a86
+ID_VENDOR_ID=1a86
+ID_MODEL=USB_Serial
+ID_MODEL_ENC=USB\x20Serial
+ID_MODEL_ID=7523
+ID_REVISION=0264
+ID_SERIAL=1a86_USB_Serial
+ID_BUS=usb
+ID_USB_INTERFACES=:ff0102:
+ID_VENDOR_FROM_DATABASE=QinHeng Electronics
+ID_MODEL_FROM_DATABASE=CH340 serial converter
+ID_PATH=platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.4
+ID_PATH_TAG=platform-14180000_pcie-pci-0000_01_00_0-usb-0_1_4
+ID_MM_DEVICE_MANUAL_SCAN_ONLY=1
+TAGS=:systemd:snap_cups_ippeveprinter:snap_cups_cupsd:
+CURRENT_TAGS=:snap_cups_ippeveprinter:snap_cups_cupsd:

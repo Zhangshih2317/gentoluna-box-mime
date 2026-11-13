@@ -1,0 +1,10 @@
+{"event": "plan", "time": "2026-11-11T05:14:10.842526+00:00", "home": [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]], "targets": [[[91, -91, -89, -89, 2, -1, 3], [-91, -89, 89, -89, -2, 1, -3]], [[88, -89, -90, -91, -1, 2, -2], [-89, -92, 91, -91, 2, -2, 1]], [[90, -88, -92, -90, 3, -2, 1], [-92, -90, 92, -89, -1, 3, -2]], [[92, -90, -89, -92, -2, 1, -3], [-90, -88, 89, -92, 3, -1, 2]], [[89, -92, -88, -89, 1, 3, 0], [-88, -91, 90, -88, -3, 2, -1]], [[90, -90, -90, -90, 0, 0, 0], [-90, -90, 90, -90, 0, 0, 0]]], "speed_percent": 5.0, "acceleration_percent": 5.0, "execute": false}
+[INFO][L1] FX_L1_System_Link: Link success, communication delay is 3ms
+[INFO][L1] FX_L1_System_Link: DOF of [GentoLuna]: arm0=7, arm1=7, head=2, body=6, lift=0
+[INFO][L1] FX_L1_System_GetSDKVersion: SDK version is 0x00040402
+[INFO][L1] FX_L1_System_GetControllerVersion: Controller version is 0x00040404
+{"event": "connected", "time": "2026-11-11T05:14:10.968993+00:00", "sdk": "00040402", "controller": "00040404"}
+{"event": "initial_feedback", "time": "2026-11-11T05:14:11.124195+00:00", "arms": [{"joints_deg": [89.71, -89.271, -89.493, -89.509, -0.068, 0.437, -0.985], "velocities_deg_s": [-0.001, 0.009, -0.026, -0.014, 0.038, 0.049, -0.012], "ratios": [5.0, 5.0], "trajectory_state": 0, "state": {"cur": 1, "cmd": 1, "err": 0}}, {"joints_deg": [-90.49, -90.847, 90.365, -90.859, 0.839, 0.713, -0.368], "velocities_deg_s": [0.01, 0.021, 0.018, -0.014, -0.037, 0.003, -0.044], "ratios": [20.0, 20.0], "trajectory_state": 0, "state": {"cur": 1, "cmd": 1, "err": 0}}], "body": [-0.744, 9.281, -17.364, 5.456, -0.296, -1.653], "head": [2.107, -15.998, 0.0], "frame_serial": 212295}
+{"event": "sdk_disconnected", "time": "2026-11-11T05:14:14.133479+00:00"}
+{"event": "failed", "time": "2026-11-11T05:14:14.133645+00:00", "error": "RuntimeError: Planned joint speed exceeds conservative 10 deg/s bound"}
+{"remote_exit_code": 1}

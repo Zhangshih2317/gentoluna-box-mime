@@ -1,0 +1,64 @@
+{
+  "name": "WAIST_TEACHING_BASELINE",
+  "source": "read_only_sdk_after_authorized_home_return",
+  "captured_at_local": "2026-11-11T15:31:41+08:00",
+  "joint_units": "deg",
+  "pose": {
+    "arm0": [
+      90,
+      -90,
+      -90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "arm1": [
+      -90,
+      -90,
+      90,
+      -90,
+      0,
+      0,
+      0
+    ],
+    "body": [
+      -0.744,
+      9.281,
+      -17.364,
+      5.456,
+      -0.296,
+      -1.653
+    ],
+    "head": [
+      2.108,
+      -15.998,
+      0
+    ]
+  },
+  "home_point": "points/BOX_START_BEFORE_INCIDENT.json",
+  "completed_rise_evidence": "evidence/stand-up-100mm-20261111-151611.jsonl",
+  "return_evidence": "evidence/body-home-5percent-20261111-152643.jsonl",
+  "verification_evidence": "evidence/teaching-feedback-20261111-153141.json",
+  "return_controller_ratios_percent": {
+    "velocity": 5,
+    "acceleration": 5
+  },
+  "home_maximum_error_at_display_precision_deg": 0,
+  "modes": {
+    "arm0": "Position",
+    "arm1": "Position",
+    "body": "IDLE",
+    "head": "IDLE"
+  },
+  "system_errors": {
+    "arm0": 0,
+    "arm1": 0,
+    "body": 0,
+    "head": 0
+  },
+  "servo_errors_all_zero": true,
+  "sdk_disconnected": true,
+  "waist_teaching_pending": true,
+  "motion_commands_during_verification": 0
+}

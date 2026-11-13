@@ -1,0 +1,412 @@
+"""Inspect two identified grippers using the supplied SDK. No motion by default."""
+import argparse
+from contextlib import ExitStack
+from datetime import datetime, timezone
+import json
+import os
+from pathlib import Path
+import subprocess
+import signal
+import time
+
+if os.name != "nt":
+    import fcntl
+    import termios
+
+from vendor_gripper_sdk import MotorController
+
+PORTS = ["/dev/luna-gripper-ftdi", "/dev/luna-gripper-ch340"]
+POSITION_TOLERANCE = 20
+
+
+def emit(event, **data):
+    print(json.dumps({"event": event, "time": datetime.now(timezone.utc).isoformat(),
+                      **data}), flush=True)
+
+
+def signed32(hi, lo):
+    value = (hi << 16) | lo
+    return value-(1 << 32) if value & (1 << 31) else value
+
+
+class ReadOnlyMotor(MotorController):
+    def _write_register(self, *args, **kwargs):
+        raise RuntimeError("Register writes are disabled in inspection mode")
+
+    def _write_registers(self, *args, **kwargs):
+        raise RuntimeError("Register writes are disabled in inspection mode")
+
+
+def check_identity(port):
+    resolved = Path(port).resolve(strict=True)
+    output = subprocess.run(["udevadm", "info", "--query=property", "--name", str(resolved)],
+                            check=True, capture_output=True, text=True).stdout
+    props = dict(line.split("=", 1) for line in output.splitlines() if "=" in line)
+    if port == PORTS[0]:
+        expected = {"ID_VENDOR_ID": "0403", "ID_MODEL_ID": "6001",
+                    "ID_SERIAL_SHORT": "BG011JUB"}
+    else:
+        expected = {"ID_VENDOR_ID": "1a86", "ID_MODEL_ID": "7523",
+                    "ID_PATH": "platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.1:1.0"}
+    if any(props.get(key) != value for key, value in expected.items()):
+        raise RuntimeError("Unexpected device identity: "+json.dumps(props))
+    users = subprocess.run(["fuser", str(resolved)], capture_output=True, text=True)
+    if users.returncode != 1:
+        raise RuntimeError("Port may be busy: "+users.stdout+users.stderr)
+    emit("device_identity", port=port, resolved=str(resolved),
+         identity={key: props.get(key) for key in expected})
+
+
+def snapshot(motor):
+    status, fault, alarm = motor._read_registers(0x0401, 3)
+    feedback = motor._read_registers(0x0418, 4)
+    return {"status": status, "status_hex": hex(status), "fault": fault, "alarm": alarm,
+            "enabled_status_bit": bool(status & 0x8000), "position_reached": bool(status & 1),
+            "zero_speed": bool(status & 4), "force_reached": bool(status & 8),
+            "position_raw": signed32(*feedback[:2]),
+            "speed_raw": feedback[2], "current_raw": feedback[3]}
+
+
+def discover(port):
+    """Read only the status register; never use broadcast address zero."""
+    check_identity(port)
+    motor = ReadOnlyMotor(port, slave_id=1, baudrate=115200, timeout=.12)
+    try:
+        fcntl.ioctl(motor.instrument.serial.fileno(), termios.TIOCEXCL)
+        for baud, addresses in (
+            (115200, range(1, 17)), (9600, (1, 2)), (57600, (1, 2)),
+            (38400, (1, 2)), (19200, (1, 2)), (230400, (1, 2)),
+        ):
+            motor.instrument.serial.baudrate = baud
+            replies = []
+            for address in addresses:
+                motor.instrument.address = address
+                try:
+                    value = motor._read_register(0x0401)
+                    replies.append({"address": address, "status": value})
+                    emit("readonly_probe_response", port=port, baudrate=baud,
+                         slave_id=address, status=value)
+                except Exception as exc:
+                    if type(exc).__name__ != "NoResponseError":
+                        emit("readonly_probe_error", port=port, baudrate=baud,
+                             slave_id=address, error=type(exc).__name__+": "+str(exc))
+            emit("readonly_probe_batch", port=port, baudrate=baud,
+                 addresses=list(addresses), responses=replies)
+            if replies:
+                return True
+        return False
+    finally:
+        motor.instrument.serial.close()
+
+
+def diagnose(port):
+    """Log SDK request/response bytes using read-only queries and local UART formats."""
+    check_identity(port)
+    motor = ReadOnlyMotor(port, slave_id=1, baudrate=115200, timeout=1)
+    try:
+        uart = motor.instrument.serial
+        uart.write_timeout = 1
+        fcntl.ioctl(uart.fileno(), termios.TIOCEXCL)
+        motor.instrument.debug = True
+        replies = []
+        for parity, stopbits in (("N", 1), ("E", 1), ("O", 1), ("N", 2)):
+            uart.parity = parity
+            uart.stopbits = stopbits
+            emit("diagnostic_uart", port=port, baudrate=115200, slave_id=1,
+                 format="8"+parity+str(stopbits), timeout_seconds=1,
+                 settings=uart.get_settings(), dtr=uart.dtr, rts=uart.rts)
+            for address, count in ((0x0401, 3), (0x0A00, 3)):
+                try:
+                    value = motor._read_registers(address, count)
+                    replies.append({"format": "8"+parity+str(stopbits),
+                                    "address": address, "values": value})
+                    emit("diagnostic_response", port=port, **replies[-1])
+                except Exception as exc:
+                    emit("diagnostic_no_valid_response", port=port, address=address,
+                         error=type(exc).__name__+": "+str(exc))
+            if replies:
+                break
+        emit("diagnostic_complete", port=port, valid_responses=replies,
+             write_register_commands=0)
+        return bool(replies)
+    finally:
+        motor.instrument.serial.close()
+
+
+def validate_start(motor, require_zero=True, allow_latched_drop=False):
+    config = {
+        "enable_mode": motor._read_registers(0x0100, 2),
+        "motion_mode": motor._read_register(0x0116),
+        "units": motor._read_register(0x0119),
+        "mapping": motor._read_registers(0x0504, 4),
+        "communication": motor._read_registers(0x0A00, 3),
+        "model": motor._read_registers(0x0B00, 16),
+    }
+    model = b"".join(x.to_bytes(2, "big") for x in config["model"]).decode(
+        "ascii", errors="replace").rstrip("\x00 ")
+    limits = [signed32(*config["mapping"][:2]), signed32(*config["mapping"][2:])]
+    if (model != "CTAG2F90D" or config["enable_mode"] != [1, 0]
+            or config["motion_mode"] != 0 or config["units"] != 1
+            or config["communication"] != [1, 6, 1] or limits != [0, 9000]):
+        raise RuntimeError("Unexpected gripper configuration: "+json.dumps(config))
+    state = snapshot(motor)
+    checked = dict(state)
+    if allow_latched_drop and checked["alarm"] == 0x1000:
+        checked["alarm"] = 0
+    validate_feedback(checked)
+    if state["speed_raw"] != 0 or not state["zero_speed"]:
+        raise RuntimeError("Gripper must be stationary")
+    if require_zero and abs(state["position_raw"]) > POSITION_TOLERANCE:
+        raise RuntimeError("Gripper must be near original position 0")
+    return {"model": model, "user_limits": limits, "feedback": state}
+
+
+def validate_feedback(state, ignore_drop_alarm=False):
+    alarm = state["alarm"] & ~0x1000 if ignore_drop_alarm else state["alarm"]
+    if state["fault"] or alarm:
+        raise RuntimeError("Gripper alarm: "+json.dumps(state))
+    if not -POSITION_TOLERANCE <= state["position_raw"] <= 9000+POSITION_TOLERANCE:
+        raise RuntimeError("Gripper exceeded validated user position range")
+
+
+def stop_grippers(motors):
+    results = []
+    for port, motor in motors:
+        try:
+            # Supplied Modbus protocol page 1: 0x0108=3 immediate stop.
+            motor._write_register(0x0108, 3)
+            state = snapshot(motor)
+            deadline = time.monotonic()+3
+            while (state["speed_raw"] != 0 or not state["zero_speed"]) and time.monotonic() < deadline:
+                time.sleep(.1)
+                state = snapshot(motor)
+            results.append({"port": port, "stop_acknowledged": True,
+                            "stationary_confirmed": state["speed_raw"] == 0 and state["zero_speed"],
+                            "feedback": state})
+        except Exception as exc:
+            results.append({"port": port, "stop_acknowledged": False, "error": str(exc)})
+    return results
+
+
+def run_cycles(motors, allow_nonzero_start=False, speed=50, cycles=5, targets=(9000, 0),
+               ignore_drop_alarm=False, force=25):
+    if not 1 <= speed <= 50 or not 1 <= force <= 30 or not 1 <= cycles <= 5 or not targets or any(
+            not isinstance(target, int) or not 0 <= target <= 9000 for target in targets):
+        raise ValueError("Motion plan outside validated bounds")
+    for port, motor in motors:
+        extra = {"allow_latched_drop": True} if ignore_drop_alarm else {}
+        emit("motion_preflight", port=port,
+             **validate_start(motor, require_zero=not allow_nonzero_start, **extra))
+    if ignore_drop_alarm:
+        emit("alarm_policy", ignored_alarm_b_mask="0x1000",
+             reason="User relayed manufacturer confirmation of firmware false alarm",
+             all_fault_a_bits_fatal=True, other_alarm_b_bits_fatal=True)
+    emit("sdk_test_plan", cycles_per_gripper=cycles, targets=list(targets),
+         speed_percent=speed, force_percent=force, acceleration=60, deceleration=60,
+         minimum_seconds_per_target=3, position_tolerance_raw=POSITION_TOLERANCE,
+         supply_24v_confirmed_by_user=True)
+    started = False
+    try:
+        for cycle in range(1, cycles+1):
+            for target in targets:
+                for port, motor in motors:
+                    validate_feedback(snapshot(motor), ignore_drop_alarm)
+                    if motor._read_registers(0x0100, 2) != [1, 0]:
+                        raise RuntimeError("Enable or absolute-position mode changed")
+                    started = True
+                    motor.temp_move(position_mm=target, speed_pct=speed, force_pct=force,
+                                    accel=60, decel=60, trigger=False)
+                    actual = motor._read_registers(0x0102, 6)
+                    if actual != [0, target, speed, force, 60, 60]:
+                        raise RuntimeError("SDK target parameter readback mismatch")
+                begin = time.monotonic()
+                for port, motor in motors:
+                    motor.trigger_motion()
+                    emit("motion_triggered", port=port, cycle=cycle, target_raw=target)
+                stable = [0]*len(motors)
+                last_log = 0
+                while time.monotonic()-begin < 12:
+                    states = []
+                    for index, (port, motor) in enumerate(motors):
+                        state = snapshot(motor)
+                        validate_feedback(state, ignore_drop_alarm)
+                        states.append({"port": port, **state})
+                        reached = (abs(state["position_raw"]-target) <= POSITION_TOLERANCE
+                                   and state["position_reached"] and state["zero_speed"]
+                                   and state["speed_raw"] == 0)
+                        stable[index] = stable[index]+1 if reached else 0
+                    elapsed = time.monotonic()-begin
+                    if elapsed-last_log >= .5:
+                        emit("motion_feedback", cycle=cycle, target_raw=target, feedback=states)
+                        last_log = elapsed
+                    if elapsed >= 3 and all(value >= 3 for value in stable):
+                        emit("target_verified", cycle=cycle, target_raw=target, feedback=states)
+                        break
+                    time.sleep(.1)
+                else:
+                    raise TimeoutError("Grippers did not reach target within 12 seconds")
+            emit("cycle_complete", cycle=cycle, grippers=len(motors))
+        final_states = []
+        for port, motor in motors:
+            state = snapshot(motor)
+            validate_feedback(state, ignore_drop_alarm)
+            if (abs(state["position_raw"]-targets[-1]) > POSITION_TOLERANCE
+                    or state["speed_raw"] != 0 or not state["zero_speed"]):
+                raise RuntimeError("Final position or stationary check failed")
+            final_states.append({"port": port, **state})
+        emit("sdk_test_complete", cycles_per_gripper=cycles, final_target_raw=targets[-1],
+             feedback=final_states)
+    except BaseException:
+        if started:
+            results = stop_grippers(motors)
+            emit("stop_after_failure", results=results)
+        raise
+
+
+def recover_empty_gripper(port, motor):
+    before = validate_start(motor, require_zero=False, allow_latched_drop=True)
+    emit("empty_recovery_preflight", port=port, **before)
+    if before["feedback"]["alarm"] != 0x1000:
+        raise RuntimeError("Expected the specific latched drop alarm; no reset performed")
+    # One acknowledged alarm reset after the operator confirmed empty, unobstructed jaws.
+    motor._write_register(0x0110, 1)
+    emit("drop_alarm_reset_once", port=port, operator_confirmed_empty=True)
+    for _ in range(3):
+        time.sleep(.1)
+        validate_start(motor, require_zero=False)
+    position = snapshot(motor)["position_raw"]
+    target = position-500 if position >= 500 else position+500
+    emit("empty_diagnostic_move", port=port, from_raw=position, target_raw=target)
+    run_cycles([(port, motor)], allow_nonzero_start=True, speed=10, cycles=1, targets=(target,))
+    run_cycles([(port, motor)], allow_nonzero_start=True, speed=10)
+
+
+def execute_test(stack, ports=None, recover_empty=False, ignore_drop_alarm=False, speed=50,
+                 close=False, force=25, open_grippers=False):
+    motors = []
+    for port in PORTS if ports is None else ports:
+        check_identity(port)
+        motor = MotorController(port, slave_id=1, baudrate=115200, timeout=.5)
+        stack.callback(motor.instrument.serial.close)
+        motor.instrument.serial.write_timeout = .5
+        fcntl.ioctl(motor.instrument.serial.fileno(), termios.TIOCEXCL)
+        motors.append((port, motor))
+    if recover_empty:
+        if len(motors) != 1:
+            raise RuntimeError("Empty recovery requires one selected gripper")
+        recover_empty_gripper(*motors[0])
+    elif close or open_grippers:
+        # Operator confirmed 0=open and 9000=closed for both grippers.
+        run_cycles(motors, allow_nonzero_start=True, speed=speed, force=force,
+                   cycles=1, targets=(9000 if close else 0,),
+                   ignore_drop_alarm=ignore_drop_alarm)
+    else:
+        run_cycles(motors, allow_nonzero_start=ignore_drop_alarm,
+                   speed=speed, ignore_drop_alarm=ignore_drop_alarm, force=force)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("--inspect", action="store_true")
+    group.add_argument("--execute", action="store_true")
+    group.add_argument("--execute-single", action="store_true")
+    group.add_argument("--close", action="store_true",
+                       help="Close both to operator-confirmed 9000 once; do not reopen")
+    group.add_argument("--open", action="store_true",
+                       help="Open both to operator-confirmed 0 once; hold position")
+    group.add_argument("--recover-empty", action="store_true")
+    group.add_argument("--scan", action="store_true")
+    group.add_argument("--diagnose", action="store_true")
+    parser.add_argument("--port", choices=PORTS)
+    parser.add_argument("--ignore-drop-alarm", action="store_true",
+                        help="User-approved firmware workaround: only alarm B bit 0x1000")
+    parser.add_argument("--speed", type=int, choices=range(1, 51), default=50)
+    parser.add_argument("--force", type=int, choices=range(1, 31), default=25,
+                        help="Force/current percentage, not Newtons or Nm")
+    args = parser.parse_args()
+    if (args.execute or args.close or args.open) and args.port:
+        parser.error("Execute validates both grippers; do not select a single port")
+    if (args.execute_single or args.recover_empty) and not args.port:
+        parser.error("Single-gripper execution requires an explicit --port")
+    if os.name == "nt":
+        parser.error("Use the dedicated Windows runner on Windows")
+    def interrupted(signum, frame):
+        raise KeyboardInterrupt("Signal %s" % signum)
+    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+        signal.signal(sig, interrupted)
+    emit("remote_process", pid=os.getpid(), run_id=os.environ.get("LUNA_GRIPPER_RUN_ID"))
+    with ExitStack() as stack:
+        lock = stack.enter_context(open("/tmp/luna-gripper-sdk.lock", "a+"))
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        if args.execute or args.execute_single or args.recover_empty or args.close or args.open:
+            execute_test(stack, [args.port] if args.port else None,
+                         recover_empty=args.recover_empty,
+                         ignore_drop_alarm=args.ignore_drop_alarm, speed=args.speed,
+                         close=args.close, force=args.force, open_grippers=args.open)
+            return 0
+        all_ok = True
+        for port in [args.port] if args.port else PORTS:
+            motor = None
+            try:
+                if args.diagnose:
+                    all_ok = diagnose(port) and all_ok
+                    continue
+                if args.scan:
+                    all_ok = discover(port) and all_ok
+                    continue
+                check_identity(port)
+                motor = ReadOnlyMotor(port, slave_id=1, baudrate=115200, timeout=.5)
+                fcntl.ioctl(motor.instrument.serial.fileno(), termios.TIOCEXCL)
+                emit("serial_open", port=port, baudrate=115200, slave_id=1, format="8N1")
+                config = {}
+                for label, address, count in (
+                    ("enable_position_mode", 0x0100, 2),
+                    ("temporary_motion_parameters", 0x0102, 7),
+                    ("mode_stall_unit_reserved", 0x0116, 4),
+                    ("homing", 0x0411, 1),
+                    ("communication", 0x0A00, 3),
+                    ("position_limits_and_mapping", 0x0500, 8),
+                    ("speed_limits_and_mapping", 0x0521, 4),
+                    ("current_limits_and_mapping", 0x0533, 3),
+                    ("current_arrival_threshold_window", 0x0536, 2),
+                    ("speed_zero_threshold_windows", 0x0525, 4),
+                    ("position_arrival_threshold_window", 0x0508, 3),
+                    ("motion_profile", 0x0800, 5),
+                    ("voltage_alarm_thresholds_raw", 0x060A, 2),
+                    ("product_model_raw", 0x0B00, 16),
+                    ("driver_version_raw", 0x0B20, 8),
+                ):
+                    try:
+                        config[label] = motor._read_registers(address, count)
+                    except Exception as exc:
+                        config[label] = {"error": str(exc)}
+                emit("configuration_read", port=port, registers=config)
+                limits = config.get("position_limits_and_mapping")
+                if isinstance(limits, list):
+                    emit("position_range_read", port=port,
+                         motor_min=signed32(*limits[0:2]), motor_max=signed32(*limits[2:4]),
+                         user_min=signed32(*limits[4:6]), user_max=signed32(*limits[6:8]),
+                         units="raw configured units; not assumed millimeters")
+                for field in ("product_model_raw", "driver_version_raw"):
+                    raw = config.get(field)
+                    if isinstance(raw, list):
+                        text = b"".join(x.to_bytes(2, "big") for x in raw)
+                        emit("device_text_read", port=port, field=field,
+                             value=text.decode("ascii", errors="replace").rstrip("\x00 "))
+                for index in range(3):
+                    emit("feedback_read", port=port, sample=index+1, **snapshot(motor))
+                    time.sleep(.15)
+            except Exception as exc:
+                all_ok = False
+                emit("device_failed", port=port, error=type(exc).__name__+": "+str(exc))
+            finally:
+                if motor is not None:
+                    motor.instrument.serial.close()
+        emit("inspection_complete", all_selected_responded=all_ok,
+             selected_ports=[args.port] if args.port else PORTS, write_register_commands=0)
+        return 0 if all_ok else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

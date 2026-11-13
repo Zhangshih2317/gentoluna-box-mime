@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "name": "BOX_MIME",
+  "date_local": "2026-11-11",
+  "timezone": "Asia/Shanghai",
+  "status": "disabled_after_unexpected_body_motion",
+  "incident_log": "evidence/box-motion-20261111-140353.jsonl",
+  "empty_handed": true,
+  "box_present": false,
+  "gripper_present": false,
+  "entrypoint": "run_box_motion.py",
+  "planner": "tools/box_motion_plan.py",
+  "execution": "explicit_RUN_after_fresh_preflight",
+  "squat": {
+    "maximum_relative_axis_amplitude_deg": 30,
+    "body_delta_deg": [
+      0,
+      15,
+      -30,
+      15,
+      0,
+      0
+    ],
+    "reference": "fresh_body_start",
+    "model_descent_mm_at_verified_start": 43.645456797784846
+  },
+  "turn": {
+    "body_axis": "B6",
+    "relative_delta_deg": 45,
+    "direction": "positive_model_axis_approximately_left",
+    "head_joints": "unchanged",
+    "base_motion": "none"
+  },
+  "arm_waypoints_deg": {
+    "home": [
+      [
+        90,
+        -90,
+        -90,
+        -90,
+        0,
+        0,
+        0
+      ],
+      [
+        -90,
+        -90,
+        90,
+        -90,
+        0,
+        0,
+        0
+      ]
+    ],
+    "open": [
+      [
+        90,
+        -90,
+        -108,
+        -90,
+        0,
+        0,
+        0
+      ],
+      [
+        -90,
+        -90,
+        108,
+        -90,
+        0,
+        0,
+        0
+      ]
+    ],
+    "embrace": [
+      [
+        90,
+        -90,
+        -78,
+        -80,
+        0,
+        0,
+        0
+      ],
+      [
+        -90,
+        -90,
+        78,
+        -80,
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "sequence": [
+    "open_before_crouch",
+    "crouch",
+    "embrace_empty_space",
+    "stand",
+    "turn_waist",
+    "open_arms_standing",
+    "arms_home",
+    "body_home"
+  ],
+  "successful_completion": {
+    "arms": "taught_HOME",
+    "body": "fresh_body_start_including_waist",
+    "crouch_after_stand": false,
+    "retain_position_mode": true
+  },
+  "failure": {
+    "stop_arm0_arm1_body": true,
+    "automatic_home": false
+  },
+  "trajectory": {
+    "rate_hz": 50,
+    "profile": "common_quintic_blend_per_stage",
+    "maximum_joint_speed_deg_s": 3,
+    "maximum_joint_acceleration_deg_s2": 3,
+    "controller_speed_percent": 5,
+    "controller_acceleration_percent": 5,
+    "nominal_motion_seconds": 158,
+    "preflight_and_upload_time_additional": true,
+    "arms_and_body_move_in_separate_stages": true
+  },
+  "checks": {
+    "start_near_arm_home_deg": 1.1,
+    "minimum_bare_flange_spacing_threshold_mm": 250,
+    "opposite_arm_obb_padding_per_arm_mm": 30,
+    "collision_max_joint_step_deg": 0.5,
+    "validated_samples": 502,
+    "observed_minimum_bare_flange_spacing_mm": 279.27029481440974,
+    "vendor_fk_maximum_position_component_error_mm": 0.004705006361461983,
+    "continuous_collision_detection": false,
+    "external_obstacles_checked": false,
+    "hardware_motion_validated": false
+  },
+  "evidence": "evidence/box-motion-20261111-140116.jsonl",
+  "note": "Recipe and historical preflight summary only. The runner regenerates from fresh feedback and rechecks before execution."
+}
