@@ -1,0 +1,318 @@
+{
+  "date": "2026-11-16",
+  "note": "Hashes at export, before portable code edits",
+  "files": [
+    {
+      "source": "run_grippers.py",
+      "published": "run_grippers.py",
+      "source_sha256": "19efc4836c06b3fadbf40c92531ad7076b70d63113a3dc78dbea0ea350e9f9b7",
+      "export_sha256": "19efc4836c06b3fadbf40c92531ad7076b70d63113a3dc78dbea0ea350e9f9b7"
+    },
+    {
+      "source": "tools/check_gripper_sdk.py",
+      "published": "tools/check_gripper_sdk.py",
+      "source_sha256": "aa1c5cee6e2311370d2822ce12fe978518443c0fcde2502e228a0b1c8e84862e",
+      "export_sha256": "8fcab343ae94ab66402e03b35cab0007d82d8a71ef5994c6ca845d4097f00fb2"
+    },
+    {
+      "source": "tools/test_gripper_readonly.py",
+      "published": "tools/test_gripper_readonly.py",
+      "source_sha256": "5bd9d65201a2d237d4d9fa21f6803b305c8234d8ca3cd19f258c10a1fa5a7455",
+      "export_sha256": "5bd9d65201a2d237d4d9fa21f6803b305c8234d8ca3cd19f258c10a1fa5a7455"
+    },
+    {
+      "source": "tools/test_grippers_manual.py",
+      "published": "tools/test_grippers_manual.py",
+      "source_sha256": "7ae13100f017fb2589ff9b1b6357f6fc8244f0290e15d06b280aa3e422d5a023",
+      "export_sha256": "7ae13100f017fb2589ff9b1b6357f6fc8244f0290e15d06b280aa3e422d5a023"
+    },
+    {
+      "source": "points/GRIPPER_USB_CHECK_20261112.md",
+      "published": "archive/points/GRIPPER_USB_CHECK_20261112.md",
+      "source_sha256": "38482a5482242dba3c51d990f0a9697d66d6bccbf539a230fcb0d9c1e6db2db8",
+      "export_sha256": "d0e8d8470f5cee2562e02a01a7c979251be9076c8ddff25384396d87c7378614"
+    },
+    {
+      "source": "evidence/gripper-close-20261113-103513.jsonl",
+      "published": "records/evidence/gripper-close-20261113-103513.jsonl",
+      "source_sha256": "ff405ffcd9535aa6bc66987684d6fc9ce94c4ea1180fc439cf1c333fcbe0db45",
+      "export_sha256": "3918be6d4bff8784b8789c5070e6ca058ef893c85b452e3022df72e88f8704c0"
+    },
+    {
+      "source": "evidence/gripper-close-20261113-103936.jsonl",
+      "published": "records/evidence/gripper-close-20261113-103936.jsonl",
+      "source_sha256": "2b3133182e36c5681695891d80d084e5fa8d1054fccff5c2fc4405636df11a83",
+      "export_sha256": "177c563a38d68877c1c1e7e97798a10635b5d4bbaed3194060baa7a9c6f6ebfa"
+    },
+    {
+      "source": "evidence/gripper-close-20261116-095541.jsonl",
+      "published": "records/evidence/gripper-close-20261116-095541.jsonl",
+      "source_sha256": "f1f4b13756c2e1f260feed7c665bdca9c8f272dfe9d38a553c08c99be3da9e4a",
+      "export_sha256": "bc467e2e96aa3acda1078f12667d4223bf2a44fde1cfbbc0521bdbee7a88a685"
+    },
+    {
+      "source": "evidence/gripper-close-20261116-095607.jsonl",
+      "published": "records/evidence/gripper-close-20261116-095607.jsonl",
+      "source_sha256": "e49cbf58ca8b1bd63b24e139e461300123e56c9e3745e6f57c1136c079084494",
+      "export_sha256": "c2d66d5c811df20530e2dd81109a8e3fe8a81ee8ebc713cb1181e80b22132e99"
+    },
+    {
+      "source": "evidence/gripper-diagnose-20261113-090254.jsonl",
+      "published": "records/evidence/gripper-diagnose-20261113-090254.jsonl",
+      "source_sha256": "4bd701b323542d1ff286c2ba14e4568fa2d867dc797d6b60ca53d2cc3d9efd75",
+      "export_sha256": "e4673ce1d56265f9900ce16e46715865b08025090bb023acb525914276d74212"
+    },
+    {
+      "source": "evidence/gripper-execute-20261113-102443.jsonl",
+      "published": "records/evidence/gripper-execute-20261113-102443.jsonl",
+      "source_sha256": "36fc8b496436a57388ced1e434aa87b79a9c3357fb12dab6b878e8d3ab178f64",
+      "export_sha256": "22faa95e8cf4d18e0b3508c373917e9d99646897e7d003865cd686bef6d830e6"
+    },
+    {
+      "source": "evidence/gripper-execute-single-20261113-095841.jsonl",
+      "published": "records/evidence/gripper-execute-single-20261113-095841.jsonl",
+      "source_sha256": "6bab26d1442928de7f52d81ec8a6a4e492bddb6035a0bfff50fe3e2c8404b4fa",
+      "export_sha256": "4a35a8938d1ef0bd89da639caad7080c72ab4fe80f32ab6eb5017764873be59f"
+    },
+    {
+      "source": "evidence/gripper-execute-single-20261113-101155.jsonl",
+      "published": "records/evidence/gripper-execute-single-20261113-101155.jsonl",
+      "source_sha256": "62902f3621a14bb3877905bf2da9b660ed5b3deb6d8793d58e83a904b08fadd5",
+      "export_sha256": "c573122ff8dae269d731756ce6a362ae24865c006dd45202f6f79d40c5f7035a"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261112-161432.jsonl",
+      "published": "records/evidence/gripper-inspect-20261112-161432.jsonl",
+      "source_sha256": "68137e0b4a8a5b3306c56ac9e1d3af524634e5f569c1af6203ae718dbde1e7ff",
+      "export_sha256": "47c11c5ea8a7c3e47e21ca071098614ef81729b807224793272844ff205a1e0a"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261112-161732.jsonl",
+      "published": "records/evidence/gripper-inspect-20261112-161732.jsonl",
+      "source_sha256": "0219b18aa03ebfa2742f148c9ea01004628fa609430d070ae424a7a7324f9c0a",
+      "export_sha256": "071b3741608d080d3659507c9428dc1bee1f023e291879868ad0693b609c2587"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261112-162953.jsonl",
+      "published": "records/evidence/gripper-inspect-20261112-162953.jsonl",
+      "source_sha256": "528b16de7d9d3b5b35c3999f8cd414bed5f30095c51f118a484e59e4fd6a1283",
+      "export_sha256": "1be8a8fbdde5a6764ee7a6a17197118e9917d919e4c2149cf479ebe6f18f1c1f"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261112-163105.jsonl",
+      "published": "records/evidence/gripper-inspect-20261112-163105.jsonl",
+      "source_sha256": "925f7607849828d558faa639aa3e7d9c59d803666d091e4ae5954472d47b2c5d",
+      "export_sha256": "4c026db0861df1928bab0f4339e50d6aa743aa9f9546c86d61db846eeb967f97"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-085311.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-085311.jsonl",
+      "source_sha256": "b8e9755c116297f6d5c3f39dd93ecd71b4aebab915b60231107309cb17eeb37c",
+      "export_sha256": "c8145accd51c3b7181daddb067d3e5721e5991ddf29d082a6620ef24e4e419a5"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-085621.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-085621.jsonl",
+      "source_sha256": "1e80132d17e4a6531ad52815cf5aa5b28f6f5ffaffe9f4e114b21dbd32b06214",
+      "export_sha256": "915f3c6d577e5831526dcb709652827345c960fe3500d890118ff874efe37f6e"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-091003.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-091003.jsonl",
+      "source_sha256": "3cbec4534c88f22e478d354b5cdfcf65d75f1b39fc5ec3ff17a5a4e3267b654c",
+      "export_sha256": "c2aa6f86be27dbd6cc7430b940cfe409da0be75b8db059c9dec705d4f032df8d"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-091240.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-091240.jsonl",
+      "source_sha256": "b03fb151cdbd5b71b9e5c27c4589d6c3516b66584f4ecaf6c97b87ec7f95e749",
+      "export_sha256": "0d4daf531b2494fbcd822c0dadc6d96a043b1376ab6ecfb3fdd12152df007cbb"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-091620.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-091620.jsonl",
+      "source_sha256": "5f26c77da66dae4cbe5ee350f966df95afdb4e89d1a2020d55b6bc3751ce9953",
+      "export_sha256": "885e2cbd06ae0b5602225741e2ad3512918e3091bb200c8f0373c80c63dd94cb"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-095035.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-095035.jsonl",
+      "source_sha256": "068ede3444b2e6adf6b2e6c276f91735b4e84f1e61f484003db4a49ff90fadf7",
+      "export_sha256": "95273ef1b79d483de51ab5f2945f086a11f9c8e82b791d03519738fb26d5c580"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-095539.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-095539.jsonl",
+      "source_sha256": "fa8a9f2af7123188ed5e127413487693532401c0e044ab205b690f55e6889849",
+      "export_sha256": "5a53e3d94bc77f88ac16813837055c3b08ad0616576f04d2150b1ab8e29f39fa"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-095658.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-095658.jsonl",
+      "source_sha256": "4d5bf0250f92687496b252cf739d757f422d0a14a481659025bf9ba41bf597e3",
+      "export_sha256": "d70a6e6b9f1ce72ebf6f79359d424c30f9490a2016293eaf19836f7cd3723de1"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-095923.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-095923.jsonl",
+      "source_sha256": "018c706010b719d212ae7c51b30f30a5073b4ee28b269b6bce2f84bf4b74b1c4",
+      "export_sha256": "5aa11093fd0fcfab0a3a71e1732397ceaa1ac93bf0b416e29fbe3be14472ce67"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-100236.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-100236.jsonl",
+      "source_sha256": "b10749160dc1766e2bdd561d3b9ff7c117aa08b26a0a416ad19f1673aa1da10f",
+      "export_sha256": "fca723942c423f617241185897c849b06be649c23a7f38a9cb16c08bdcffe85d"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-100448.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-100448.jsonl",
+      "source_sha256": "c3181826527ff3efe55b665d27016c77c24edb4dc024a55dc44abcf74782434f",
+      "export_sha256": "239d86724752f8344fe825d559479838474ed886c44d617f7db7bb86b91cd60c"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-102430.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-102430.jsonl",
+      "source_sha256": "b8920b9dc578e7741e78decce05dd2263389b15c40d2e638139a7dab5d2988ac",
+      "export_sha256": "578ba3197695120120c7b0ee447dd1ecd035b60906ca741e566d0271692d112e"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-102903.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-102903.jsonl",
+      "source_sha256": "30ec8a0d59febfad9bb5c6be2f23f3090e99b9aea4eaa16c1b0b2a72cb02ae6e",
+      "export_sha256": "d6aa8563d734f99692bb9685370ae05d1f951165bc088ffcdba83eff7aff2e78"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-102956.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-102956.jsonl",
+      "source_sha256": "41137f5d7073b6a49377e9d292bf44348cf043b89f662e52cee5d953941ccd19",
+      "export_sha256": "a0b52f54910f6f7efef035877df2e416878ef2ecc1a9545dff6575165b101434"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261113-103406.jsonl",
+      "published": "records/evidence/gripper-inspect-20261113-103406.jsonl",
+      "source_sha256": "66809e9791ebf116e727d21d2d0e2d7b84b88467055481315497565bb3c5af79",
+      "export_sha256": "d5867cf6f3b0838f992f7677a52a3b27b99daa63ed5bf4492c260d23bc0a0209"
+    },
+    {
+      "source": "evidence/gripper-inspect-20261116-095631.jsonl",
+      "published": "records/evidence/gripper-inspect-20261116-095631.jsonl",
+      "source_sha256": "b1d627d274300356940eaeaa79f0cf385b30a24cc110d8dd6b21a1baf380001a",
+      "export_sha256": "c531392a6204a607be6ef8c8987b1af911ce353018ec97cec5358bd2f0d7021b"
+    },
+    {
+      "source": "evidence/gripper-install-20261112-161231.jsonl",
+      "published": "records/evidence/gripper-install-20261112-161231.jsonl",
+      "source_sha256": "a7cc822a6133bec4ddafdadb4d5df61e3235f315fab0f2f754b54da4ec97853d",
+      "export_sha256": "7cd6d2281c6b373c839143c07cf598a4aa6145d6eb18eec4c0cbba564e0550bf"
+    },
+    {
+      "source": "evidence/gripper-install-20261112-161419.jsonl",
+      "published": "records/evidence/gripper-install-20261112-161419.jsonl",
+      "source_sha256": "d2b531ae71fc693d07e2da62aaa3696a38da9d3a7f465700ffc8b54d45ab60b1",
+      "export_sha256": "bb9b8ead6f051f38c804a46f0447b981d1976a02aa5e649f75a7552c59fa49d8"
+    },
+    {
+      "source": "evidence/gripper-open-20261113-103901.jsonl",
+      "published": "records/evidence/gripper-open-20261113-103901.jsonl",
+      "source_sha256": "4b3caa4da5e630e1e58affffcf44c2f6e39238c4a16f261119b9eb8379918647",
+      "export_sha256": "70989e9072a502d3012459529f036483b8a09be47ac7dd851f1968e83e53088e"
+    },
+    {
+      "source": "evidence/gripper-open-20261116-095600.jsonl",
+      "published": "records/evidence/gripper-open-20261116-095600.jsonl",
+      "source_sha256": "69740a29f7b61eb332d75d75afe4c3730fe16316f637d13aeeeb42e55923b8c8",
+      "export_sha256": "3d0996e2ff5f2f204b51359524128ab3625f145ce69ad856dceabf0d153f40a1"
+    },
+    {
+      "source": "evidence/gripper-rebind-controller-20261113-091608.jsonl",
+      "published": "records/evidence/gripper-rebind-controller-20261113-091608.jsonl",
+      "source_sha256": "ad8defefc4fea4da797746cc65f6cd65851de87acaeae487d8d8caab51ec3c42",
+      "export_sha256": "ba41138fab8b4dd186f234b6f3286a5752d116fad156659b82802d4271a9f70b"
+    },
+    {
+      "source": "evidence/gripper-reconnect-usb-20261113-091132.jsonl",
+      "published": "records/evidence/gripper-reconnect-usb-20261113-091132.jsonl",
+      "source_sha256": "5cdb28bb6b614d44062df218c5e4f1beea2690af7b860115cb75035f11d2cfc0",
+      "export_sha256": "c5a5b91a6ad3b0ac1e91d940fcf01bd32061ca98ea2035696b15c701ed6e5304"
+    },
+    {
+      "source": "evidence/gripper-recover-empty-20261113-100426.jsonl",
+      "published": "records/evidence/gripper-recover-empty-20261113-100426.jsonl",
+      "source_sha256": "a61254c7ff8ffe72dbf94a46bea6fcafe9fa45cc7456b7e2da65c44ac7a14fb9",
+      "export_sha256": "b7c349db7bf76b687163e330b7efae215aa7931a1ed48042938169b2685550dc"
+    },
+    {
+      "source": "evidence/gripper-repair-20261112-161220.jsonl",
+      "published": "records/evidence/gripper-repair-20261112-161220.jsonl",
+      "source_sha256": "63abb0f8cbbe5b3913518d8800cfa5c62821e38bec1aa5f3fb2c4c9366d09538",
+      "export_sha256": "ac75671c4e65512e611579efcd8bc3093bd6f5e9155070cadc647deea8b08298"
+    },
+    {
+      "source": "evidence/gripper-repair-20261113-085302.jsonl",
+      "published": "records/evidence/gripper-repair-20261113-085302.jsonl",
+      "source_sha256": "5f6fdb98ce641277f0dc1aa41d5112b16f516c5e9563529aedfd69bfdd20185f",
+      "export_sha256": "cb71e06cf711aedf79e36229c1ddec15438027b09211631c4184be39a9a3a917"
+    },
+    {
+      "source": "evidence/gripper-repair-20261113-090944.jsonl",
+      "published": "records/evidence/gripper-repair-20261113-090944.jsonl",
+      "source_sha256": "27b36fa35c5e35a969026d1f8f05b2bdc0917a0cb64424b48b8be2264516f73c",
+      "export_sha256": "5ecd4181c935b7901f5ceec1c1830404b027f19debf685c0031d685c5bfabeb5"
+    },
+    {
+      "source": "evidence/gripper-reset-ch340-20261112-161527.jsonl",
+      "published": "records/evidence/gripper-reset-ch340-20261112-161527.jsonl",
+      "source_sha256": "caef064b6df92ccf8eb15c1164707004ae0d9c3d3e2cedfa4cc4643684fa28c5",
+      "export_sha256": "2bdb9602e6a05c8ffea41d52570f6b4cc3f7284fae49afd5982e0a2e676729bf"
+    },
+    {
+      "source": "evidence/gripper-reset-ch340-20261113-103024.jsonl",
+      "published": "records/evidence/gripper-reset-ch340-20261113-103024.jsonl",
+      "source_sha256": "d6671ce61a73c78037527090049bbcba3952020dd68852fcdb10423d5275979a",
+      "export_sha256": "178454605a406349e638368a19d498fe46d37bfd677cb30a93ffd2e2f1b1aa75"
+    },
+    {
+      "source": "evidence/gripper-scan-20261112-161641.jsonl",
+      "published": "records/evidence/gripper-scan-20261112-161641.jsonl",
+      "source_sha256": "2c04348322fe8878f5552a1b76dd3eda1f8c5cf4c97cc3a14bd6385fd473d90b",
+      "export_sha256": "7bf4494cb535887f0353df4bf73e965ffd2446e1b7fe61dcf7b6066eb5d9e350"
+    },
+    {
+      "source": "evidence/gripper-scan-20261113-085710.jsonl",
+      "published": "records/evidence/gripper-scan-20261113-085710.jsonl",
+      "source_sha256": "25a6f928d89a88cf59ceabe6015e9d3d19cb49f76bdb6b99adbb6b135d9e7e92",
+      "export_sha256": "3da83bbaf512ae5b3e7ce0e9c09c79a4c23a6efccae729e1f1a22e5bee4ceb8d"
+    },
+    {
+      "source": "evidence/gripper-windows-20261113-092324.jsonl",
+      "published": "records/evidence/gripper-windows-20261113-092324.jsonl",
+      "source_sha256": "bb93df8a60cd827848700b59b8c1ecda0fcce3ecb5d01807350d6e811eee165e",
+      "export_sha256": "23f8eb1cfd9a376c30c535868f95d9c7ade99b196270ec02bfd9b3d58c785a98"
+    },
+    {
+      "source": "evidence/gripper-windows-20261113-092343.jsonl",
+      "published": "records/evidence/gripper-windows-20261113-092343.jsonl",
+      "source_sha256": "8399231178fb73f281d197b28521a761e4266303a8b7c61c2598672ef51923c0",
+      "export_sha256": "e7c4e7e1d9fe90b1542a1ca9264e2eb3ceea50cf7393c2beba61c685f6419e8e"
+    },
+    {
+      "source": "evidence/gripper-windows-20261113-094501.jsonl",
+      "published": "records/evidence/gripper-windows-20261113-094501.jsonl",
+      "source_sha256": "7c5e928432e04e01e4379d79b50297e45ccb2e2189b1594c466f7adca4ee4771",
+      "export_sha256": "408347d7b9c86de2b49a95bf67a8e5f8e4e6f7c2bab0085913555f9f45ddca2c"
+    },
+    {
+      "source": "evidence/gripper-windows-20261113-095657.jsonl",
+      "published": "records/evidence/gripper-windows-20261113-095657.jsonl",
+      "source_sha256": "197ea7f2c460100d38fe7e227364ad15aec778161acc32d88f41ea5d1b30b11c",
+      "export_sha256": "aa0044fb180a7676c89a251c55a9e4b77fa5a2b0a059d02bcd0e2869416aa501"
+    },
+    {
+      "source": "evidence/gripper-windows-execute-20261113-101522.jsonl",
+      "published": "records/evidence/gripper-windows-execute-20261113-101522.jsonl",
+      "source_sha256": "cabd1d9931ca3192cae573f61c43af52333505f5356e5179a30336a7a5e962f4",
+      "export_sha256": "f5881fb8fffceeab645dc6b06567724f7461ec7a5573a5fd494e3a22bb6d58ed"
+    }
+  ]
+}

@@ -24,6 +24,12 @@ MIT 许可覆盖本仓库自行编写的动作编排、诊断、测试、文档�
 NumPy、Paramiko 按各自上游许可证使用；本仓库不包含这些库的代码。
 安装版本以运行时环境记录为准，`requirements.txt` 是兼容范围，不是厂家认证清单。
 
+双夹爪独立功能还需要由用户提供合法的 `changingtek_p_rtu_Servo.py`，
+以及Linux端的 minimalmodbus 2.1.1、pyserial 3.5。
+公开仓库只提供接口调用代码与依赖版本清单，没有复制SDK源文件。
+夹爪安装不依赖上面的机械臂标定与碰撞组件。
+UServoController、CH341驱动和厂家PDF同样不再分发。
+
 ## 历史参考
 
 开发时参考过 `wangbo20261102/20261111Gentoluna-testing` 的本地副本，

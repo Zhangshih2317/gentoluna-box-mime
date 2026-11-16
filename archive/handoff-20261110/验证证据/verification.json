@@ -1,0 +1,97 @@
+{
+  "checked_at": "2026-11-10T01:55:17.685704+00:00",
+  "files": {
+    "apex": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\ApexTeleop-1.0.33\\Apex Teleop.exe",
+      "sha256": "e993fa1cd9be33b96589c6e79ea630cdec6b58df66be39473a27c900397e39b8",
+      "matches_handoff": true
+    },
+    "fxplatform": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\FXPlatform-4.4.2\\FXPlatform.exe",
+      "sha256": "09688baa632d63193cd02423e5e4f52b51f709f67bf240280f466253c1c03a2d",
+      "matches_handoff": true
+    },
+    "adb": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\tools\\platform-tools\\adb.exe",
+      "sha256": "b4a6b455702684652cccf7b46258b29e653538904359a58fd4931cf3ef286b3f",
+      "matches_handoff": true
+    },
+    "gnirehtet": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\tools\\gnirehtet-v2.5.1\\gnirehtet-rust-win64\\gnirehtet.exe",
+      "sha256": "d5daefbb48143fbc2b01f24be79135fc11959fe4553b00f5a454801ed5ff720d",
+      "matches_handoff": true
+    },
+    "gnirehtet_apk": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\tools\\gnirehtet-v2.5.1\\gnirehtet-rust-win64\\gnirehtet.apk",
+      "sha256": "c1ac2b869a48e3c836046aac5a168f3ade510288f3304a87ddb671315c564b9a",
+      "matches_handoff": true
+    },
+    "sdk_dll": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\work\\gento-sdk-4.4.2\\PYTHON_SDK\\libGentoSDKPY.dll",
+      "sha256": "1f4e2c86d276edf6ec546aa692e7018f3a43f2f5cbb4af9faa9665258d6d1a13",
+      "matches_handoff": true
+    },
+    "relay_dex": {
+      "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\tools\\pico-feedback\\classes.dex",
+      "sha256": "b5e07af7837327a00ec306e0e61f3c271065cf0e57f8f73b2c4498eb8009937d",
+      "matches_handoff": true
+    }
+  },
+  "robot_control_commands_sent": false,
+  "sdk_dll_load": "passed; no controller link",
+  "python_dependencies": {
+    "requests": "2.34.2",
+    "paramiko": "5.1.0",
+    "numpy": "2.5.4",
+    "PyYAML": "6.0.3",
+    "pypdf": "7.0.0"
+  },
+  "node_version": "v22.22.3",
+  "relay_node_syntax": "passed",
+  "adb_version": "Android Debug Bridge version 1.0.41\nVersion 37.0.1-15733141\nInstalled as F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\tools\\platform-tools\\adb.exe\nRunning on Windows 10.0.26200",
+  "adb_devices": "List of devices attached",
+  "archive_snapshots_verified": 231,
+  "network": {
+    "ssid": "[REDACTED]",
+    "computerIP": "192.0.2.11",
+    "backend": "192.0.2.10:8080",
+    "http_get_checks": "3 passed, HTTP 200",
+    "administrator_required": false,
+    "evidence": "wifi-connectivity.json"
+  },
+  "pico": "not connected, as confirmed by user",
+  "missing_day_6_files": [
+    "vr-speed-audit source and JSON evidence",
+    "Apex-speed-fix source and candidate patches"
+  ],
+  "status": "Host restored; Robot and Teleop running; native Wi-Fi headset session verified; Ready and Home not executed",
+  "apex_ui": {
+    "version": "1.0.33",
+    "configuration_loaded": true,
+    "hostIP": "192.0.2.10",
+    "files_extracted": 5244,
+    "window_title": "Tianji M Apex",
+    "startup": "passed",
+    "runtime_backend": "ws://192.0.2.10:8080"
+  },
+  "services": {
+    "robot": "active",
+    "teleop": "active",
+    "camera": "inactive",
+    "tool": "inactive",
+    "dnsmasq": "inactive",
+    "evidence": "service-start-20261110.jsonl"
+  },
+  "controller_version": "4.4.4",
+  "live_joint_count": 22,
+  "ready": false,
+  "vr_connected": true,
+  "motion_commands_sent": false,
+  "headset": {
+    "ip": "192.0.2.103",
+    "version": "1.0.7_pxr_260713",
+    "connection": "native Wi-Fi TCP session + UDP discovery",
+    "evidence": "headset-connected-status.json"
+  },
+  "last_updated": "2026-11-10T02:24:09.983853+00:00"
+}

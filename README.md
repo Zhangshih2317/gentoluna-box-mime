@@ -1,7 +1,40 @@
-# Gento Luna 搬箱动作开发与复用
+# Gento Luna 开发文档与可复用程序
+
+更新：**2026-11-16，v0.2.0**。包含双臂/HOME/BODY 示教、搬箱模拟、
+双 USB-RS485 夹爪控制、屏幕电量与语音工作的代码、说明、问题记录和脱敏证据。
+
+**第一次下载从 [完整导航](docs/INDEX.md) 开始。**
+下载完整 ZIP 后解压，在项目根目录执行命令。文档和离线测试不需要机器人；
+实际控制需要填写本机配置、SSH 访问以及对应厂家 SDK。
+本项目不包含密码、私钥、厂家 SDK 和专有模型，不承诺任意机器人零配置即动。
+
+| 你要做什么 | 入口 |
+|---|---|
+| 先了解整个开发过程 | [开发时间线](docs/DEVELOPMENT.md)、[完整原始记录索引](docs/INDEX.md) |
+| 两只夹爪张开、闭合 | [夹爪安装与使用](docs/GRIPPERS.md)，`run_grippers.py` |
+| 单轮/六轮搬箱模拟、独立回 HOME | [运控安装](docs/SETUP.md) |
+| 看电量屏、语音和网络处理记录 | [辅助功能](docs/AUXILIARY.md) |
+| 遇到报错或想核对实测范围 | [故障排查](docs/TROUBLESHOOTING.md)、[验证记录](docs/VALIDATION.md) |
+
+## 双夹爪快速入口
+
+按照 [GRIPPERS.md](docs/GRIPPERS.md) 完成一次性配置和依赖安装后：
+
+```powershell
+python run_grippers.py
+```
+
+菜单：`1` 同时张开，`2` 同时闭合，`3` 读取状态，`0` 退出。
+也可使用 `python run_grippers.py open` / `close` / `status`。
+默认速度 **10%**、力矩 **30%**，文件顶部有中文参数说明。
+现场已确认 **0=张开、9000=闭合**；新设备须核对映射后才能运动。
+每次只执行选定动作并保持，不自动循环。夹爪控制独立于搬箱模拟。
+
+## 搬箱模拟
 
 从人工示教、下蹲运动学、回原点、调速排查，到两个完整搬箱模拟程序的开发归档。
-这两个流程模拟“抱箱、起身、转腰、张臂放开”；**不包含抓取检测、夹爪控制或真实箱子搬运任务规划**。
+这两个流程模拟“抱箱、起身、转腰、张臂放开”；**搬箱流程本身不包含抓取检测、
+夹爪联动或真实箱子搬运任务规划**。
 
 ## 已完成的两个程序
 
@@ -81,6 +114,7 @@ python run_box_mime_six_cycles.py --execute
 run_box_mime_taught.py       单轮入口
 run_box_mime_six_cycles.py   六轮入口
 run_return_home.py           独立回 HOME
+run_grippers.py              双夹爪手动开合
 config/                     可移植连接配置与 SSH 适配器
 tools/                      规划、执行、反馈、测试
 demos/box_mime_six_cycles/   六轮独立模块快照
@@ -93,3 +127,14 @@ archive/                    旧文档、旧点位、历史源码（.py.txt）
 历史内容会有旧参数和阶段性结论，以本 README 和 `docs/` 为当前说明。
 旧缓存仅保留在 `archive/` 供审计；不会被公开版入口用于启动。
 本仓库代码采用 MIT 许可；厂家及第三方组件不包含在内。
+
+## 下载后离线验收
+
+```powershell
+python -m pip install -r requirements.txt
+python tools/run_offline_tests.py
+python run_grippers.py --help
+```
+
+离线入口禁止网络连接。机器人现场成绩与公开部署改造后的离线测试分开记录。
+源码 ZIP 包含所有公开文档、源码和归档；私有组件取得方式见 [THIRD_PARTY.md](THIRD_PARTY.md)。

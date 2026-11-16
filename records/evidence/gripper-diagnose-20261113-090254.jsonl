@@ -1,5 +1,5 @@
 {"event": "remote_process", "time": "2026-11-13T01:16:26.581142+00:00", "pid": 7187, "run_id": "[REDACTED]"}
-{"event": "device_identity", "time": "2026-11-13T01:16:26.633777+00:00", "port": "/dev/luna-gripper-ftdi", "resolved": "/dev/ttyUSB4", "identity": {"ID_VENDOR_ID": "0403", "ID_MODEL_ID": "6001", "ID_SERIAL_SHORT": "BG011JUB"}}
+{"event": "device_identity", "time": "2026-11-13T01:16:26.633777+00:00", "port": "/dev/luna-gripper-ftdi", "resolved": "/dev/ttyUSB4", "identity": {"ID_VENDOR_ID": "0403", "ID_MODEL_ID": "6001", "ID_SERIAL_SHORT": "EXAMPLE_SERIAL"}}
 {"event": "diagnostic_uart", "time": "2026-11-13T01:16:39.140019+00:00", "port": "/dev/luna-gripper-ftdi", "baudrate": 115200, "slave_id": 1, "format": "8N1", "timeout_seconds": 1, "settings": {"baudrate": 115200, "bytesize": 8, "parity": "N", "stopbits": 1, "xonxoff": false, "dsrdtr": false, "rtscts": false, "timeout": 1, "write_timeout": 1, "inter_byte_timeout": null}, "dtr": true, "rts": true}
 MinimalModbus debug mode. Will write to instrument (expecting 11 bytes back): 01 03 04 01 00 03 55 3B (8 bytes)
 MinimalModbus debug mode. Clearing serial buffers for port /dev/luna-gripper-ftdi

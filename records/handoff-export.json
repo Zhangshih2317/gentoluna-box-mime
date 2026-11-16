@@ -1,0 +1,78 @@
+{
+  "date": "2026-11-16",
+  "files": [
+    {
+      "published": "archive/handoff-20261110/开发摘要.md",
+      "sha256": "7faec8afa5cf3e1a89395c4184ea68a2e00b52fc18cd7de51e6b00d32031c03a"
+    },
+    {
+      "published": "archive/handoff-20261110/本机还原记录.md",
+      "sha256": "8cc8264982956bdbab33300c3cd69f4bf1e982762bb29197176b2f96a3bcc55d"
+    },
+    {
+      "published": "archive/handoff-20261110/文件校验清单.json",
+      "sha256": "1afaab62256d39c3a24973414ca8b3377eb979f42e22fdb4512071adac8d1fce"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/archive-verification.json",
+      "sha256": "21479e30e314b3df068d9743b96d5850e6eae54b5e38ce64088454b3575e1f5c"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/verification.json",
+      "sha256": "0436479e803ad1804ba466e56538a0b502e287887c762d82a0cad64fb7ac19b2"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/wifi-connectivity.json",
+      "sha256": "2ed81ef51177dd32ecd9ad790d0818d907aefcf552a56131214262e1d5ded1de"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/pico-wifi-precheck.json",
+      "sha256": "6deb6d76009697f65b00bf147a8a5cda2d334c8548e72bff43f54954cb7fd4c4"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/service-start-20261110.jsonl",
+      "sha256": "8227b0080987b8fad3e85069ca8c3e757e98527cc457fc287506852a2146c17d"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/services-after-start.json",
+      "sha256": "92107b107e88823d9f6b7753e08c602bd6076a39e894b54ad0455800a6978c23"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/headset-observation-2026-11-10T02-22-25-439Z.json",
+      "sha256": "d4d8a95bdef5564913327a21348438688ef919e8fde53edcba1e1fa8bf908f4b"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/headset-connected-status.json",
+      "sha256": "9950a66cd72d0bef17e8a69121cd4442ff3ff99f70918907285a1c4ab49d0f35"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/requirements-lock.txt",
+      "sha256": "23639e03039ff6c82b6db4e3ac02e9b18ef0010f423b34e1b51cd571689b5c1a"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/downloads.json",
+      "sha256": "45dcc5cfe5d6454cd8d1eb9f0c5d53a44c13f4d2d368c3cf87ede746195668a9"
+    },
+    {
+      "published": "archive/handoff-20261110/验证证据/robot-feedback-20261110.json",
+      "sha256": "e770ff854397f6826b311fe8a1d82cdc1d9ee0b27b23b2ca64327265cea4d17a"
+    },
+    {
+      "published": "archive/source/tools/generate_battery_audio.ps1.txt",
+      "sha256": "b7fdfc7864cf629b5a6f149f3d17e63de8127a08d46d68445045fae2da8419c2"
+    },
+    {
+      "published": "archive/source/tools/luna-battery-display.service.txt",
+      "sha256": "13a15e67d955c2511573001dc634ed9506fbf7297531200565637fed17ce6492"
+    },
+    {
+      "published": "archive/source/tools/luna-battery-screen.service.txt",
+      "sha256": "a6a4fa9658e62e694a7abdb4d31cf1bd809754506956d2bab5bc19b86a9f92eb"
+    },
+    {
+      "published": "archive/source/tools/set_luna_wifi_priority.ps1.txt",
+      "sha256": "3ff785ef784eb6734425d6a6d4444a0b111f8cb9878bf68676dd53d6016e0273"
+    }
+  ],
+  "note": "Redacted archive; original checksums describe originals, not redacted bytes."
+}

@@ -7,10 +7,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]/"tools"))
 from luna_config import load_config
 
 
-def connect():
+def connect(config=None):
     import paramiko
 
-    config = load_config()
+    config = load_config() if config is None else config
     client = paramiko.SSHClient()
     client.load_system_host_keys()
     client.set_missing_host_key_policy(paramiko.RejectPolicy())

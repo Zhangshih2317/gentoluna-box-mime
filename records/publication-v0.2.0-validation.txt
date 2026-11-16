@@ -1,0 +1,218 @@
+v0.2.0 clean-download verification, 2026-11-16
+No robot connection or motion; proprietary SDK/calibration not supplied.
+Python syntax files: 69
+Local documentation links: 65, all exist
+
+$ python tools/run_offline_tests.py
+test_sdk_frame_conversion_and_mismatch_rejection (test_box_motion.GeometryTests.test_sdk_frame_conversion_and_mismatch_rejection) ... ok
+test_invalid_amplitude_or_start_rejected (test_box_motion.PlanTests.test_invalid_amplitude_or_start_rejected) ... ok
+test_nonfinite_pose_rejected (test_box_motion.PlanTests.test_nonfinite_pose_rejected) ... ok
+test_order_squat_bound_standing_release_and_return (test_box_motion.PlanTests.test_order_squat_bound_standing_release_and_return) ... ok
+test_reverse_turn_and_smaller_squat (test_box_motion.PlanTests.test_reverse_turn_and_smaller_squat) ... ok
+test_samples_continuity_speed_acceleration_and_inactive_parts (test_box_motion.PlanTests.test_samples_continuity_speed_acceleration_and_inactive_parts) ... ok
+test_body_completion_requires_running_then_settled_target (test_box_motion.RuntimeTests.test_body_completion_requires_running_then_settled_target) ... ok
+test_body_upload_packs_six_axes_and_requires_new_ack (test_box_motion.RuntimeTests.test_body_upload_packs_six_axes_and_requires_new_ack) ... ok
+test_body_uses_dedicated_start_not_unsupported_mask (test_box_motion.RuntimeTests.test_body_uses_dedicated_start_not_unsupported_mask) ... ok
+test_missing_second_ready_buffer_never_starts (test_box_motion.RuntimeTests.test_missing_second_ready_buffer_never_starts) ... ok
+test_old_ready_buffer_is_not_accepted_as_new_upload (test_box_motion.RuntimeTests.test_old_ready_buffer_is_not_accepted_as_new_upload) ... ok
+test_stop_escalates_when_feedback_cannot_confirm (test_box_motion.RuntimeTests.test_stop_escalates_when_feedback_cannot_confirm) ... ok
+test_stop_requests_body_and_both_arms (test_box_motion.RuntimeTests.test_stop_requests_body_and_both_arms) ... ok
+test_upload_failure_never_starts (test_box_motion.RuntimeTests.test_upload_failure_never_starts) ... ok
+test_controller_held_axis_outside_allowance_still_rejects (test_position_acceptance.Tests.test_controller_held_axis_outside_allowance_still_rejects) ... ok
+test_no_confirmation_before_endpoint_command (test_position_acceptance.Tests.test_no_confirmation_before_endpoint_command) ... ok
+test_outside_tolerance_resets_confirmation (test_position_acceptance.Tests.test_outside_tolerance_resets_confirmation) ... ok
+test_two_frames_require_spacing_and_expire_after_one_second (test_position_acceptance.Tests.test_two_frames_require_spacing_and_expire_after_one_second) ... ok
+test_whole_body_endpoint_is_accepted_including_held_axes_and_torso_sum (test_position_acceptance.Tests.test_whole_body_endpoint_is_accepted_including_held_axes_and_torso_sum) ... ok
+test_duplicate_frame_does_not_retimestamp_old_position (test_feedback_observation.Tests.test_duplicate_frame_does_not_retimestamp_old_position) ... ok
+test_invalid_observation_times_reject (test_feedback_observation.Tests.test_invalid_observation_times_reject) ... ok
+test_real_excessive_jump_is_reported_with_both_read_windows (test_feedback_observation.Tests.test_real_excessive_jump_is_reported_with_both_read_windows) ... ok
+test_same_frame_cannot_contain_a_position_jump (test_feedback_observation.Tests.test_same_frame_cannot_contain_a_position_jump) ... ok
+test_slow_previous_read_does_not_create_a_false_jump (test_feedback_observation.Tests.test_slow_previous_read_does_not_create_a_false_jump) ... ok
+test_driver_holds_last_command_and_freezes_trajectory_clock (test_motion_wait_policy.Tests.test_driver_holds_last_command_and_freezes_trajectory_clock) ... ok
+test_full_candidate_stage_with_two_second_delayed_feedback (test_motion_wait_policy.Tests.test_full_candidate_stage_with_two_second_delayed_feedback) ... ok
+test_hard_adapter_fault_does_not_issue_another_command (test_motion_wait_policy.Tests.test_hard_adapter_fault_does_not_issue_another_command) ... ok
+test_home_tolerance_remains_tighter_than_stage_tolerance (test_motion_wait_policy.Tests.test_home_tolerance_remains_tighter_than_stage_tolerance) ... ok
+test_invalid_feedback_and_hard_joint_limits_still_reject (test_motion_wait_policy.Tests.test_invalid_feedback_and_hard_joint_limits_still_reject) ... ok
+test_larger_pitch_deviation_holds_not_raises_or_completes (test_motion_wait_policy.Tests.test_larger_pitch_deviation_holds_not_raises_or_completes) ... ok
+test_persistent_deviation_latches_operator_hold_without_auto_resume (test_motion_wait_policy.Tests.test_persistent_deviation_latches_operator_hold_without_auto_resume) ... ok
+test_same_feedback_frame_cannot_satisfy_arrival (test_motion_wait_policy.Tests.test_same_feedback_frame_cannot_satisfy_arrival) ... ok
+test_two_degree_torso_error_is_accepted_but_not_blanket_axis_drift (test_motion_wait_policy.Tests.test_two_degree_torso_error_is_accepted_but_not_blanket_axis_drift) ... ok
+test_two_second_endpoint_delay_does_not_stop (test_motion_wait_policy.Tests.test_two_second_endpoint_delay_does_not_stop) ... ok
+test_complete_flow_with_two_second_actual_feedback_delay (test_integrated_motion_wait.Tests.test_complete_flow_with_two_second_actual_feedback_delay) ... ok
+test_controller_fault_still_rejects_before_first_command (test_integrated_motion_wait.Tests.test_controller_fault_still_rejects_before_first_command) ... ok
+test_endpoint_timeout_keeps_streaming_instead_of_exiting (test_integrated_motion_wait.Tests.test_endpoint_timeout_keeps_streaming_instead_of_exiting) ... ok
+test_heartbeat_loss_still_rejects_before_first_command (test_integrated_motion_wait.Tests.test_heartbeat_loss_still_rejects_before_first_command) ... ok
+test_old_point_two_degree_pitch_threshold_no_longer_aborts (test_integrated_motion_wait.Tests.test_old_point_two_degree_pitch_threshold_no_longer_aborts) ... ok
+test_pitch_above_two_degrees_waits_then_resumes_without_emergency (test_integrated_motion_wait.Tests.test_pitch_above_two_degrees_waits_then_resumes_without_emergency) ... ok
+test_acceleration_and_jerk_do_not_scale_up_with_user_speed (test_coordinated_joint_timing.Tests.test_acceleration_and_jerk_do_not_scale_up_with_user_speed) ... ok
+test_distinct_axis_limits_produce_one_phase_and_preserve_pitch (test_coordinated_joint_timing.Tests.test_distinct_axis_limits_produce_one_phase_and_preserve_pitch) ... ok
+test_invalid_values_are_rejected (test_coordinated_joint_timing.Tests.test_invalid_values_are_rejected) ... ok
+test_inverse_quintic_recovers_progress (test_coordinated_joint_timing.Tests.test_inverse_quintic_recovers_progress) ... ok
+test_missing_calibration_is_not_replaced_by_guessed_limits (test_coordinated_joint_timing.Tests.test_missing_calibration_is_not_replaced_by_guessed_limits) ... ok
+test_velocity_saturates_at_calibrated_limit (test_coordinated_joint_timing.Tests.test_velocity_saturates_at_calibrated_limit) ... ok
+test_detected_deviation_prevents_next_command (test_recovery.Tests.test_detected_deviation_prevents_next_command) ... ok
+test_inward_recovery_near_limit_is_allowed (test_recovery.Tests.test_inward_recovery_near_limit_is_allowed) ... ok
+test_send_targets_only_enabled_groups (test_recovery.Tests.test_send_targets_only_enabled_groups) ... ok
+test_wrong_direction_tracking_and_uncommanded_motion_rejected (test_recovery.Tests.test_wrong_direction_tracking_and_uncommanded_motion_rejected) ... ok
+test_old_motion_entry_rejected_before_sdk_access (test_teach_pose.Tests.test_old_motion_entry_rejected_before_sdk_access) ... ok
+test_stale_moving_faulted_or_nonfinite_capture_rejected (test_teach_pose.Tests.test_stale_moving_faulted_or_nonfinite_capture_rejected) ... ok
+test_stationary_point_is_preserved (test_teach_pose.Tests.test_stationary_point_is_preserved) ... ok
+test_changed_flange_configuration_rejects_cache (test_box_mime_cache.Tests.test_changed_flange_configuration_rejects_cache) ... ok
+test_interrupted_turn_unwinds_waist_before_arms (test_box_mime_cache.Tests.test_interrupted_turn_unwinds_waist_before_arms) ... ok
+test_missing_changed_model_or_changed_code_rejects_cache (test_box_mime_cache.Tests.test_missing_changed_model_or_changed_code_rejects_cache) ... ok
+test_observed_interrupted_crouch_stands_before_closing_arms (test_box_mime_cache.Tests.test_observed_interrupted_crouch_stands_before_closing_arms) ... ok
+test_recovery_does_not_accept_arbitrary_arm_or_body_positions (test_box_mime_cache.Tests.test_recovery_does_not_accept_arbitrary_arm_or_body_positions) ... ok
+test_target_order_or_head_change_is_not_silently_accepted (test_box_mime_cache.Tests.test_target_order_or_head_change_is_not_silently_accepted) ... ok
+test_this_interruption_recovers_arms_before_body_then_runs_normal_flow (test_box_mime_cache.Tests.test_this_interruption_recovers_arms_before_body_then_runs_normal_flow) ... ok
+test_verified_main_path_is_reused (test_box_mime_cache.Tests.test_verified_main_path_is_reused) ... ok
+test_example_addresses_cannot_be_used_for_hardware (test_public_config.Tests.test_example_addresses_cannot_be_used_for_hardware) ... ok
+test_invalid_config_is_rejected (test_public_config.Tests.test_invalid_config_is_rejected) ... ok
+test_remote_modules_receive_paths_and_address_before_import (test_public_config.Tests.test_remote_modules_receive_paths_and_address_before_import) ... ok
+test_shell_environment_path_is_quoted (test_public_config.Tests.test_shell_environment_path_is_quoted) ... ok
+test_alarm_or_out_of_bounds_feedback_rejected (test_gripper_readonly.Tests.test_alarm_or_out_of_bounds_feedback_rejected) ... ok
+test_bad_enable_or_range_blocks_start (test_gripper_readonly.Tests.test_bad_enable_or_range_blocks_start) ... ok
+test_close_both_once_at_force_thirty_without_reopening (test_gripper_readonly.Tests.test_close_both_once_at_force_thirty_without_reopening) ... ok
+test_drop_exception_preserves_other_faults_and_raw_feedback (test_gripper_readonly.Tests.test_drop_exception_preserves_other_faults_and_raw_feedback) ... ok
+test_duplicate_device_aliases_rejected_before_open (test_gripper_readonly.Tests.test_duplicate_device_aliases_rejected_before_open) ... ok
+test_feedback_uses_only_documented_read_registers (test_gripper_readonly.Tests.test_feedback_uses_only_documented_read_registers) ... ok
+test_five_cycles_use_sdk_and_verify_each_endpoint (test_gripper_readonly.Tests.test_five_cycles_use_sdk_and_verify_each_endpoint) ... ok
+test_five_cycles_with_drop_bit_preserve_arrival_checks (test_gripper_readonly.Tests.test_five_cycles_with_drop_bit_preserve_arrival_checks) ... ok
+test_force_outside_authorized_range_sends_no_writes (test_gripper_readonly.Tests.test_force_outside_authorized_range_sends_no_writes) ... ok
+test_inspection_disables_both_vendor_write_paths (test_gripper_readonly.Tests.test_inspection_disables_both_vendor_write_paths) ... ok
+test_low_speed_target_and_readback_match (test_gripper_readonly.Tests.test_low_speed_target_and_readback_match) ... ok
+test_nonzero_start_requires_explicit_option_and_stationary_state (test_gripper_readonly.Tests.test_nonzero_start_requires_explicit_option_and_stationary_state) ... ok
+test_parameter_mismatch_stops_both_without_triggering (test_gripper_readonly.Tests.test_parameter_mismatch_stops_both_without_triggering) ... ok
+test_preflight_failure_sends_no_writes (test_gripper_readonly.Tests.test_preflight_failure_sends_no_writes) ... ok
+test_recovery_requires_exact_drop_alarm (test_gripper_readonly.Tests.test_recovery_requires_exact_drop_alarm) ... ok
+test_recovery_resets_once_and_stops_after_failed_diagnostic (test_gripper_readonly.Tests.test_recovery_resets_once_and_stops_after_failed_diagnostic) ... ok
+test_signed_position (test_gripper_readonly.Tests.test_signed_position) ... ok
+test_single_gripper_runs_ten_verified_targets (test_gripper_readonly.Tests.test_single_gripper_runs_ten_verified_targets) ... ok
+test_single_open_from_closed_stays_open (test_gripper_readonly.Tests.test_single_open_from_closed_stays_open) ... ok
+test_single_port_execution_rejected_before_open (test_gripper_readonly.Tests.test_single_port_execution_rejected_before_open) ... usage: check [-h]
+             (--inspect | --execute | --execute-single | --close | --open | --recover-empty | --scan | --diagnose)
+             [--port {/dev/luna-gripper-ftdi,/dev/luna-gripper-ch340}]
+             [--ignore-drop-alarm]
+             [--speed {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50}]
+             [--force {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30}]
+check: error: Execute validates both grippers; do not select a single port
+ok
+test_exit_menu_does_not_connect (test_grippers_manual.Tests.test_exit_menu_does_not_connect) ... ok
+test_explicit_actions_and_parameters (test_grippers_manual.Tests.test_explicit_actions_and_parameters) ... ok
+test_failure_exits_without_retry (test_grippers_manual.Tests.test_failure_exits_without_retry) ... ok
+test_menu_defaults_and_no_automatic_reversal (test_grippers_manual.Tests.test_menu_defaults_and_no_automatic_reversal) ... ok
+test_remote_mapping_and_policy (test_grippers_manual.Tests.test_remote_mapping_and_policy) ... ok
+test_grippers_do_not_require_arm_sdk (test_gripper_config.Tests.test_grippers_do_not_require_arm_sdk) ... ok
+test_identity_and_mapping_checked (test_gripper_config.Tests.test_identity_and_mapping_checked) ... ok
+test_remote_paths_quoted_and_no_reversal (test_gripper_config.Tests.test_remote_paths_quoted_and_no_reversal) ... ok
+test_template_requires_real_identities (test_gripper_config.Tests.test_template_requires_real_identities) ... ok
+
+----------------------------------------------------------------------
+Ran 94 tests in 1.614s
+
+OK
+
+
+$ python run_grippers.py --help
+usage: run_grippers.py [-h] [--speed SPEED] [--force FORCE]
+                       [{open,close,status}]
+
+在 Windows 上手动控制机器人 USB 上的两只夹爪。
+
+positional arguments:
+  {open,close,status}  open=双爪张开，close=双爪闭合，status=只读状态；不填则显示菜单
+
+options:
+  -h, --help           show this help message and exit
+  --speed SPEED        速度百分比
+  --force FORCE        力矩百分比
+
+
+$ python tools/run_gripper_remote.py --help
+usage: run_gripper_remote.py [-h]
+                             [--speed {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50}]
+                             [--force {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30}]
+                             [--ignore-drop-alarm]
+                             {inventory,install,inspect,open,close}
+
+Deploy/run the configured gripper controller through verified SSH.
+
+positional arguments:
+  {inventory,install,inspect,open,close}
+
+options:
+  -h, --help            show this help message and exit
+  --speed {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50}
+  --force {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30}
+  --ignore-drop-alarm
+
+
+$ python tools/doctor.py --component grippers
+MISSING: Create config/robot.local.json from config/robot.example.json first
+MISSING: Create config/grippers.local.json from grippers.example.json
+No network connection or motion attempted.
+
+Expected exit 1: clean download requires user SSH/USB/SDK configuration.
+
+$ python run_box_mime_taught.py --help
+usage: run_box_mime_taught.py [-h] [--execute | --preflight | --prepare-cache]
+                              [--cache-head YAW PITCH ROLL] [--full-preflight]
+                              [--stepped]
+
+Continuous empty-handed box mime. Default: preflight; --execute moves once.
+
+options:
+  -h, --help            show this help message and exit
+  --execute
+  --preflight
+  --prepare-cache       Prepare the fixed model path offline without
+                        connecting to the robot
+  --cache-head YAW PITCH ROLL
+                        Observed held HEAD angles for --prepare-cache only, in
+                        degrees
+  --full-preflight      Explicitly recompute the complete model path
+  --stepped             Use the previously verified stop-at-small-waypoint
+                        timing
+
+
+$ python run_box_mime_six_cycles.py --help
+usage: run_box_mime_six_cycles.py [-h]
+                                  [--execute | --preflight | --prepare-cache]
+                                  [--cache-head YAW PITCH ROLL]
+                                  [--full-preflight] [--stepped]
+
+Six complete box mimes, alternating HOME-relative -45/+45 yaw. Default:
+preflight.
+
+options:
+  -h, --help            show this help message and exit
+  --execute
+  --preflight
+  --prepare-cache       Prepare the fixed model path offline without
+                        connecting to the robot
+  --cache-head YAW PITCH ROLL
+                        Observed held HEAD angles for --prepare-cache only, in
+                        degrees
+  --full-preflight      Explicitly recompute the complete model path
+  --stepped             Use the previously verified stop-at-small-waypoint
+                        timing
+
+
+$ python run_return_home.py --help
+usage: run_return_home.py [-h] [--execute | --preflight | --prepare-cache]
+                          [--cache-head YAW PITCH ROLL] [--full-preflight]
+                          [--stepped]
+
+Continuous empty-handed box mime. Default: preflight; --execute moves once.
+
+options:
+  -h, --help            show this help message and exit
+  --execute
+  --preflight
+  --prepare-cache       Prepare the fixed model path offline without
+                        connecting to the robot
+  --cache-head YAW PITCH ROLL
+                        Observed held HEAD angles for --prepare-cache only, in
+                        degrees
+  --full-preflight      Explicitly recompute the complete model path
+  --stepped             Use the previously verified stop-at-small-waypoint
+                        timing

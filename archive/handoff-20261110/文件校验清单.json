@@ -1,0 +1,67 @@
+[
+  {
+    "file": "开发摘要.md",
+    "bytes": 2588,
+    "sha256": "B5F6737432AE436B2AB62605CEB3B174DFCA127A3CD63D9E6A3F245C88D58B57"
+  },
+  {
+    "file": "本机还原记录.md",
+    "bytes": 6016,
+    "sha256": "E495A6A49F94C195397F87C2635C008F8F91B830799FA9AD4784422391DC5D4D"
+  },
+  {
+    "file": "验证证据\\archive-verification.json",
+    "bytes": 14806,
+    "sha256": "D5ED967CDF0ACA89F7000BC26E5105069EF5C29A3BA9EA367F3B89FC19C8C96E"
+  },
+  {
+    "file": "验证证据\\verification.json",
+    "bytes": 3920,
+    "sha256": "E2C4A3AF0213931DBA8C2DE0831B5A6426F5065CB464545A3EA5A28FCC19FDF8"
+  },
+  {
+    "file": "验证证据\\wifi-connectivity.json",
+    "bytes": 8979,
+    "sha256": "9FCD42FB4DFD396866E1CA1BC2D1DA06974BABE6CDD85E408F3BFA591355EF3F"
+  },
+  {
+    "file": "验证证据\\pico-wifi-precheck.json",
+    "bytes": 4408,
+    "sha256": "9DD79D6D8B8977755949E734D9C14731EBEED0B1BCB5BBB878BE49E0ED3DAA9B"
+  },
+  {
+    "file": "验证证据\\service-start-20261110.jsonl",
+    "bytes": 4624,
+    "sha256": "CEE7D01BE85AE253F8AC504781219636157F38025286BAD6444C935F6461D894"
+  },
+  {
+    "file": "验证证据\\services-after-start.json",
+    "bytes": 19417,
+    "sha256": "CAA6C2DD5645C8B7390B444B699B5979FB91F9EDCEECA5974AB8F9A8D844E911"
+  },
+  {
+    "file": "验证证据\\headset-observation-2026-11-10T02-22-25-439Z.json",
+    "bytes": 3931,
+    "sha256": "CE509348F434C8C53EFC8DB21EB53BEA907FAB219A8E3DC082F0B76C4FB05E7B"
+  },
+  {
+    "file": "验证证据\\headset-connected-status.json",
+    "bytes": 5549,
+    "sha256": "C735D361F7848848B0F37C2A998D53C9F9CA367A9ED732ED4820F6C5CBA8909C"
+  },
+  {
+    "file": "验证证据\\requirements-lock.txt",
+    "bytes": 251,
+    "sha256": "911479EDF794A7D8C03E839E13BD5D904E1D87E4EEC1B7B7F0307BD029C57EA9"
+  },
+  {
+    "file": "验证证据\\downloads.json",
+    "bytes": 1496,
+    "sha256": "27D97D38F9B37833F1F160BBF8016D4DF08EBE32B1894DE74474531AED4AED30"
+  },
+  {
+    "file": "验证证据\\robot-feedback-20261110.json",
+    "bytes": 3706,
+    "sha256": "90B48B62793E7FEBF7A681C41C2C500D96AA4552C20EB5274A56C9C11D608D73"
+  }
+]

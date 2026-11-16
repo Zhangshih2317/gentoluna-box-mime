@@ -4,6 +4,8 @@ __pycache__/
 .env
 .env.*
 config/robot.local.json
+config/grippers.local.json
+/vendor/
 config/*private*
 *.pem
 *.key

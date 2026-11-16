@@ -12,7 +12,8 @@ PURE = (
     "test_box_motion", "test_position_acceptance", "test_feedback_observation",
     "test_motion_wait_policy", "test_integrated_motion_wait",
     "test_coordinated_joint_timing", "test_recovery", "test_teach_pose",
-    "test_box_mime_cache", "test_public_config",
+    "test_box_mime_cache", "test_public_config", "test_gripper_readonly",
+    "test_grippers_manual", "test_gripper_config",
 )
 
 

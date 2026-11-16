@@ -14,7 +14,7 @@
 
 | USB 路径 | 芯片 | VID:PID | 标识 | 本次启动曾分配的串口 |
 | --- | --- | --- | --- | --- |
-| 5-1.1 | FTDI FT232RL | 0403:6001 | BG011JUB | ttyUSB4 |
+| 5-1.1 | FTDI FT232RL | 0403:6001 | EXAMPLE_SERIAL | ttyUSB4 |
 | 5-1.4 | QinHeng CH340 | 1a86:7523 | 未报告独立序列号 | ttyUSB5 |
 
 两者位于同一 Genesys Logic USB Hub 的端口 1 和端口 4。
@@ -115,7 +115,7 @@ Python 文件的主程序会在连接后执行五次 9000 与 0 的往复运动�
 已完成：
 
 - 在 Orin `/etc/udev/rules.d/85-brltty.rules` 创建厂商规则的本地覆盖，
-  仅跳过序列号 BG011JUB 的 FTDI 及 USB 位置 5-1.4 的 CH340；
+  仅跳过序列号 EXAMPLE_SERIAL 的 FTDI 及 USB 位置 5-1.4 的 CH340；
   清除这两只设备的 BRLTTY 自动启动属性，保留其他规则。
 - 停止 brltty-udev.service，重新绑定 ftdi_sio/ch341 驱动。
   未卸载系统驱动、未重启机器人、未改变机械臂使能。
@@ -226,7 +226,7 @@ VIN_SYS_5V0 通道 in_input=4984，按 hwmon 毫伏约定对应约 19.816V 与 4
 此前 CH340 排除规则使用内核总线编号，未匹配新设备，BRLTTY 再次启动
 并抢占串口。因此上一节“跨重启保留”仅适用于当时编号未变的那次启动。
 
-已修正 `tools/repair_gripper_usb.py`：FTDI 按序列号 BG011JUB 识别；
+已修正 `tools/repair_gripper_usb.py`：FTDI 按序列号 EXAMPLE_SERIAL 识别；
 CH340 按稳定物理路径
 `platform-14180000.pcie-pci-0000:01:00.0-usb-0:1.4` 识别。
 修复脚本先发现并核验设备，不再假定 USB 总线编号。规则已部署，
@@ -296,7 +296,7 @@ FTDI 有序列号，适合作为首选。尚不能断定具体是 Hub、线缆�
 ### 再次重启并换口后
 
 用户报告已重启、换 USB 口。本次 Orin 开机约 2 分钟，
-CH340 位于 `5-1.1`，FTDI BG011JUB 位于 `5-1.3`，两者仍在同一个
+CH340 位于 `5-1.1`，FTDI EXAMPLE_SERIAL 位于 `5-1.3`，两者仍在同一个
 `5-1` 四口 Hub 下。软件拓扑无法判断该 Hub 是盒内还是外置。
 CH340 物理路径改变导致旧规则不匹配，BRLTTY 再次启动并抢占。
 已将 CH340 的规则和只读/执行身份检查更新为
@@ -356,7 +356,7 @@ Windows 端已检测到 pyserial 3.5，当前无 Win32_SerialPort 设备。
 ### Windows 直连 FTDI 对比结果
 
 用户将转换器直接接到当前 Windows 电脑。pyserial 枚举为 COM4，
-VID/PID=0403:6001、序列号显示 BG011JUBA；对应此前 FTDI 通道。
+VID/PID=0403:6001、序列号显示 EXAMPLE_SERIAL；对应此前 FTDI 通道。
 新增 `tools/check_gripper_windows.py`，通过本地 minimalmodbus 2.1.1
 wheel 加载依赖和用户提供的厂家 SDK，不执行 SDK 的运动示例。
 子类禁止两个寄存器写接口，只调用功能码 03。
@@ -407,7 +407,7 @@ COM4 正常打开。115200/8N1/ID 1 下连续三次读取状态，
 
 用户明确报告已断开厂家软件，随后运行未修改的
 `python tools/check_gripper_windows.py`，退出码 0。
-COM4 / FTDI BG011JUBA，115200/8N1/ID 1，首次功能码 03 请求即收到有效回复：
+COM4 / FTDI EXAMPLE_SERIAL，115200/8N1/ID 1，首次功能码 03 请求即收到有效回复：
 请求 `01 03 04 01 00 03 55 3B`，
 回复 `01 03 06 00 15 00 00 00 00 2C B6`。
 
@@ -544,7 +544,7 @@ CTAG2F90D，版本字符串 2060000000000000，24V，用户确认空载无外部
 | 设备 | 完成往复 | 目标验证 | 最终位置 | 最终速度 | 最终故障 A | 最终报警 B |
 | --- | --- | --- | --- | --- | --- | --- |
 | Orin CH340 `/dev/luna-gripper-ch340` | 5 | 10/10 | 0 | 0 | 0 | 0 |
-| Windows FTDI `COM4`，BG011JUBA | 5 | 10/10 | 0 | 0 | 0 | 0x1000 |
+| Windows FTDI `COM4`，EXAMPLE_SERIAL | 5 | 10/10 | 0 | 0 | 0 | 0x1000 |
 
 CH340 的五个 9000 端点反馈均为 9000；FTDI 分别为
 8981、8980、8982、8983、8983，均在既定 20 用户单位容差内。
@@ -570,7 +570,7 @@ python tools/run_gripper_windows_cycles.py --execute --ignore-drop-alarm --speed
 ### 两只接回 Orin 后联合驱动通过
 
 2026-11-13，用户确认两只夹爪都接在机器人上，并要求同时驱动。
-只读检查确认 FTDI BG011JUB 为 ttyUSB5，CH340 为 ttyUSB4，
+只读检查确认 FTDI EXAMPLE_SERIAL 为 ttyUSB5，CH340 为 ttyUSB4，
 既有稳定别名和身份校验均通过，串口没有占用。起始位置 FTDI=8613、
 CH340 约为 0，两只静止，只有已获用户确认可忽略的 B=0x1000。
 

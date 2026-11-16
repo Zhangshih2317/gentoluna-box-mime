@@ -2375,6 +2375,26 @@
     "completion_confirmed": null
   },
   {
+    "file": "gripper-close-20261116-095541.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-close-20261116-095607.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
     "file": "gripper-diagnose-20261113-090254.jsonl",
     "execute_requested": null,
     "controller_ratios": null,
@@ -2605,6 +2625,16 @@
     "completion_confirmed": null
   },
   {
+    "file": "gripper-inspect-20261116-095631.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 1,
+    "completion_confirmed": null
+  },
+  {
     "file": "gripper-install-20261112-161231.jsonl",
     "execute_requested": null,
     "controller_ratios": null,
@@ -2626,6 +2656,16 @@
   },
   {
     "file": "gripper-open-20261113-103901.jsonl",
+    "execute_requested": null,
+    "controller_ratios": null,
+    "stage_completions": 0,
+    "cycle_completions": 0,
+    "failure_events": [],
+    "remote_exit_code": 0,
+    "completion_confirmed": null
+  },
+  {
+    "file": "gripper-open-20261116-095600.jsonl",
     "execute_requested": null,
     "controller_ratios": null,
     "stage_completions": 0,

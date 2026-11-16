@@ -1,0 +1,25 @@
+[Unit]
+Description=Luna physical screen battery monitor (read only)
+After=luna-battery-display.service network.target
+Requires=luna-battery-display.service
+PartOf=luna-battery-display.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=nvidia
+Group=nvidia
+RuntimeDirectory=luna-battery-screen
+RuntimeDirectoryMode=0700
+ExecStartPre=+/usr/bin/python3 /opt/luna-battery-screen/battery_screen_prepare.py
+ExecStart=/bin/bash -c 'source /home/nvidia/gento-test-baseline/gento-test-env.sh && exec /usr/bin/python3 /opt/luna-battery-screen/battery_screen.py'
+Restart=always
+RestartSec=5
+TimeoutStartSec=25
+TimeoutStopSec=8
+UMask=0077
+Environment=PYTHONUNBUFFERED=1
+Environment=LANG=C.UTF-8
+
+[Install]
+WantedBy=graphical.target

@@ -46,7 +46,7 @@
 - 这些是离散裸臂模型结果，`continuous_collision_detection=false`、
   `external_obstacles_checked=false`；不包含夹爪外形模型。
 
-## 公开副本验证
+## v0.1.0 公开副本验证
 
 发布时执行的测试结果保存到 `records/publication-validation.txt`。
 本机提供标定组件后的完整离线测试178项通过。
@@ -74,3 +74,28 @@ python tools/summarize_records.py
 
 从公开事件日志提取 `records/run-index.json` 与 `records/summary.json`，
 并校验四次选定成功记录的退出与完成事件。没有将失败日志删去或重新标记为成功。
+
+## 双夹爪现场证据
+
+以下都在 `records/evidence/`，由原现场版本执行：
+
+| 日志 | 结果 |
+|---|---|
+| `gripper-execute-single-20261113-101155.jsonl` | CH340五次往复，10目标验证，最终0 |
+| `gripper-windows-execute-20261113-101522.jsonl` | FTDI五次往复，10目标验证，最终0，B=0x1000 |
+| `gripper-execute-20261113-102443.jsonl` | 两路各五次，10个联合目标验证，最终均0 |
+| `gripper-close-20261113-103513.jsonl` | 力矩30%、速度10%，最终8999/9000，速度均0 |
+| `gripper-open-20261116-095600.jsonl` | 张开完成，最终均0 |
+| `gripper-close-20261116-095607.jsonl` | 闭合完成，最终均9000 |
+| `gripper-inspect-20261116-095631.jsonl` | 随后CH340打开EIO，退出1；不是成功状态检查 |
+
+力矩30%是参数设置，不是测力计结果；成功开合不证明带物抓取、硬同步或USB故障根治。
+发布版新增USB配置、密钥SSH和独立虚拟环境，仅进行离线验证，没有新实机验收。
+
+## v0.2.0 可重复验收
+
+无SDK、无标定、无设备配置的完整源码下载，安装主机Python依赖后，
+执行 `python tools/run_offline_tests.py`。新增覆盖双爪单次开/闭、30%参数读回、
+双路未就绪不启动、重复物理端口拒绝、故障掩码、菜单失败退出、
+USB身份与方向确认、纯夹爪无需机械臂SDK。
+具体测试数量和干净下载结果见 `records/publication-v0.2.0-validation.txt`。

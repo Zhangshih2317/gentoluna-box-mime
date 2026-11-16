@@ -1,0 +1,23 @@
+{
+  "remote_directory": "/home/robot/luna-grippers",
+  "sdk_file": "vendor/changingtek_p_rtu_Servo.py",
+  "open_close_mapping_confirmed": false,
+  "devices": [
+    {
+      "port": "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_REPLACE_ME-if00-port0",
+      "identity": {
+        "ID_VENDOR_ID": "0403",
+        "ID_MODEL_ID": "6001",
+        "ID_SERIAL_SHORT": "REPLACE_ME"
+      }
+    },
+    {
+      "port": "/dev/serial/by-path/REPLACE_ME",
+      "identity": {
+        "ID_VENDOR_ID": "1a86",
+        "ID_MODEL_ID": "7523",
+        "ID_PATH": "REPLACE_ME"
+      }
+    }
+  ]
+}

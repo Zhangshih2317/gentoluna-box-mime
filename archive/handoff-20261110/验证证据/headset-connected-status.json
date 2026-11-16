@@ -1,0 +1,70 @@
+{
+  "checkedAt": "2026-11-10T02:23:22.598302+00:00",
+  "results": {
+    "/api/v1/robot/status": {
+      "ok": true,
+      "data": {
+        "control_ready": false,
+        "control_error": false,
+        "control_error_message": "",
+        "arm_state": [
+          -1,
+          -1,
+          -1,
+          -1,
+          -1,
+          -1
+        ],
+        "arm_state_age_sec": 0.006722211837768555,
+        "current_mode": -1,
+        "speed_factor": 1.0,
+        "current_input_mode": 1
+      }
+    },
+    "/api/v1/modules/teleop/logs?lines=35": {
+      "ok": true,
+      "data": {
+        "module": "teleop",
+        "service": "apex-teleop.service",
+        "lines": 35,
+        "logs": [
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Leg_J2_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Leg_J3_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Leg_J4_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Leg_J5_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Leg_J6_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Head_J1_joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Head_J2_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L1_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L2_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L3_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L4_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L5_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L6_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_L7_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_R1_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_R2_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_R3_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_R4_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_R5_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] joint name: Arm_R6_Joint",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [teleop_manager_v2-1] license ok",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [controller_udp.py-5] [INFO] [1794278077.864204992] [VR_reader]: TCP session manager listening on port 9010",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [controller_udp.py-5] [INFO] [1794278077.864777728] [VR_reader]: [TCP] Waiting for headset on port 9010...",
+          "2026-11-10T10:34:37+0800 vision bash[17415]: [controller_udp.py-5] [INFO] [1794278077.867033408] [VR_reader]: Listening UDP on 0.0.0.0:9000, 0.0.0.0:9001",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [gento_replay_ui_node-8] [INFO] [1794278078.493093344] [gento_replay_ui_node]: gento_replay UI ready on 0.0.0.0:8012; record_service=control/gento_replay/record_named, playback_service=control/gento_replay/playback_named",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [gento_replay_ui_node-8] INFO:     Started server process [18909]",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [gento_replay_ui_node-8] INFO:     Waiting for application startup.",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [gento_replay_ui_node-8] INFO:     Application startup complete.",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [gento_replay_ui_node-8] INFO:     Uvicorn running on http://0.0.0.0:8012 (Press CTRL+C to quit)",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [qp_controller-3] [INFO] [1794278078.608223200] [qp_controller]: C++ QP controller initialized at 500.0 Hz, model=/opt/kernelmind/apex/install/marvin_description/share/marvin_description/mjcf/Gento_Luna/scene_teleop_luna.xml, nv=22, home_q[nq=22]: L6(idx13)=-0.0100 L7(idx14)=0.1570  R6(idx20)=-0.0100 R7(idx21)=-0.1570",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [qp_controller-3] [WARN] [1794278078.609050400] [qp_controller]: Ignoring IKRequest until robot_state reports movable mode",
+          "2026-11-10T10:34:38+0800 vision bash[17415]: [qp_controller-3] [INFO] [1794278078.609188608] [qp_controller]: QP configuration synced from robot feedback",
+          "2026-11-10T10:35:46+0800 vision bash[17415]: [controller_udp.py-5] [INFO] [1794278146.868107456] [VR_reader]: Set vr_ip to first discovered headset 192.0.2.103 (from 192.0.2.103:41013)",
+          "2026-11-10T10:35:55+0800 vision bash[17415]: [controller_udp.py-5] [INFO] [1794278155.263740704] [VR_reader]: [TCP] Headset connected from 192.0.2.103:39758",
+          "2026-11-10T10:35:55+0800 vision bash[17415]: [controller_udp.py-5] [INFO] [1794278155.322322784] [VR_reader]: [TCP] Version command received: 1.0.7_pxr_260713"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+[Unit]
+Description=Luna physical display for battery status
+After=systemd-user-sessions.service gdm.service
+Conflicts=gdm.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+RuntimeDirectory=luna-battery-x11
+RuntimeDirectoryMode=0700
+ExecStartPre=/usr/bin/python3 /opt/luna-battery-screen/battery_xserver_prepare.py
+ExecStart=/usr/lib/xorg/Xorg :0 vt1 -keeptty -nolisten tcp -auth /run/luna-battery-x11/Xauthority -noreset -background none
+Restart=always
+RestartSec=3
+TimeoutStopSec=8
+TTYPath=/dev/tty1
+StandardInput=tty
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+UMask=0077
+
+[Install]
+WantedBy=graphical.target
+Alias=display-manager.service

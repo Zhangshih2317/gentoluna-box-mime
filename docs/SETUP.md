@@ -1,5 +1,8 @@
 # 安装与首次运行
 
+本页针对双臂/BODY搬箱和HOME。只使用双夹爪时请读
+[GRIPPERS.md](GRIPPERS.md)，不需要安装下述机械臂专有组件。
+
 ## 1. 环境前提
 
 主机：Python 3.10+、SSH连接能力；现场使用Windows/Python3.12。

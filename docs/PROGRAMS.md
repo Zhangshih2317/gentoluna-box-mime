@@ -7,6 +7,9 @@
 | `run_box_mime_taught.py` | 一次完整搬箱模拟 | 只读预检 |
 | `run_box_mime_six_cycles.py` | 交替左右45°，六次完整搬箱 | 只读预检 |
 | `run_return_home.py` | 单独回HOME | 只读预检 |
+| `run_grippers.py` | 双USB夹爪张开/闭合/状态 | 菜单，选择动作才运动 |
+| `tools/run_gripper_remote.py` | USB枚举、远端依赖安装、夹爪执行 | 必须显式选择子命令 |
+| `tools/doctor.py` | 本机部署检查 | 不联网、不运动 |
 | `tools/fetch_frame_reference.py` | 获取自己的标定文件 | SFTP只读 |
 | `tools/teach_pose.py` | 采集当前位置/保存人工示教点 | SDK只读 |
 | `tools/read_frame_parameters.py` | 读取本机法兰参数供缓存计算 | SDK只读，写本机JSON |
@@ -41,13 +44,15 @@
 - `run_stand_up_10cm.py`、`stand_up_plan.py`：示教深蹲基础上的100mm站起。
 - `run_body_home_5percent.py`：早期BODY低速回位。
 - `run_dual_arm_large.py`、`dual_arm_five_moves.py`：双臂五组测试与同步轨迹。
-- `run_grippers.py`、夹爪诊断与USB修复脚本：独立夹爪项目，未并入搬箱动作。
+- 夹爪诊断与USB修复的旧版本；当前 `run_grippers.py` 已作为独立公开入口，
+  但没有并入搬箱动作。
 - `battery_screen.py`、`battery_audio.py`等：屏幕电量和语音提醒。
 - `build_home.py`、`home_kinematics.py`等：坐标系、厂家FK与HOME候选研究。
 - `analyze_taught_squat.py`、`analyze_body_speed_response.py`：下蹲及速度响应分析。
 
 历史连接脚本可能引用旧路径或外部包，因此不宣称所有归档工具直接可运行。
 厂商夹爪SDK、语音资源、参考代码仓库及私有连接函数没有发布。
+夹爪当前部署方法见 [GRIPPERS.md](GRIPPERS.md)。
 辅助工作的现场结果与限制保留于 `archive/points/` 和 `records/evidence/`。
 
 ## 不覆盖现场程序

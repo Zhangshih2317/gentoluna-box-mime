@@ -1,0 +1,23 @@
+[
+  {
+    "url": "https://github.com/Genymobile/gnirehtet/releases/download/v2.5.1/gnirehtet-rust-win64-v2.5.1.zip",
+    "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\packages\\gnirehtet-rust-win64-v2.5.1.zip",
+    "sha256": "7f5b1063e7895182aa60def1437e50363c3758144088dcd079037bb7c3c46a1c"
+  },
+  {
+    "url": "https://raw.githubusercontent.com/Gento-Teleoperation-Apex/Gento-SDK/5a5f24332aba242a99b6c39d3f4ffde312d705ee/SDK_CT040404_SDK040402_260617/SDK/00040402/FXPlatform.exe",
+    "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\FXPlatform-4.4.2\\FXPlatform.exe",
+    "sha256": "09688baa632d63193cd02423e5e4f52b51f709f67bf240280f466253c1c03a2d"
+  },
+  {
+    "url": "https://dl.google.com/android/repository/platform-tools_r37.0.1-win.zip",
+    "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\packages\\platform-tools_r37.0.1-win.zip",
+    "sha256": "45f4d63113e895ebde0c90f194099a4676b6ac653bd28d54314a9e022bbc1a99"
+  },
+  {
+    "url": "https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_Web_Deb/releases/download/%E9%81%A5%E6%93%8D%E7%B3%BB%E7%BB%9F%E9%80%9A%E7%94%A8%E9%81%A5%E6%93%8D%E4%B8%8A%E4%BD%8D%E6%9C%BAv1.0.33/Apex-Teleop-Setup-1.0.33.exe",
+    "path": "F:\\Codex-Portable\\workspace\\Luna-VR\\outputs\\Luna-Teleop\\packages\\Apex-Teleop-Setup-1.0.33.exe",
+    "sha256": "b1a8bd040fab76e2815b5d77b4449386afc8300b9f02b2dfd100fb080809c664",
+    "resumed_and_verified": true
+  }
+]
