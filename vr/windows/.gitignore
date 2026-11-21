@@ -1,0 +1,5 @@
+tools/downloads/
+tools/platform-tools/
+tools/gnirehtet-v2.5.1/
+*.log
+*-state.json*

@@ -1,0 +1,882 @@
+[
+  {
+    "file": "outputs/20261119-150649-kernel",
+    "bytes": 3412,
+    "sha256": "4c62f4c32d6eadafc1c16f2047f7f1432d91f337ee181ac3df05491d9a17e0b4"
+  },
+  {
+    "file": "outputs/20261119-150649-robot.ini",
+    "bytes": 18522,
+    "sha256": "d6ab60a91d46948b6e2a5031812ee8c286782b241cbed9e70716741e3ab7d3c8"
+  },
+  {
+    "file": "outputs/20261119-150649-syslog",
+    "bytes": 4088,
+    "sha256": "d8d7886d15fe92ffe19e70efbd697bdc84122d2d83acd3ff5557e8aed14ffedc"
+  },
+  {
+    "file": "outputs/20261120-171149-wrist485-readonly.json",
+    "bytes": 7550,
+    "sha256": "627e2a8cc21dc7712a3f8aca68ae50cfc72f9574627350ee1b3a8dd9270c403c"
+  },
+  {
+    "file": "outputs/20261120-171336-cpp-wrist485-readonly.txt",
+    "bytes": 274,
+    "sha256": "bbc6bd8db66042dfc4cd5b67db7466e2344a831a8b4b34e6f0f6209088f360ee"
+  },
+  {
+    "file": "outputs/20261120-apex-ctag-installed-check.txt",
+    "bytes": 617,
+    "sha256": "9cb4e9a4da48c0c6028840591d1c3f7510f6eb5516189f00e9ad42fd6acaeb32"
+  },
+  {
+    "file": "outputs/20261120-cpp-wrist485-final.txt",
+    "bytes": 618,
+    "sha256": "f96b609ad195347d7cded308d355e1c0409bc6a67953e6dfc08d448ca00dc643"
+  },
+  {
+    "file": "outputs/20261120-cpp-wrist485-paced-comparison.txt",
+    "bytes": 772,
+    "sha256": "a52460ffa4aa011602e9e5b17f51406b1f22c0da8202b450327f29581e83a133"
+  },
+  {
+    "file": "outputs/20261120-latency-before.jpg",
+    "bytes": 48763,
+    "sha256": "f759a61bbb8668abf40151dcc8927684775ad388196cdbf4ec6eee06d4e99238"
+  },
+  {
+    "file": "outputs/20261120-latency-before.txt",
+    "bytes": 10375,
+    "sha256": "a1d24efc789cbb65ee6df9051f7d324f77c1c674b6cbd949739a9e4f10c1d240"
+  },
+  {
+    "file": "outputs/20261120-native1080-wired.txt",
+    "bytes": 6027,
+    "sha256": "887729db2da9f5c0eed3e5836b1b1745b629729cbafc78ce06f1043e8d427e52"
+  },
+  {
+    "file": "outputs/20261120-pico-720p-wifi-media.json",
+    "bytes": 3890,
+    "sha256": "24d2c228e6e0155a266e2551a4e218e9a9b11047202528d3311d6fec2a67613b"
+  },
+  {
+    "file": "outputs/20261120-pico-usb-native1080.json",
+    "bytes": 3929,
+    "sha256": "67b958af5f1c9ca85f6e27a3b3fe213265ef9ef11f0c33607cad7804c132cb60"
+  },
+  {
+    "file": "outputs/20261120-room10-2m-ab.jpg",
+    "bytes": 52492,
+    "sha256": "c18731c5198aa7d0e41f02f4a72afff0396d3bb8b3903e5ebc74c63f2873572a"
+  },
+  {
+    "file": "outputs/20261120-room10-2m-ab.txt",
+    "bytes": 13347,
+    "sha256": "64f0fd77a5ee430af307932ba182e458a302f7f5b202ca2fc879bf3437fbdaef"
+  },
+  {
+    "file": "outputs/20261120-room10-4m-ab.jpg",
+    "bytes": 47185,
+    "sha256": "49ad6a8cebbd12d01cda4940d748ae295dc8e5fc5f2e132d719385fbee205ba7"
+  },
+  {
+    "file": "outputs/20261120-room10-4m-ab.txt",
+    "bytes": 9100,
+    "sha256": "76390dac4641e07c992b902ec2fe26317ed58fa5dbc0ad0ac9bb2224402f8ce1"
+  },
+  {
+    "file": "outputs/20261120-vr-room10-color-rate.txt",
+    "bytes": 7718,
+    "sha256": "449bc220b015f4714bb4d44a4b4cc4c0a2c9f69f0c291fbfc3dd29a809330ff3"
+  },
+  {
+    "file": "outputs/20261120-vr-room10-color.jpg",
+    "bytes": 47444,
+    "sha256": "9d6777b6419b6d354ac2b03c879ab17398aa8510c6dd7a7a6688932421c499ac"
+  },
+  {
+    "file": "outputs/20261120-vr-room10-color60-rate.txt",
+    "bytes": 7543,
+    "sha256": "6c48434f6b8dcf1734614b1c28ed69b0509e2bda8e53baf8d72290b654bb03b4"
+  },
+  {
+    "file": "outputs/20261120-vr-room10-color60.jpg",
+    "bytes": 48638,
+    "sha256": "1118158818dc13d4f202ab4b6f6aec24c8e2312b04d7ff9e388f37813e04d3c6"
+  },
+  {
+    "file": "outputs/20261120-vr-room10-received.jpg",
+    "bytes": 69694,
+    "sha256": "72b7ee3242f358866b3374961bdd1e48b198f81f440d0278d76795cf9f20cc6c"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093354-read-only.json",
+    "bytes": 40577,
+    "sha256": "e2473826813a5d5cb5ef270e7701ef86e3e2ea916ea992380d8386840a3e4812"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093412-driver-topology.json",
+    "bytes": 22761,
+    "sha256": "bb24b1da8026c126d5e835a003ed166a9419691fb61d35222a0e9d2f205a97f8"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093429-initialization.json",
+    "bytes": 24432,
+    "sha256": "7325d4378bf7fae747fa2392b8870253890da3bf2f84cb38f86adf48eb9f3567"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093446-vendor-init-review.json",
+    "bytes": 13692,
+    "sha256": "eaf5d7ed707a6020ac34ddf332baaf5069ed5ea017059ae92719a2b011d1e44a"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093646-power-inspection.json",
+    "bytes": 9050,
+    "sha256": "a6f38e0adb4076bbb0b0bc328f312e2247f9c54b6db5a7251e5a60b3a7983e48"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093658-link-state.json",
+    "bytes": 1297,
+    "sha256": "7cda1e40b56a56abaf365a8d17d203c26d533f931669153f1b1a503306146afe"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093715-single-camera-test.json",
+    "bytes": 2962,
+    "sha256": "0df9f425e917638bcd9f569c52d0be8ad48d2a574dbbcdb006f7e15b64a59251"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-093730-capture-occupancy.json",
+    "bytes": 1141,
+    "sha256": "548f8ae45a1230915fefcaee76016f108042c9eea6cfe414b253308df80b9a60"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-094337-web-service-conflict.json",
+    "bytes": 11733,
+    "sha256": "12050943802287b66dc8ada6f099655bb6efd8156d9c03d51412997b75a23d08"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-094349-frontend-inspection.json",
+    "bytes": 2777,
+    "sha256": "fa8568cb77be4d1dd609daca22dbffc8378a3d394a9e6d148f6ec37a7a8ac3ea"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-094402-web-camera-usage.json",
+    "bytes": 8743,
+    "sha256": "68a930613b9d6f804f05fb0da3e92817231f6c43a7a7fc20e329de1877ccf02a"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-094417-camera-conflict-evidence.json",
+    "bytes": 1137,
+    "sha256": "0779ee0ab8ef7157d22fe78a7a326554b2546ff815e96a12acbd7e90d245f80a"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-094428-camera-log-text.json",
+    "bytes": 2722,
+    "sha256": "6d1d256d03dc5edb8636831a6d93c6a67e45d671b783b79001a0aebaacd94cda"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-101053-8760-status.json",
+    "bytes": 10682,
+    "sha256": "ae340f8535a5d3d19a19365d1480921f151c2a67bfaa8d6cbf29667321d938a3"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-101104-8760-api-discovery.json",
+    "bytes": 3081,
+    "sha256": "05d79bfc0fdd5abe2d09182824682f830936bb3cc9e23968e89a0b353a78dcb1"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-101116-8760-live-readback.json",
+    "bytes": 7420,
+    "sha256": "bc15caa1d3301fc958e17134221e6bf1ae7faaa1ab62610255241db2f2375fa7"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-101649-d435-independent-preflight.json",
+    "bytes": 1410,
+    "sha256": "8650b977e1d5b330931e1e48d2846584ad9af28a6c3bc981d15d4786cbb82237"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-101854-d435-preview-start.json",
+    "bytes": 1399,
+    "sha256": "ba0951655f1c83f81f8a04c6cd4f80436162af39c3221d9a7e29e210f09c878e"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-102328-apex-d435-discovery.json",
+    "bytes": 6616,
+    "sha256": "4572a17c362538249388cd06e080f9cdfcf6a1de845a9f69ab8fd07e04c04485"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-102345-apex-input-capabilities.json",
+    "bytes": 9062,
+    "sha256": "a4f188ba8214be8758ae72dec360b2d4647345fe72c44dc716b674457267c1c3"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-102402-apex-camera-parameters.json",
+    "bytes": 15689,
+    "sha256": "d508f920a07a46ee389f14da2f85e42878adcac3d1511d6267be17fd41968772"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-102444-apex-d435-test-launch.json",
+    "bytes": 458,
+    "sha256": "e35ffb750bf1309c0c6435e51aad89eb9147cca2b37d7173d7cedf2aff8b00ac"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-102501-apex-d435-native-result.json",
+    "bytes": 15491,
+    "sha256": "a1269d25f8673354c50d4ed9ba56d91795c3597783cb6101094fa193b2b5d395"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-102619-apex-d435-integrated.json",
+    "bytes": 2162,
+    "sha256": "6bcaa3e59bf827d27659cc02fe572f9fc7bed84cc39050bb223739a581a068e2"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-103110-apex-depth-preflight.json",
+    "bytes": 2443,
+    "sha256": "3607b5d1bcf35e4706aaa737d6cdfbb67879f84e780b2d8b0615038595054ea5"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-103206-rgbd-transport-check.json",
+    "bytes": 2523,
+    "sha256": "127f63a3f660cf806c3195e93a9e16e4e706e7d48736878d8f80a4e9454e65de"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-103220-rtp-native-support.json",
+    "bytes": 845,
+    "sha256": "d041f1368267a588343bf6fd11bbb6ead6e240cc445611902cf7747796699ef4"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-103357-apex-rgbd-first-test.json",
+    "bytes": 12123,
+    "sha256": "7d8ea278b2889e72af8a94b914448a120a2be0a20e35dab522ae0cc619f9e43b"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-103501-apex-rgbd-restart-verified.json",
+    "bytes": 2159,
+    "sha256": "0dba4dd84551dbc4b035c567acf20f2a6e8eaedd18a05ac5beb650dba21826ee"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-104504-d435-max-resolution.json",
+    "bytes": 1409,
+    "sha256": "a16f0e0ceffe91a10d8b48d790680d8cf28623bf8411abcc52882003cfb07711"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-104658-apex-max-resolution-test.json",
+    "bytes": 3235,
+    "sha256": "c60bb3248e6252238c6f60fc5be731d2ce3c2bca4457e0d7cc5b1426cfbbab64"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261111-104731-apex-max-resolution-stable.json",
+    "bytes": 4290,
+    "sha256": "aa04d4420c55549b253f54ff3b767bffd9979c030efe5ee10986657eef663500"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-104706-driver-release-preflight-20261113.json",
+    "bytes": 4109,
+    "sha256": "8106a6e874b354fb2987a310a1757eca9f98e1a9ede7984ac1c390a2bc3c17e2"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-104728-driver-released-20261113.json",
+    "bytes": 1307,
+    "sha256": "336f830f45f6b12febc7d1a8cf886bdc82e3b688ebf290c4ec74b254996d36a9"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-104837-fault-not-found-investigation.json",
+    "bytes": 1075,
+    "sha256": "1e72db3b33fbc0b81f9496178cec820671ccd781ac22bfceab7c7c4f85db212c"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-104939-fault-route-confirmed.json",
+    "bytes": 1427,
+    "sha256": "41bd5ac9618c75b3b1f30cfce637f8258f585e8f75cc06e672a73c0ae5162217"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-105156-mode3-failure-readonly.json",
+    "bytes": 16410,
+    "sha256": "630fa0e93856136e9250d4fc19bef5afd8854bfadd793908d6c9996bdfcac75d"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-105212-mode3-diagnostic-surface.json",
+    "bytes": 10332,
+    "sha256": "448ac1afb86fb763b714794c696665e970676a2533df1d222245bd9442297330"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-105245-mode3-feedback-fields.json",
+    "bytes": 1837,
+    "sha256": "12af6415598a8611b999eb6ed584b734c5e931e464464b88ff37dd785196c252"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-105419-manual-controller-release-20261113.json",
+    "bytes": 414,
+    "sha256": "12dcfd60bd3de70fcdaf3485e09149c104127d161fb47b71ee637cc027003c69"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-105917-apex-mode3-mapping.json",
+    "bytes": 7999,
+    "sha256": "0e33906d1cb2f57ff19e3fbc12cdbf19d797a3d9daa3f7e1516e7d476d6b1a1b"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110029-arm100-sdk-read-preflight.json",
+    "bytes": 7213,
+    "sha256": "3451bf7824c25f0fe4729ed1e977b1c77d20b3924af7f78f0156b65e4c202c85"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110041-arm100-read-methods.json",
+    "bytes": 3290,
+    "sha256": "62a92084ec786dcb4452caa0f15eb5ce2ad49edc211ef36068a5b52dcb87361c"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110052-readonly-sdk-review.json",
+    "bytes": 5517,
+    "sha256": "1c022ee5081bfb4fd8719f2055899600a086b7a50ae50ee9cacdde997471865b"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110125-jointimp-pd-comparison.json",
+    "bytes": 3175,
+    "sha256": "348f5937b81e82d1919c9322225fa046f3452e5391fe0d45d27d53f306b62d79"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110406-mode3-test-preflight.json",
+    "bytes": 2773,
+    "sha256": "013e1023c966561af382dabf160592502e3adc57c4292e337697fbc53913e47c"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110427-mode3-trace-preparation.json",
+    "bytes": 2723,
+    "sha256": "5c87ed0e7dd55a82c8b3bbd70018d2a014200766500d823e5a163923ee04db61"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110443-mode3-trace-abi.json",
+    "bytes": 3643,
+    "sha256": "dcd53b830306c5156b84ba660392998f35bc8be33408591e53501c21f91ae9d1"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110500-mode3-trace-layout.json",
+    "bytes": 4126,
+    "sha256": "3d5146d479d623f80b03cec1882157a5492b6a8178554d1c15cf5b2bfa475b5e"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110554-mode3-trace-build.json",
+    "bytes": 3545,
+    "sha256": "8f19ccb902196d7498d495bfad20b63e455802ff56ab53684af2b8428d4df397"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110632-test-start-review.json",
+    "bytes": 2041,
+    "sha256": "a3f87cd63b307efab75284f05d45666b2f722e15bf8e610b7cd16181f39c9ab7"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110647-mode3-test-start.json",
+    "bytes": 938,
+    "sha256": "6bc186098ffef9e400bc829f5553fb120c8586e8b87a251fe142c9ef3796c343"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110700-mode3-test-ratio.json",
+    "bytes": 1854,
+    "sha256": "bbd462b6aa9f474ffc5601a2723899d7684b31d4bfd40c8492e2e2fff7900d59"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110715-mode3-startup-ratio-options.json",
+    "bytes": 1941,
+    "sha256": "5ced02320d5da61fe1015270f61d918a76e40b08723076450b352224b3036dcb"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110807-mode3-low-ratio-confirmed.json",
+    "bytes": 1949,
+    "sha256": "e085b074f912e5f1f232121588233823f0e786dce6bf66290264703492f782d0"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110821-mode3-single-switch-result.json",
+    "bytes": 2085,
+    "sha256": "91fd8919cc650d6a2dc3f0ada2abf7f7b21f3fcac1207bac5a9f7f24a38fb3b1"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110833-mode3-error106.json",
+    "bytes": 4384,
+    "sha256": "baa5f140607957cf815dbea417ad1cb40aa727316ce826bae80efa1e74055d91"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-110857-mode3-test-cleanup.json",
+    "bytes": 1977,
+    "sha256": "752c51104a87b649276d93cb950f82aede0140bdcdf76fe1c95274122d2249b2"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111016-pd-support-compatibility.json",
+    "bytes": 8779,
+    "sha256": "f879c8d98575754404faa3d243442cff6fac84efaaf0469ff1cd0cf63cc46863"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111037-pd-state-machine-versions.json",
+    "bytes": 12703,
+    "sha256": "c4b3289a45970c2128d810172ec2c851d7f2c6f7c90ef4df298130ac4ee0e65e"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111050-servo-identification-method.json",
+    "bytes": 5037,
+    "sha256": "d13ce756bd5c98097086ea47dd3995d23d4a2e21f5e934226043144b44db543d"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111155-servo-read-layout.json",
+    "bytes": 8932,
+    "sha256": "d8e83a4598f206065b08420b19202dccfac255ff2fa727569d09d08e236bfad3"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111213-servo-firmware-readback.json",
+    "bytes": 2808,
+    "sha256": "fbb9e8de6f6b054ea92282e5bba31a79d2beb8f8db5df49b90b5e45e853094ff"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111229-servo-supported-modes-api.json",
+    "bytes": 4757,
+    "sha256": "015e2d28ddc11f5475591d38bdbf418d0a38b9b23f1c4ce2f1d63f805f9e3363"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111249-compatibility-guard-review.json",
+    "bytes": 6833,
+    "sha256": "b862100e8abf5267f45852bc178f2076c1471da9f10760433ddff50a4c9f57e7"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111305-pd-configuration-gate.json",
+    "bytes": 5583,
+    "sha256": "53ae1357773907bc00c905b0a9dd4e35b42b369fa88e6956abfc2667749f6180"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111321-pd-gate-value.json",
+    "bytes": 853,
+    "sha256": "b16df49274d8067b89266007af7118760263d8d18af3dd8b20eff71304e3584f"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111337-pd-gate-verified.json",
+    "bytes": 2658,
+    "sha256": "ffbb40818bfcfd5d90a9f3992d72bdd751ee60fb632591a7e9701d116773fd67"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111355-pd-gate-final-validation.json",
+    "bytes": 1068,
+    "sha256": "801c96f8b4605511cc95c54c9ed9a0c3ec50c1711295966e2a7b954172a37fd5"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111408-config-export-discovery.json",
+    "bytes": 7260,
+    "sha256": "fae0067f01e5587f722e958e741deea723c0b8942714b3ab833e8fe7137d3c74"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111425-robot-config-path-review.json",
+    "bytes": 2737,
+    "sha256": "82bcb56cc9f3b01e4f0b88bbb6f2ca422e54d6b42c29b117b6b6d0e3932222f2"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111446-controller-config-readback.json",
+    "bytes": 2961,
+    "sha256": "28d42b2e16bebabafef9f43373f181a92ec8d2e2394ade83bb2a05147b5ade3f"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-111526-actual-pid-config-confirmation.json",
+    "bytes": 934,
+    "sha256": "76feb30561d78a85f72cd7745508bae1fde140e87d00c0c23bcd73e0e04a82aa"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-112336-vr-connect-check.json",
+    "bytes": 17123,
+    "sha256": "82bdcc37bce6bc8a08432e7d657a1ce155cc9fc605bc4b8cf9deaa28024af88b"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-112356-vr-status.json",
+    "bytes": 23765,
+    "sha256": "bbe0f645327b1b53bdd9997d72528a22ca9024840e0d64333a6150ebd021f8be"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120522-impedance-resume.json",
+    "bytes": 9134,
+    "sha256": "faccb88048fb61141ba74fc6a3d0d830f42dd8ad73cdc4505e4cd14079b1c9ed"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120546-controller-diagnostics-discovery.json",
+    "bytes": 6849,
+    "sha256": "17715cd0b7686396b29c253de42da69af7b64a31fbe373d31475c62c59dc1b12"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120615-controller-log-interface.json",
+    "bytes": 6247,
+    "sha256": "e9b09bef92b45d4e55ceeca6e35ee00063f0f8152b39cc45e935725497acc755"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120722-controller-passive-log.json",
+    "bytes": 1144,
+    "sha256": "66193998cc19ca40fba053be29e596ce1740b491558b44160f1cbe3a90f2da7a"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120735-controller-syslog-review.json",
+    "bytes": 19701,
+    "sha256": "098359533ae14e1ad5501ca3255442869fc79b289f4c300550f90e0ce3539ee1"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120750-controller-boot-paths.json",
+    "bytes": 11450,
+    "sha256": "82a15997cadd986e422e4df1d80479b250b72ffb1bd792483e3c3610ab386f1b"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120805-controller-mode-events.json",
+    "bytes": 22196,
+    "sha256": "7b5a7380b8b88905c0e526452860ee768ff4a3afa1117beea7b2b0be742da634"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120832-controller-startup-review.json",
+    "bytes": 7243,
+    "sha256": "ab241066505c8ef69a67e5a9b5fba4863a85841c892a58f0bf88b43c430b05ab"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-120843-servo-boot-configuration.json",
+    "bytes": 11236,
+    "sha256": "8c5351a8738fa1b4c2d470375e7fb5f6b84714366dc182b26d1bf10a29e68d7c"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/20261113-121030-controller-deeper-diagnostics.json",
+    "bytes": 2550,
+    "sha256": "2d4af5e83e66ab39f2a7e760a9e7c51b399771937a5bf1651f58aecca33949bf"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/apex-frame.jpg",
+    "bytes": 60177,
+    "sha256": "1fcfc0630534c740e48092d662903b84febced3c778758cd3f4ce69c6596cc0f"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/apex-rgbd-frame.jpg",
+    "bytes": 67858,
+    "sha256": "f5638d6fb4692d1f4a70b7d5050efd4e4eb95a9c8f9804158590563d027a04d1"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/apex-rgbd-max-frame.jpg",
+    "bytes": 448645,
+    "sha256": "ce6beb8d132b38764ba1f3ec804cff20fe99a990f6c6a70c962e49757086e8d4"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/apex-rgbd-max-review.jpg",
+    "bytes": 53659,
+    "sha256": "32a26dcd4758c1191407ec3fbf264e391273f4892331ed13b35162b67b6350db"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/color.jpg",
+    "bytes": 38706,
+    "sha256": "899941b6620b5869b6701cbcc62368922500594e77c94725a823fd46846d9952"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/depth.jpg",
+    "bytes": 14675,
+    "sha256": "6443023c3782eb930b5b0e04dc6bc73cccdfc0cfae82237ac7ff2b414fc42205"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/depth.png",
+    "bytes": 180869,
+    "sha256": "d67e712fefde760e5db1d3362d1f3391320464f3a6eda8822480218308bd70de"
+  },
+  {
+    "file": "outputs/camera-diagnostics-20261111/相机诊断结论.md",
+    "bytes": 5390,
+    "sha256": "153575b98c743ed3f36e539149544cbd99dcb273a7e573dc26b306401f1ce154"
+  },
+  {
+    "file": "outputs/controller-kern-log-20261113.txt",
+    "bytes": 41716,
+    "sha256": "cf0dfcb986470086178fb51ddc182de5c6069d8f39193738b716ac760dc9f45c"
+  },
+  {
+    "file": "outputs/controller-modules-dep-20261113.txt",
+    "bytes": 21521,
+    "sha256": "67903e0557e5ad95fc86039db682152b78901128f7d5748667a524262c037a25"
+  },
+  {
+    "file": "outputs/controller-robot-20261113.ini",
+    "bytes": 18522,
+    "sha256": "d6ab60a91d46948b6e2a5031812ee8c286782b241cbed9e70716741e3ab7d3c8"
+  },
+  {
+    "file": "outputs/controller-syslog-20261113.txt",
+    "bytes": 42584,
+    "sha256": "fc976269bd9760d062838b771e5f0ef82146197a1dc26b12b9ecefb01e0fa788"
+  },
+  {
+    "file": "outputs/controller-syslog-previous-20261113.txt",
+    "bytes": 227411,
+    "sha256": "166039522be41eacf9844cbee1798bb1a21502a589a9c0bc60726a71bc39c9ce"
+  },
+  {
+    "file": "outputs/ctag2f90d-payload-estimate.md",
+    "bytes": 2300,
+    "sha256": "d9e67dc854e268c0a6940b1f2a5c35478da2f7378fcb01aa95020e2175d44c68"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/.gitignore",
+    "bytes": 203,
+    "sha256": "a3e8e745f58176788e5657c32e80e9007b330e9fc94a8b230734bcb74544bdf6"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/box_mime_controller.pyw",
+    "bytes": 12730,
+    "sha256": "d28f3011233bb9090050d6ddfb91e897aaaab21e6d2ae0bfd0799909a319da1d"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/config/robot.example.json",
+    "bytes": 330,
+    "sha256": "09f4dddc91931ff7989c6ff786e571a016aaf2d2e1dc173b52da6254f9adf9fb"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/config/ssh_connector.py",
+    "bytes": 906,
+    "sha256": "46ba7e6a137418000e0d83231ee4bd130d495f81cc620b2c2dcacd8abd4b06f3"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/box_mime_cache.py",
+    "bytes": 5202,
+    "sha256": "e21e2d99b632a893e1b9ee6efe7d8934f41bec8fa18b988027952576a4bc62c7"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/box_mime_six_cycles.py",
+    "bytes": 9354,
+    "sha256": "b46e5a507202e0da96f4b2061af5033f5b1d9e3eaa53f294af4b4bbb9b75589d"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/box_mime_taught_plan.py",
+    "bytes": 12443,
+    "sha256": "efd61703be54a0d6c7f058a51a388ba3aaa5bf229af801692721419ef629e442"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/box_mime_taught_robot.py",
+    "bytes": 34808,
+    "sha256": "cc673ea28ecf946be38902b8d51106b80747f5fe53fb029ec3fc8a8083bea302"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/box_motion_plan.py",
+    "bytes": 4004,
+    "sha256": "0d2cf499251f6371d9d50329d80089dc2c18b2be9d405a0728fba998832c810c"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/box_motion_robot.py",
+    "bytes": 21646,
+    "sha256": "14effbc568096c8c93f59236d27b35932d1dc5c06a7887eff3bb950f126caf27"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/coordinated_joint_timing.py",
+    "bytes": 3667,
+    "sha256": "03c882fa714a8d336d63c507799dacbb6be964a5a0ac0f07dc74a5e7d16fb297"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/feedback_observation.py",
+    "bytes": 2121,
+    "sha256": "16e61db1be3f629fc5c06a93340156488b0bfa5992af2493fab67fd0aca8932e"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/motion_wait_policy.py",
+    "bytes": 11694,
+    "sha256": "24458b5f622ae964c6a72cc311c25aeb2851ad150e7d11b1dce2c0e9f0782bcb"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/native_arm_motion.py",
+    "bytes": 10664,
+    "sha256": "c3c7fafc447181e2862dfd03ce4b870babc0114adcf5af1313a4ff08d38a82fe"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/position_acceptance.py",
+    "bytes": 1225,
+    "sha256": "ada4b19591e38d6470c046cd7d08c4de3eec8098387eda555d4f995d6c206679"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/recover_box_start_robot.py",
+    "bytes": 12300,
+    "sha256": "e73d5fc4dfa222ab3085079d26dcb076d96fa8fdbe6dd213c01b80cd55a46205"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/demos/box_mime_six_cycles/stand_up_robot.py",
+    "bytes": 10723,
+    "sha256": "6ecdf17b0b416308f2a202c21084546bf5f356fd170c30683ccca7a6bb9fa4e1"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/LICENSE",
+    "bytes": 1087,
+    "sha256": "6e9f61ec820346b9b831f462eaa106c980ba9b9e607c78a92ad1574ee11f3659"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/points/BOX_START_BEFORE_INCIDENT.json",
+    "bytes": 599,
+    "sha256": "bdd9f9880638420da85eda95187b854fb9dbdbfd7e1be3869f9c0fb578b07b57"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/points/HOME_RECOVERY_PREFLIGHT_REFERENCE.json",
+    "bytes": 1163,
+    "sha256": "7b4946a0dc7b120854f6070d5967e430e4ff775f3621ce20f133b3955a6ac3db"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/points/SDK_FRAME_PARAMETERS.json",
+    "bytes": 425,
+    "sha256": "8578404603980a291268b085d198e85728352878a901f1e2d6cb0f82fa4fcbaf"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/points/taught/SQUAT_TAUGHT-20261111-150201.json",
+    "bytes": 710,
+    "sha256": "271b11f7c6d1e3f513244fb9c789717d648998269bc93216b28492f99dab989a"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/points/taught/WAIST_TAUGHT_01_UI-20261111-153805.json",
+    "bytes": 2003,
+    "sha256": "9c11ba8c2f9a05af7c53e11555d1dac27949d69aade6d69e8c771aa02d669fe2"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/README.md",
+    "bytes": 2189,
+    "sha256": "9c06042129d9a41a62c3d3173c69f771494a9e56b246f74aae9c3b59ce9cef46"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/requirements-gripper.txt",
+    "bytes": 35,
+    "sha256": "8f9db6625d5b1ab8ed7fe593e8d34b3d6b6545ca4d6ee6a2ed2afb3fe7c10286"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/requirements.txt",
+    "bytes": 32,
+    "sha256": "9dacd224181a90c0dbc875faf8cd840abe469e9404a8ca8bad7e25e643588509"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/run_box_mime_six_cycles.py",
+    "bytes": 20380,
+    "sha256": "c550b1b98d423ab1991f7d4fdc328681ccdf754cdc646c8a6817e4a2ef2cb375"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/run_box_mime_taught.py",
+    "bytes": 19915,
+    "sha256": "bd72eed2a3a162cacf0b9ccc6c786882bd6cc912ceadb9bb3220360000f215a8"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/run_luna_dual_gripper_three_cycles.py",
+    "bytes": 4510,
+    "sha256": "d07ec331cecde2fe1e2701e4c831ea3bdfe537350364b066d39fdfc81794e5bc"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/run_return_home.py",
+    "bytes": 312,
+    "sha256": "0639f331de132a82ff50c0c340becb8240f17dea7dcb64be93960a15f02d240e"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/THIRD_PARTY.md",
+    "bytes": 2147,
+    "sha256": "5b67ff6b615c3dcf8977f9ebba986bc9acb349c6fbd90e432b40a696d5970db3"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/box_mime_cache.py",
+    "bytes": 5202,
+    "sha256": "e21e2d99b632a893e1b9ee6efe7d8934f41bec8fa18b988027952576a4bc62c7"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/box_mime_grippers.py",
+    "bytes": 4853,
+    "sha256": "264f9455056e2a5d8ed30589fe898f6ac2c8dbf95a7a496b8d78717564b8f6d9"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/box_mime_taught_plan.py",
+    "bytes": 12443,
+    "sha256": "efd61703be54a0d6c7f058a51a388ba3aaa5bf229af801692721419ef629e442"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/box_mime_taught_robot.py",
+    "bytes": 36049,
+    "sha256": "bf60106066d8c7cdbaca5095c19a4ee0768e9e17a1fd4f86cbbc5397d45e5d88"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/box_motion_plan.py",
+    "bytes": 4004,
+    "sha256": "0d2cf499251f6371d9d50329d80089dc2c18b2be9d405a0728fba998832c810c"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/box_motion_robot.py",
+    "bytes": 21646,
+    "sha256": "14effbc568096c8c93f59236d27b35932d1dc5c06a7887eff3bb950f126caf27"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/check_gripper_sdk.py",
+    "bytes": 22281,
+    "sha256": "27fed47964e82eb0bb9636b3a20e5ce36459c1beba15206b784faffd83730347"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/coordinated_joint_timing.py",
+    "bytes": 3667,
+    "sha256": "03c882fa714a8d336d63c507799dacbb6be964a5a0ac0f07dc74a5e7d16fb297"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/feedback_observation.py",
+    "bytes": 2121,
+    "sha256": "16e61db1be3f629fc5c06a93340156488b0bfa5992af2493fab67fd0aca8932e"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/fetch_frame_reference.py",
+    "bytes": 1643,
+    "sha256": "52bcb6d335b7b5b80b94cf0a98c9c79d72bf48a6560a10d0fdddf232d6b42986"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/luna_config.py",
+    "bytes": 2035,
+    "sha256": "7f6d584b2e6959d39f8f74466ebb46612021771a3ff11a28df051faeefa712d8"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/mime_squat_height.py",
+    "bytes": 2642,
+    "sha256": "0587d8f5371eb8ca0bee1029d76c5e45ec608c8d62d34cd655109c7483c56e38"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/motion_wait_policy.py",
+    "bytes": 11694,
+    "sha256": "24458b5f622ae964c6a72cc311c25aeb2851ad150e7d11b1dce2c0e9f0782bcb"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/native_arm_motion.py",
+    "bytes": 10553,
+    "sha256": "fa6f62e67bd722fdd2903829a75fd0db504fdfd2240b9e2fcf2f0555af762700"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/position_acceptance.py",
+    "bytes": 1225,
+    "sha256": "ada4b19591e38d6470c046cd7d08c4de3eec8098387eda555d4f995d6c206679"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/recover_box_start_robot.py",
+    "bytes": 12300,
+    "sha256": "e73d5fc4dfa222ab3085079d26dcb076d96fa8fdbe6dd213c01b80cd55a46205"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/return_home_robot.py",
+    "bytes": 7109,
+    "sha256": "b3f74182ab5b33d171176c29ae49bc386839ee4306da41b02ffb7f00e3df274c"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/robot_status.py",
+    "bytes": 296,
+    "sha256": "8e64564f51541f043250fd932fcdeff7eef12ef21ceeda0f4e4ec5abc5041a22"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/stand_up_plan.py",
+    "bytes": 6529,
+    "sha256": "2fed9a3e1084cf530e6d9ae4d99e2fed3290ffeb3b7cee75a0d04230ba5f8589"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/stand_up_robot.py",
+    "bytes": 10723,
+    "sha256": "6ecdf17b0b416308f2a202c21084546bf5f356fd170c30683ccca7a6bb9fa4e1"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-delivery/tools/teach_pose.py",
+    "bytes": 6730,
+    "sha256": "fdfbf833de3ccdac9d6380daafa30cdf7bebac770a3e3a5a8f43c21f9169dfd6"
+  },
+  {
+    "file": "outputs/gentoluna-gripper-8pin-37a7068/gentoluna-gripper-ui-delivery.zip",
+    "bytes": 133085,
+    "sha256": "9795073ad9348b14a1166e852cfabd757de3c96203282dd51ad7093ebb42bdb9"
+  },
+  {
+    "file": "outputs/mode3-test-20261113.md",
+    "bytes": 2535,
+    "sha256": "cff28404db9b3967a7b163e65ff5e77f235b37c459d08a970117ac6e3fcaa30f"
+  },
+  {
+    "file": "outputs/pd-compatibility-20261113.md",
+    "bytes": 8127,
+    "sha256": "f60ec8cb3bd90ab9db4e1eba1bbe4248364243e0ac72acc9b43df78154061b6a"
+  }
+]

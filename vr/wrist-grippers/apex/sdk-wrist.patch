@@ -1,0 +1,36 @@
+diff --git a/L1Robot/L1Robot.cpp b/L1Robot/L1Robot.cpp
+--- a/L1Robot/L1Robot.cpp
++++ b/L1Robot/L1Robot.cpp
+@@ -324,2 +324,5 @@
++void Wrist485Linked();
++void Wrist485Unlinking();
++
+ int FX_L1_System_Link(unsigned char ip1, unsigned char ip2, unsigned char ip3, unsigned char ip4, unsigned int log_level)
+ {
+@@ -448,2 +451,3 @@
+     FX_LINK_TAG = 1;
++    Wrist485Linked();
+ 
+@@ -454,3 +458,4 @@
+ void FX_L1_System_Unlink()
+ {
++    Wrist485Unlinking();
+     FX_L0_System_Unlink();
+@@ -3415,3 +3420,11 @@
+-int FX_L1_Terminal_GetData(FXTerminalType terminal_type, unsigned int timeout, FXChnType *chn_type, unsigned char data[64], unsigned int *receving_time)
++// The factory vcan reader polls this entry point even if Apex Tool is stopped.
++// In this CTAG-only build the adapter is the exclusive wrist RX consumer.
++int FX_L1_Terminal_GetData(FXTerminalType, unsigned int, FXChnType *, unsigned char[64], unsigned int *)
++{
++    return FUNC_RET_OPERATION_TIMEOUT;
++}
++
++int Wrist485Receive(FXTerminalType terminal_type, unsigned int timeout, FXChnType *chn_type, unsigned char data[64], unsigned int *receving_time)
+ {
+     int recv_len = 0;
+@@ -3501,3 +3514,5 @@
+ int FX_L1_Terminal_SetData(FXTerminalType terminal_type, FXChnType chn_type, unsigned int timeout, unsigned char data[64], unsigned int data_len, unsigned int *sending_time)
+ {
++    if (chn_type != FX_CHN_485A)
++        return FUNC_RET_INVALID_INPUT_ARG;
+     unsigned int max_timeout = timeout;

@@ -1,0 +1,125 @@
+{
+  "local_time": "2026-11-20T17:11:49.474373+08:00",
+  "remote_exit": 0,
+  "result": {
+    "arms": {
+      "ARM0/485A": {
+        "model": "CTAG2F90D",
+        "initial_feedback": {
+          "status": 21,
+          "status_hex": "0x15",
+          "fault": 0,
+          "alarm": 0,
+          "enabled_status_bit": false,
+          "position_reached": true,
+          "zero_speed": true,
+          "force_reached": false,
+          "position_raw": 0,
+          "speed_raw": 0,
+          "current_raw": 0
+        },
+        "preflight": {
+          "model": "CTAG2F90D",
+          "user_limits": [
+            0,
+            9000
+          ],
+          "feedback": {
+            "status": 21,
+            "status_hex": "0x15",
+            "fault": 0,
+            "alarm": 0,
+            "enabled_status_bit": false,
+            "position_reached": true,
+            "zero_speed": true,
+            "force_reached": false,
+            "position_raw": 0,
+            "speed_raw": 0,
+            "current_raw": 0
+          }
+        },
+        "second_feedback": {
+          "status": 21,
+          "status_hex": "0x15",
+          "fault": 0,
+          "alarm": 0,
+          "enabled_status_bit": false,
+          "position_reached": true,
+          "zero_speed": true,
+          "force_reached": false,
+          "position_raw": 0,
+          "speed_raw": 0,
+          "current_raw": 0
+        },
+        "ok": true
+      },
+      "ARM1/485A": {
+        "model": "CTAG2F90D",
+        "initial_feedback": {
+          "status": 21,
+          "status_hex": "0x15",
+          "fault": 0,
+          "alarm": 0,
+          "enabled_status_bit": false,
+          "position_reached": true,
+          "zero_speed": true,
+          "force_reached": false,
+          "position_raw": 0,
+          "speed_raw": 0,
+          "current_raw": 0
+        },
+        "preflight": {
+          "model": "CTAG2F90D",
+          "user_limits": [
+            0,
+            9000
+          ],
+          "feedback": {
+            "status": 21,
+            "status_hex": "0x15",
+            "fault": 0,
+            "alarm": 0,
+            "enabled_status_bit": false,
+            "position_reached": true,
+            "zero_speed": true,
+            "force_reached": false,
+            "position_raw": 0,
+            "speed_raw": 0,
+            "current_raw": 0
+          }
+        },
+        "second_feedback": {
+          "status": 21,
+          "status_hex": "0x15",
+          "fault": 0,
+          "alarm": 0,
+          "enabled_status_bit": false,
+          "position_reached": true,
+          "zero_speed": true,
+          "force_reached": false,
+          "position_raw": 0,
+          "speed_raw": 0,
+          "current_raw": 0
+        },
+        "ok": true
+      }
+    },
+    "function_code": "0x03",
+    "controller": "6.6.7.190"
+  },
+  "stdout": [
+    "ARM0/485A {\"model\": \"CTAG2F90D\", \"initial_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"preflight\": {\"model\": \"CTAG2F90D\", \"user_limits\": [0, 9000], \"feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}}, \"second_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"ok\": true}",
+    "[ERRO][L1] FX_L1_Terminal_GetData: ARM1.TERMINAL receive data timeout",
+    "[ERRO][L1] FX_L1_Terminal_GetData: ARM1.TERMINAL receive data timeout",
+    "{\"event\": \"gripper_read_retry\", \"time\": \"2026-11-20T09:26:29.224641+00:00\", \"arm\": 1, \"register\": \"0418\", \"attempt\": 1}",
+    "[ERRO][L1] FX_L1_Terminal_GetData: ARM1.TERMINAL receive data timeout",
+    "[ERRO][L1] FX_L1_Terminal_GetData: ARM1.TERMINAL receive data timeout",
+    "{\"event\": \"gripper_read_retry\", \"time\": \"2026-11-20T09:26:30.895055+00:00\", \"arm\": 1, \"register\": \"0418\", \"attempt\": 2}",
+    "[ERRO][L1] FX_L1_Terminal_GetData: ARM1.TERMINAL receive data timeout",
+    "[ERRO][L1] FX_L1_Terminal_GetData: ARM1.TERMINAL receive data timeout",
+    "{\"event\": \"gripper_read_retry\", \"time\": \"2026-11-20T09:26:32.900184+00:00\", \"arm\": 1, \"register\": \"0418\", \"attempt\": 3}",
+    "ARM1/485A {\"model\": \"CTAG2F90D\", \"initial_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"preflight\": {\"model\": \"CTAG2F90D\", \"user_limits\": [0, 9000], \"feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}}, \"second_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"ok\": true}",
+    "WRIST_RESULT {\"arms\": {\"ARM0/485A\": {\"model\": \"CTAG2F90D\", \"initial_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"preflight\": {\"model\": \"CTAG2F90D\", \"user_limits\": [0, 9000], \"feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}}, \"second_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"ok\": true}, \"ARM1/485A\": {\"model\": \"CTAG2F90D\", \"initial_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"preflight\": {\"model\": \"CTAG2F90D\", \"user_limits\": [0, 9000], \"feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}}, \"second_feedback\": {\"status\": 21, \"status_hex\": \"0x15\", \"fault\": 0, \"alarm\": 0, \"enabled_status_bit\": false, \"position_reached\": true, \"zero_speed\": true, \"force_reached\": false, \"position_raw\": 0, \"speed_raw\": 0, \"current_raw\": 0}, \"ok\": true}}, \"function_code\": \"0x03\", \"controller\": \"6.6.7.190\"}"
+  ],
+  "stderr": ""
+}

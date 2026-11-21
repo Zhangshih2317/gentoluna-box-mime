@@ -1,0 +1,6 @@
+[INFO] [1795229409.430949152] [apex_ctag_wrist]: Apex CTAG Tool attached (inspect)
+[INFO] [1795229411.542643744] [apex_ctag_wrist]: CTAG ARM0/485A passed read-only preflight
+[INFO] [1795229416.572704256] [apex_ctag_wrist]: CTAG ARM1/485A passed read-only preflight
+ARM0/485A position=9000 speed=0 fault=0 alarm=0
+ARM1/485A position=0 speed=0 fault=0 alarm=0
+Feedback samples L/R 30/30, factory CAN poll isolated=1

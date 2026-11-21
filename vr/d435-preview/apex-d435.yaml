@@ -1,0 +1,38 @@
+quad_csi_quickview:
+  ros__parameters:
+    input_width: 960
+    input_height: 540
+    vr_output_width: 960
+    vr_output_height: 540
+    quad_output_width: 960
+    quad_output_height: 540
+    overlay_scale: 0.25
+    bitrate: 4000000
+    fps: 30
+    flip_180_option: [0, 0, 0, 0]
+    jpeg_quality: 80
+    enable_compressed_pub: true
+    mp4_dir: "/media/marvin/BAG_STORAGE/recorded_bags"
+    mp4_bitrate: 8000000
+    signal_url: "ws://127.0.0.1:8554"
+    vr_room_id: "10"
+    quad_room_id: "11"
+    head_cam_source: ["v4l2:///dev/video12"]
+    hand_cam_source: ["none", "none"]
+    camera_config:
+      camera_sources:
+        head_left: "v4l2:///dev/video12"
+        head_right: "none"
+        hand_left: "none"
+        hand_right: "none"
+      default:
+        exposure: -1
+        gain: -1
+        exposure_short: -1
+        hdr_enable: -1
+        sensor_mode: -1
+        bypass_mode: -1
+        override_enable: -1
+        low_latency_mode: -1
+        override_capture_timeout_ms: -1
+        trig_mode: -1

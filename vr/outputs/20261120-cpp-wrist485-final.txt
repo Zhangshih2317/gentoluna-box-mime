@@ -1,0 +1,12 @@
+Consolidate compiler generated dependencies of target inspect_wrist
+[ 50%] Building CXX object CMakeFiles/inspect_wrist.dir/inspect_wrist.cpp.o
+[100%] Linking CXX executable inspect_wrist
+[100%] Built target inspect_wrist
+Preflight 1
+PASS ARM0/485A CTAG2F90D position=0 speed=0 status=21 fault=0 alarm=0 empty_read_retries=0
+PASS ARM1/485A CTAG2F90D position=0 speed=0 status=21 fault=0 alarm=0 empty_read_retries=0
+Preflight 2
+ARM0 read reg=0x401 expected_bytes=11 actual_bytes=0
+FAIL ARM0/485A invalid RTU reply
+PASS ARM1/485A CTAG2F90D position=0 speed=0 status=21 fault=0 alarm=0 empty_read_retries=1
+

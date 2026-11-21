@@ -1,0 +1,851 @@
+--- a/verify/test_ros_adapter.cpp
++++ b/verify/test_ros_adapter.cpp
+@@ -17,22 +17,6 @@
+ std::array<bool,2> empty_next_status{};
+ bool corrupt_next_mode_read = false;
+ unsigned mode_replies_corrupted = 0;
+-unsigned drop_mode_reads = 0;
+-bool drop_motion_status = false;
+-unsigned drop_stopped_status_reads = 0;
+-bool drop_right_stage_ack = false;
+-bool truncate_left_stage_ack = false;
+-bool discard_left_stage_write = false;
+-unsigned left_stage_writes = 0;
+-unsigned left_model_reads = 0;
+-bool lose_left_start_ack = false, lose_left_stop_ack = false;
+-unsigned right_stage_ack_drops = 0, right_stage_writes = 0;
+-bool drop_position = false;
+-std::array<unsigned,2> missing_positions{};
+-bool trace_left_stop=false, trace_left_checks=false;
+-unsigned bad_recovery_modes=0;
+-Clock::time_point left_stop_time{};
+-std::vector<Clock::time_point> left_checks;
+ 
+ size_t arm_index(FXTerminalType arm) {
+     if (arm == FX_TERMINAL_ARM0) return 0;
+@@ -61,68 +45,7 @@
+     assert(channel == FX_CHN_485A && len <= 64);
+     *elapsed = 0;
+     auto i = arm_index(arm);
+-    const auto old_params=drives[i].params;
+     replies[i] = drives[i].exchange(Bytes(data, data + len));
+-    if (i==0 && data[1]==6 && data[5]==3 && trace_left_stop) {
+-        left_stop_time=Clock::now();
+-        left_checks.clear();
+-        trace_left_stop=false;
+-        trace_left_checks=true;
+-    }
+-    if (i==0 && data[1]==3 && data[2]==1 && data[3]==0 && trace_left_checks) {
+-        left_checks.push_back(Clock::now());
+-        if (bad_recovery_modes) {
+-            --bad_recovery_modes;
+-            replies[i]=with_crc({1,3,4,0,0,0,0});
+-        }
+-    }
+-    if (drop_position && data[1]==3 && data[2]==4 && data[3]==0x18) {
+-        replies[i].clear();
+-        ++missing_positions[i];
+-    }
+-    if (i==0 && data[1]==6 && data[2]==1 && data[3]==8) {
+-        auto &lose_ack = data[5]==1 ? lose_left_start_ack : lose_left_stop_ack;
+-        if (lose_ack) {
+-            replies[i].clear();
+-            lose_ack=false;
+-        }
+-    }
+-    if (i==0 && data[1]==3 && data[2]==0x0b && data[3]==0 && ++left_model_reads==1) {
+-        require(replies[i].size()==37,"unexpected model response size");
+-        replies[i].resize(35);
+-    }
+-    if (i==0 && data[1]==16) {
+-        ++left_stage_writes;
+-        if (truncate_left_stage_ack) {
+-            replies[i]={0x06,0xe0,0x37};
+-            truncate_left_stage_ack=false;
+-            if (discard_left_stage_write) {
+-                drives[i].params=old_params;
+-                discard_left_stage_write=false;
+-            }
+-        }
+-    }
+-    if (i==1 && data[1]==16) {
+-        ++right_stage_writes;
+-        if (drop_right_stage_ack) {
+-            replies[i].clear();
+-            drop_right_stage_ack=false;
+-            ++right_stage_ack_drops;
+-        }
+-    }
+-    if (i==0 && data[1]==3 && data[2]==1 && data[3]==0 && drop_mode_reads) {
+-        --drop_mode_reads;
+-        replies[i].clear();
+-    }
+-    if (i==1 && data[1]==3 && data[2]==4 && data[3]==1) {
+-        if (drives[i].moving && drop_motion_status) {
+-            replies[i].clear();
+-            drop_motion_status=false;
+-        } else if (!drives[i].moving && drives[i].stops && drop_stopped_status_reads) {
+-            replies[i].clear();
+-            --drop_stopped_status_reads;
+-        }
+-    }
+     if (i==0 && corrupt_next_mode_read && data[1]==3 && data[2]==1 && data[3]==0) {
+         replies[i].back()^=1;
+         corrupt_next_mode_read=false;
+@@ -209,8 +132,8 @@
+         while (Clock::now()<end) tick();
+     }
+     template<typename Predicate>
+-    void until(const char *description, Predicate predicate,std::chrono::seconds timeout=10s) {
+-        auto end=Clock::now()+timeout;
++    void until(const char *description, Predicate predicate) {
++        auto end=Clock::now()+10s;
+         while (!predicate() && Clock::now()<end) tick();
+         require(predicate(),description);
+         std::cout << "PASS " << description << std::endl;
+@@ -223,79 +146,34 @@
+     std::atomic_bool tool_enabled{true};
+     Adapter adapter(*owner,true,{},[&]{return tool_enabled.load();});
+     input.until("both preflights and ROS feedback", [&]{return input.position[0]==4200 && input.position[1]==4200;});
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(left_model_reads==2 && drives[0].starts==0 && drives[1].starts==0,
+-                "short model reply was not recovered with one read-only retry");
+-    }
+     input.dwell(800ms);
+     require(snapshot(0).starts==0 && snapshot(1).starts==0,"startup press actuated");
+     input.value={0,0};
+     input.dwell(600ms);
+     {
+         std::lock_guard<std::mutex> lock(sim_mutex);
+-        drop_mode_reads=3;
+-    }
+-    input.value[0]=1;
+-    input.until("three missing mode replies before start",[]{
+-        std::lock_guard<std::mutex> lock(sim_mutex); return drop_mode_reads==0;
+-    });
+-    input.dwell(4900ms);
+-    require(snapshot(0).starts==0,"held press replayed after missing mode reads");
+-    input.value[0]=0;
+-    input.dwell(500ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+         empty_next_status[0]=true;
+     }
+     input.until("empty reply on idle ARM0",[]{
+         std::lock_guard<std::mutex> lock(sim_mutex); return !empty_next_status[0];
+     });
+-    input.dwell(4900ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        truncate_left_stage_ack=true;
+-        discard_left_stage_write=true;
+-        drives[0].params={0,0,60,60,60,60};
+-    }
+-    input.value[0]=1;
+-    input.until("truncated left staging reply injected",[]{
+-        std::lock_guard<std::mutex> lock(sim_mutex); return !truncate_left_stage_ack;
+-    });
+-    input.dwell(4900ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(left_stage_writes==1 && drives[0].starts==0,
+-                "truncated staging reply repeated the write or moved the drive");
+-    }
+-    input.value[0]=0;
+-    input.dwell(600ms);
++    input.dwell(850ms);
+     {
+         std::lock_guard<std::mutex> lock(sim_mutex);
+         corrupt_next_mode_read=true;
+-        truncate_left_stage_ack=true;
+     }
+     input.value[0]=1;
+     input.until("left closes on ARM0", [&]{return input.position[0]==9000;});
+     {
+         std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(mode_replies_corrupted==1 && left_stage_writes==2 && drives[0].starts==1,
++        require(mode_replies_corrupted==1 && drives[0].starts==1,
+                 "corrupt preparation read did not recover with one start");
+     }
+     require(snapshot(1).starts==0,"left press sent to ARM1");
+     input.value[0]=0;
+     input.until("left release opens ARM0", [&]{return input.position[0]==0;});
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drop_right_stage_ack=true;
+-    }
+     input.value[1]=1;
+     input.until("right closes on ARM1", [&]{return input.position[1]==9000;});
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(right_stage_ack_drops==1 && right_stage_writes==1 && drives[1].starts==1,
+-                "missing staging ACK duplicated a write or start");
+-    }
+     require(snapshot(0).starts==2,"right press changed ARM0");
+     input.value[1]=0;
+     input.until("right release opens ARM1", [&]{return input.position[1]==0;});
+@@ -347,178 +225,12 @@
+     input.dwell(500ms);
+     input.value[1]=1;
+     input.until("adapter accepts fresh gesture after cancellation", [&]{return snapshot(1).starts==5;});
+-    input.until("right reaches closed position before feedback-loss test",[&]{return input.position[1]==9000;});
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drives[1].hold_motion=true;
+-        drop_motion_status=true;
+-        drop_stopped_status_reads=1;
+-    }
+-    input.value[1]=0;
+-    input.until("lost moving feedback sends stop",[]{return snapshot(1).stops==1;});
+-    input.value[1]=1;
+-    input.until("first recovery round missing a post-stop reply",[]{
+-        std::lock_guard<std::mutex> lock(sim_mutex); return drop_stopped_status_reads==0;
+-    });
+-    input.dwell(4500ms);
+-    require(snapshot(1).starts==6 && snapshot(1).stops==1,"repeated ambiguous motion or stop");
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex); drives[1].hold_motion=false;
+-    }
+-    input.value[1]=0;
+-    input.dwell(550ms);
+-    input.value[1]=1;
+-    input.until("fresh press accepted after verified stop",[]{return snapshot(1).starts==7;});
+     tool_enabled=false;
+     input.value[1]=0;
+     input.dwell(1800ms);
+-    require(snapshot(1).starts==7,"revoked Tool session triggered a new movement");
+-    input.grip[1]=false;
+-    input.dwell(450ms);
+-    input.grip[1]=true;
+-    input.dwell(550ms);
+-    tool_enabled=true;
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drives[1].hold_motion=true;
+-        drop_motion_status=true;
+-    }
+-    input.value[1]=1;
+-    input.until("new simulated motion before sustained loss",[]{return snapshot(1).moving;});
+-    const auto before_sustained_loss=snapshot(1);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drop_stopped_status_reads=30;
+-    }
+-    input.until("stop sent once on sustained loss",[&]{
+-        return snapshot(1).stops==before_sustained_loss.stops+1;
+-    });
+-    input.dwell(17000ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drop_stopped_status_reads=0;
+-    }
+-    input.value[1]=0;
+-    input.dwell(700ms);
+-    input.value[1]=1;
+-    input.dwell(1400ms);
+-    require(snapshot(1).starts==before_sustained_loss.starts &&
+-            snapshot(1).stops==before_sustained_loss.stops+1,
+-            "sustained loss unlocked the wrist or repeated its stop");
++    require(snapshot(1).starts==5,"revoked Tool session triggered a new movement");
+     adapter.stop();
+ }
+-
+-void verify_missing_start_ack() {
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drives={};
+-        drives[0].hold_motion=true;
+-        lose_left_start_ack=true;
+-        lose_left_stop_ack=true;
+-        trace_left_stop=true;
+-    }
+-    auto owner=std::make_shared<rclcpp::Node>("ack_owner","/ack_test_"+std::to_string(getpid()));
+-    Input input(owner);
+-    input.value={0,0};
+-    Adapter adapter(*owner,true);
+-    input.until("both drives ready for lost start ACK", [&]{return input.position[0]==4200 && input.position[1]==4200;});
+-    input.dwell(350ms);
+-    input.value[0]=1;
+-    input.until("ambiguous start followed by one protective stop",[]{return snapshot(0).stops==1;});
+-    input.value[1]=1;
+-    input.until("right closes while left is suspended",[]{return snapshot(1).starts==1;});
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(left_checks.empty(),"first recovery check occurred too early");
+-    }
+-    input.dwell(4000ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(left_checks.size()==1 && left_checks.front()-left_stop_time>=2850ms &&
+-                left_checks.front()-left_stop_time<3600ms,"wrong first check schedule");
+-        trace_left_checks=false;
+-    }
+-    require(snapshot(0).starts==1 && !snapshot(0).moving,"held input repeated an ambiguous start");
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        lose_left_start_ack=true;
+-        lose_left_stop_ack=true;
+-        trace_left_stop=true;
+-        bad_recovery_modes=4;
+-    }
+-    input.value[0]=0;
+-    input.dwell(500ms);
+-    input.value[0]=1;
+-    input.until("fresh gesture accepted only after confirmed stop",[]{return snapshot(0).stops==2;});
+-    input.value[1]=0;
+-    input.until("peer opens during five-round recovery",[]{return snapshot(1).starts==2;});
+-    input.until("fifth left check reached",[&]{
+-        std::lock_guard<std::mutex> lock(sim_mutex); return left_checks.size()==5;
+-    },17s);
+-    input.dwell(1000ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        for (unsigned k=0;k<left_checks.size();++k) {
+-            const auto elapsed=left_checks[k]-left_stop_time;
+-            require(elapsed>=3s*(k+1)-150ms && elapsed<3s*(k+1)+600ms,"bad recovery round cadence");
+-        }
+-        require(drives[0].starts==2 && drives[0].stops==2,"held trigger replayed during recovery");
+-        trace_left_checks=false;
+-        lose_left_start_ack=true;
+-        trace_left_stop=true;
+-        bad_recovery_modes=5;
+-    }
+-    input.value[0]=0;
+-    input.dwell(600ms);
+-    input.value[0]=1;
+-    input.until("fifth healthy round allowed new input",[]{return snapshot(0).stops==3;});
+-    input.until("five consecutive bad rounds observed",[]{
+-        std::lock_guard<std::mutex> lock(sim_mutex);return left_checks.size()==5;
+-    },17s);
+-    input.dwell(3400ms);
+-    input.value={0,1};
+-    input.until("peer responds with left latched",[]{return snapshot(1).starts==3;});
+-    input.value[0]=1;
+-    input.dwell(1300ms);
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        require(left_checks.size()==5 && drives[0].starts==3 && drives[0].stops==3,
+-                "fifth failed check did not latch just the affected wrist");
+-    }
+-    adapter.stop();
+-}
+-}
+-
+-void verify_trigger_without_position() {
+-    auto owner=std::make_shared<rclcpp::Node>("trigger_owner","/trigger_test_"+std::to_string(getpid()));
+-    Input input(owner);
+-    input.value={0,0};
+-    Adapter adapter(*owner,true);
+-    input.until("initial feedback before removing position telemetry",[&]{
+-        return input.position[0]==4200 && input.position[1]==4200;
+-    });
+-    {
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        drop_position=true;
+-    }
+-    input.until("position telemetry absent on both wrists",[]{
+-        std::lock_guard<std::mutex> lock(sim_mutex);
+-        return missing_positions[0] && missing_positions[1];
+-    });
+-    for (unsigned edge=1; edge<=12; ++edge) {
+-        const bool close=(edge%2)==1;
+-        input.value.fill(close ? 1.0f : 0.0f);
+-        input.until("one command per wrist for this trigger edge",[&]{
+-            const auto l=snapshot(0),r=snapshot(1);
+-            const auto expected=close ? 9000 : 0;
+-            return l.starts==edge && r.starts==edge && l.position==expected && r.position==expected;
+-        });
+-    }
+-    input.dwell(1800ms);
+-    require(snapshot(0).starts==12 && snapshot(1).starts==12,"held trigger repeated a command");
+-    require(input.position[0]==4200 && input.position[1]==4200,"position telemetry unexpectedly delivered");
+-    std::cout<<"PASS six open-close cycles per hand without ordinary position feedback"<<std::endl;
+-    adapter.stop();
+ }
+ 
+ int main(int argc,char **argv) {
+@@ -528,11 +240,7 @@
+     };
+     require(env("ROS_DOMAIN_ID")=="93" && env("ROS_LOCALHOST_ONLY")=="1","use isolated test domain");
+     rclcpp::init(argc,argv);
+-    try {
+-        if (argc==2 && std::string(argv[1])=="--no-position") verify_trigger_without_position();
+-        else if (argc==2 && std::string(argv[1])=="--recovery") verify_missing_start_ack();
+-        else verify();
+-    }
++    try { verify(); }
+     catch (const std::exception &error) {
+         std::cerr << "FAIL " << error.what() << std::endl;
+         rclcpp::shutdown();
+--- a/wrist_adapter.hpp
++++ b/wrist_adapter.hpp
+@@ -8,10 +8,8 @@
+ #include <std_msgs/msg/int32_multi_array.hpp>
+ #include <std_msgs/msg/int16_multi_array.hpp>
+ #include <atomic>
+-#include <condition_variable>
+ #include <functional>
+ #include <mutex>
+-#include <optional>
+ #include <thread>
+ 
+ namespace wrist {
+@@ -23,8 +21,6 @@
+ 
+ struct SharedTerminal {
+     TerminalApi api{};
+-    // Each wrist has its own RX queue. Serialize individual calls into the shared SDK.
+-    std::mutex *sdk_mutex=nullptr;
+     std::function<void()> before_start;
+     bool retry_idle_reads = false;
+     bool retry_quiet_reads = false;
+@@ -38,42 +34,33 @@
+             if (retry_idle_reads || attempt > 1) std::this_thread::sleep_for(150ms);
+             auto reply = exchange_once(side, request, expected);
+             // An intact exception or an unexpected device/function goes to the protocol checker.
+-            if (attempt == attempts || (reply.size() >= 5 && crc(reply) == 0)) return reply;
++            if (attempt == attempts || (retry_idle_reads && !reply.empty()) ||
++                (reply.size() >= 5 && crc(reply) == 0)) return reply;
+             if (reply.empty()) ++retried_empty_reads;
+         }
+     }
+ private:
+-    template<class Call>
+-    int sdk(Call call) {
+-        if (!sdk_mutex) return call();
+-        std::lock_guard<std::mutex> lock(*sdk_mutex);
+-        return call();
+-    }
+     Bytes exchange_once(int side, const Bytes &request, std::size_t expected) {
+         const auto arm = side == 0 ? FX_TERMINAL_ARM0 : FX_TERMINAL_ARM1;
+         std::array<unsigned char,64> wire{};
+         require(request.size() <= wire.size(), "oversize wrist request");
+         std::copy(request.begin(), request.end(), wire.begin());
+-        require(sdk([&]{return FX_L1_Terminal_ClearData(arm);}) == 0, "terminal clear failed");
++        require(FX_L1_Terminal_ClearData(arm) == 0, "terminal clear failed");
+         std::this_thread::sleep_for(100ms);
+         unsigned stamp = 0;
+-        require(sdk([&]{
+-            if (request.size()==8 && request[1]==6 && request[2]==1 && request[3]==8 &&
+-                request[4]==0 && request[5]==1) {
+-                require(static_cast<bool>(before_start), "missing drive trigger interlock");
+-                before_start();
+-            }
+-            return FX_L1_Terminal_SetData(arm, FX_CHN_485A, 250, wire.data(),request.size(),&stamp);
+-        }) == 0, "terminal send failed");
++        if (request.size()==8 && request[1]==6 && request[2]==1 && request[3]==8 &&
++            request[4]==0 && request[5]==1) {
++            require(static_cast<bool>(before_start), "missing drive trigger interlock");
++            before_start();
++        }
++        require(FX_L1_Terminal_SetData(arm, FX_CHN_485A, 250, wire.data(),
++                                       request.size(), &stamp) == 0, "terminal send failed");
+         Bytes reply;
+         auto deadline = Clock::now() + 700ms;
+         while (Clock::now() < deadline) {
+             FXChnType channel = FX_CHN_485A;
+-            int n = sdk([&]{return api.receive(arm,sdk_mutex ? 5 : 30,&channel,wire.data(),&stamp);});
+-            if (n == FUNC_RET_OPERATION_TIMEOUT || n == 0) {
+-                if (sdk_mutex) std::this_thread::sleep_for(1ms);
+-                continue;
+-            }
++            int n = api.receive(arm, 30, &channel, wire.data(), &stamp);
++            if (n == FUNC_RET_OPERATION_TIMEOUT || n == 0) continue;
+             require(n > 0 && n <= 64 && channel == FX_CHN_485A, "unexpected wrist channel or receive error");
+             reply.insert(reply.end(), wire.begin(), wire.begin()+n);
+             if (reply.size() >= expected || (reply.size() >= 5 && (reply[1] & 0x80))) break;
+@@ -93,9 +80,6 @@
+     const std::function<bool()> tool_active;
+     std::atomic_bool running{true};
+     std::mutex mutex;
+-    std::mutex sdk_mutex;
+-    std::condition_variable wake;
+-    std::array<bool,2> ready{};
+     Clock::time_point heartbeat{}, state_seen{};
+     std::array<bool,2> movable{};
+     std::array<Clock::time_point,2> side_enable{};
+@@ -105,10 +89,10 @@
+     std::array<rclcpp::Subscription<Float>::SharedPtr,2> triggers;
+     std::array<rclcpp::Subscription<Bool>::SharedPtr,2> enables;
+     std::array<rclcpp::Publisher<Status>::SharedPtr,2> feedback_pub;
+-    std::array<std::thread,2> workers;
++    std::thread worker;
+     std::once_flag shutdown;
+     bool allowed(int side, Clock::time_point now) const {
+-        return actuate && running && ready[side] && movable[side] && now-state_seen < 500ms &&
++        return actuate && running && movable[side] && now-state_seen < 500ms &&
+                side_enable[side]!=Clock::time_point{} && now-side_enable[side]<300ms &&
+                heartbeat != Clock::time_point{} && now-heartbeat < 1500ms;
+     }
+@@ -124,151 +108,87 @@
+         msg.data={f.position,f.speed,f.status,f.fault,f.alarm};
+         feedback_pub[side]->publish(msg);
+     }
+-    void set_ready(int side,bool value) {
+-        std::lock_guard<std::mutex> lock(mutex);
+-        inputs[side].reset();
+-        ready[side]=value;
+-    }
+-    void run_side(int i) {
++    void run() {
+         SharedTerminal bus;
+         bus.api=api;
+-        bus.sdk_mutex=&sdk_mutex;
+-        Motor<SharedTerminal> motor(bus,i);
+-        bool inspected=false, moving=false, stop_sent=false;
+-        int target=0;
+-        uint64_t handled=0;
+-        Clock::time_point deadline{}, next_poll{};
+-        auto send_stop = [&] {
++        std::array<Motor<SharedTerminal>,2> motors{{{bus,0},{bus,1}}};
++        std::array<bool,2> moving{};
++        std::array<int,2> target{};
++        std::array<uint64_t,2> handled{};
++        std::array<Clock::time_point,2> deadline{};
++        std::array<Clock::time_point,2> next_poll{};
++        auto stop = [&](int i) {
+             bus.retry_quiet_reads=false;
+-            if (stop_sent) return;
+-            stop_sent=true;
+-            motor.command(true);
+-        };
+-        auto stationary = [&] {
+-            const auto f=motor.feedback();
+-            publish(i,f);
+-            f.check();
+-            require(f.stationary(),"wrist not stationary");
+-            return f.position;
+-        };
+-        auto confirm_stop = [&](bool reversing) {
+-            const auto end=Clock::now()+2s;
+-            bool previous_zero_speed=false;
++            motors[i].command(true);
++            const auto end = Clock::now()+2s;
+             do {
+-                if (reversing) {
+-                    const bool zero_speed=(motor.checked_status()[0]&4)!=0;
+-                    if (zero_speed && previous_zero_speed) {moving=false; return;}
+-                    previous_zero_speed=zero_speed;
+-                } else {
+-                    const auto f=motor.feedback();
+-                    publish(i,f);
+-                    f.check();
+-                    if (f.stationary()) {
+-                        moving=false;
+-                        RCLCPP_INFO(node.get_logger(),"ARM%d stopped at position %d",i,f.position);
+-                        return;
+-                    }
+-                }
++                auto f=motors[i].feedback();
++                publish(i,f);
++                if (f.stationary()) { moving[i]=false; return; }
+             } while (Clock::now()<end);
+             throw std::runtime_error("wrist stop not confirmed");
+         };
+-        while (running && rclcpp::ok()) {
+-            try {
+-                if (!inspected) {
+-                    bus.retry_idle_reads=true;
+-                    motor.inspect();
+-                    inspected=true;
+-                    set_ready(i,true);
+-                    RCLCPP_INFO(node.get_logger(),"CTAG ARM%d/485A passed read-only preflight",i);
+-                }
+-                bus.retry_idle_reads=!actuate;
+-                bus.retry_quiet_reads=false;
+-                const auto action=intent(i);
+-                if (moving && (action.target<0 || action.target!=target)) {
+-                    send_stop();
+-                    confirm_stop(action.target>=0);
+-                }
+-                if (action.target>=0 && action.revision!=handled) {
+-                    bus.retry_quiet_reads=!moving;
+-                    motor.prepare(action.target,minimum_motion_percent,minimum_motion_percent,false);
++        try {
++            bus.retry_idle_reads = true;
++            for (int i=0;i<2 && running;i++) {
++                motors[i].inspect();
++                RCLCPP_INFO(node.get_logger(),"CTAG ARM%d/485A passed read-only preflight",i);
++            }
++            bus.retry_idle_reads = !actuate;
++            { std::lock_guard<std::mutex> lock(mutex); for (auto &input:inputs) input.reset(); }
++            while (running && rclcpp::ok()) {
++                for (int i=0;i<2 && running;i++) {
++                    auto action=intent(i);
++                    if (moving[i] && (action.target<0 || action.target!=target[i])) stop(i);
++                    const bool requested=action.target>=0 && action.revision!=handled[i];
++                    bus.retry_quiet_reads=actuate && !moving[0] && !moving[1];
++                    if (moving[i] || (!requested && Clock::now()>=next_poll[i])) {
++                        next_poll[i]=Clock::now()+800ms;
++                        try {
++                            auto f=motors[i].feedback();
++                            publish(i,f);
++                            f.check();
++                            if (moving[i]) {
++                                if (f.stationary() && (f.status&1) && std::abs(f.position-target[i])<=20)
++                                    moving[i]=false;
++                                else require(Clock::now()<deadline[i],"wrist target timed out");
++                            }
++                        } catch (const EmptyRegisterReply &) {
++                            if (moving[i]) throw;
++                            RCLCPP_WARN_THROTTLE(node.get_logger(),*node.get_clock(),5000,
++                                "ARM%d idle read timed out; feedback pending",i);
++                            continue;
++                        }
++                    }
++                    if (!requested) continue;
++                    motors[i].prepare(action.target);
++                    auto latest=intent(i);
++                    if (latest.revision!=action.revision || latest.target!=action.target) continue;
++                    handled[i]=action.revision;
+                     bus.retry_quiet_reads=false;
+-                    handled=action.revision;
+-                    bus.before_start=[&,action] {
++                    bus.before_start=[this,i,action,&moving,&target,&deadline] {
+                         auto current=intent(i);
+                         if (current.revision!=action.revision || current.target!=action.target ||
+                             (tool_active && !tool_active()))
+                             throw CancelledBeforeStart{};
+-                        moving=true;
+-                        stop_sent=false;
+-                        target=action.target;
+-                        deadline=Clock::now()+12s;
++                        // A missing acknowledgement after this point can mean the drive started.
++                        moving[i]=true;
++                        target[i]=action.target;
++                        deadline[i]=Clock::now()+12s;
+                     };
+-                    motor.command(false);
+-                    RCLCPP_INFO(node.get_logger(),"ARM%d %s command acknowledged (target %d)",i,
+-                                target==0?"open":"close",target);
++                    try { motors[i].command(false); }
++                    catch (const CancelledBeforeStart &) {
++                        RCLCPP_DEBUG(node.get_logger(),"ARM%d gesture cancelled before trigger",i);
++                    }
+                     bus.before_start={};
+-                } else if (moving || Clock::now()>=next_poll) {
+-                    next_poll=Clock::now()+800ms;
+-                    uint16_t status=0;
+-                    const auto f=motor.observe(status);
+-                    if (f) {
+-                        publish(i,*f);
+-                        f->check();
+-                        if (moving && f->stationary() && (f->status&1) && std::abs(f->position-target)<=20)
+-                            moving=false;
+-                    } else if (moving && (status&5)==5 && (motor.checked_status()[0]&5)==5) {
+-                        moving=false;
+-                    }
+-                    if (moving) require(Clock::now()<deadline,"wrist motion supervision timed out");
+                 }
+-            } catch (const CancelledBeforeStart &) {
+-                bus.before_start={};
+-            } catch (const std::exception &error) {
+-                const auto since=Clock::now();
+-                set_ready(i,false);
+-                bus.before_start={};
+-                bus.retry_idle_reads=bus.retry_quiet_reads=false;
+-                RCLCPP_WARN(node.get_logger(),"ARM%d suspended: %s; first check in 3s",i,error.what());
+-                if (moving) {
+-                    try { send_stop(); }
+-                    catch (const std::exception &e) { RCLCPP_ERROR(node.get_logger(),"ARM%d stop: %s",i,e.what()); }
+-                }
+-                for (int round=1; round<=5; ++round) {
+-                    {
+-                        std::unique_lock<std::mutex> lock(mutex);
+-                        wake.wait_until(lock,since+round*3s,[&]{return !running.load();});
+-                    }
+-                    if (!running || !rclcpp::ok()) break;
+-                    try {
+-                        if (!inspected) {
+-                            motor.inspect();
+-                            inspected=true;
+-                            RCLCPP_INFO(node.get_logger(),"CTAG ARM%d/485A passed read-only preflight",i);
+-                        } else {
+-                            motor.check_mode();
+-                            auto position=stationary();
+-                            if (moving) require(stationary()==position,"wrist position not stable after stop");
+-                        }
+-                        moving=false;
+-                        set_ready(i,true);
+-                        RCLCPP_INFO(node.get_logger(),"ARM%d recovered on check %d/5; fresh gesture required",i,round);
+-                        break;
+-                    } catch (const std::exception &e) {
+-                        RCLCPP_WARN(node.get_logger(),"ARM%d check %d/5 failed: %s",i,round,e.what());
+-                        if (round==5) {
+-                            RCLCPP_ERROR(node.get_logger(),"ARM%d latched off after five failed checks; %s",i,
+-                                         moving?"stop not confirmed":"commands inhibited");
+-                            return;
+-                        }
+-                    }
+-                }
++                std::this_thread::sleep_for(10ms);
+             }
+-            std::this_thread::sleep_for(10ms);
+-        }
+-        if (moving) {
+-            try {send_stop();}
+-            catch(const std::exception &e) { RCLCPP_ERROR(node.get_logger(),"ARM%d stop command failed: %s",i,e.what()); }
+-            try {confirm_stop(false);}
++        } catch (const std::exception &e) {
++            RCLCPP_ERROR(node.get_logger(),"Wrist adapter latched off: %s",e.what());
++        }
++        for (int i=0;i<2;i++) if (moving[i]) {
++            try {stop(i);}
+             catch(const std::exception &e) { RCLCPP_ERROR(node.get_logger(),"ARM%d stop unconfirmed: %s",i,e.what()); }
+         }
+     }
+@@ -306,25 +226,14 @@
+                 rclcpp::QoS(1).best_effort(),[this,i](Float::ConstSharedPtr msg){
+                     std::lock_guard<std::mutex> lock(mutex);
+                     auto now=Clock::now();
+-                    if (allowed(i,now)) {
+-                        const auto revision=inputs[i].revision;
+-                        inputs[i].update(msg->data,now);
+-                        if (inputs[i].target>=0 && inputs[i].revision!=revision)
+-                            RCLCPP_INFO(node.get_logger(),"ARM%d trigger %.2f requested %s",i,msg->data,
+-                                inputs[i].target==0?"open":"close");
+-                    } else inputs[i].reset();
++                    if (allowed(i,now)) inputs[i].update(msg->data,now);
++                    else inputs[i].reset();
+                 });
+         }
+-        try {
+-            for (int i=0;i<2;++i) workers[i]=std::thread(&Adapter::run_side,this,i);
+-        } catch (...) { stop(); throw; }
++        worker=std::thread(&Adapter::run,this);
+     }
+     void stop() {
+-        std::call_once(shutdown,[this]{
+-            { std::lock_guard<std::mutex> lock(mutex); running=false; }
+-            wake.notify_all();
+-            for (auto &worker:workers) if (worker.joinable()) worker.join();
+-        });
++        std::call_once(shutdown,[this]{ running=false; if(worker.joinable()) worker.join(); });
+     }
+     ~Adapter() { stop(); }
+ };
+--- a/wrist_protocol.hpp
++++ b/wrist_protocol.hpp
+@@ -6,7 +6,6 @@
+ #include <cmath>
+ #include <cstdint>
+ #include <cstdio>
+-#include <optional>
+ #include <stdexcept>
+ #include <string>
+ #include <vector>
+@@ -32,15 +31,7 @@
+     return text;
+ }
+ 
+-struct RegisterTransportError : std::runtime_error {
+-    using std::runtime_error::runtime_error;
+-};
+-
+-struct EmptyRegisterReply : RegisterTransportError {
+-    using RegisterTransportError::RegisterTransportError;
+-};
+-
+-struct MissingStartAck : std::runtime_error {
++struct EmptyRegisterReply : std::runtime_error {
+     using std::runtime_error::runtime_error;
+ };
+ 
+@@ -111,13 +102,10 @@
+     int16_t speed;
+     uint16_t status, fault, alarm;
+     bool stationary() const { return speed == 0 && (status & 4); }
+-    static void check_drive(uint16_t fault, uint16_t alarm) {
++    void check() const {
+         if (fault || (alarm & ~drop_alarm_b))
+             throw std::runtime_error("drive fault A=" + std::to_string(fault) +
+                                      " alarm B=" + std::to_string(alarm));
+-    }
+-    void check() const {
+-        check_drive(fault,alarm);
+         require(position >= -20 && position <= 9020, "position outside verified travel");
+     }
+ };
+@@ -126,21 +114,11 @@
+ template<class Exchange> class Motor {
+     Exchange &bus;
+     int side;
+-    Bytes request(Bytes frame, std::size_t expected, bool verify_stage_by_readback=false) {
++    Bytes request(Bytes frame, std::size_t expected) {
+         auto reply = bus(side, with_crc(frame), expected);
+-        const bool damaged=reply.size()<5 || crc(reply)!=0;
+-        // Only the non-actuating parameter write has an independent six-word readback.
+-        if (verify_stage_by_readback && damaged) return {};
+-        if (reply.empty() && frame[1]==6 && frame[2]==1 && frame[3]==8) {
+-            if (frame[5]==1)
+-                throw MissingStartAck(transaction_error(side,frame,0,"start acknowledgement missing"));
+-            throw std::runtime_error(transaction_error(side,frame,0,"stop acknowledgement missing"));
+-        }
+         if (reply.empty() && frame[1]==3)
+             throw EmptyRegisterReply(transaction_error(side,frame,0,"empty wrist register reply"));
+-        if (frame[1]==3 && damaged)
+-            throw RegisterTransportError(transaction_error(side,frame,reply.size(),"damaged wrist register reply"));
+-        if (damaged || reply[0]!=1)
++        if (reply.size()<5 || crc(reply)!=0 || reply[0]!=1)
+             throw std::runtime_error(transaction_error(side,frame,reply.size(),"invalid RTU reply"));
+         if (reply[1]!=frame[1] || reply.size()!=expected)
+             throw std::runtime_error(transaction_error(side,frame,reply.size(),"RTU exception or bad length"));
+@@ -159,24 +137,11 @@
+             result.push_back((reply[3 + 2*i] << 8) | reply[4 + 2*i]);
+         return result;
+     }
+-private:
+-    Feedback read_position(const Words &v) {
++    Feedback feedback() {
++        auto v = read(0x0401, 3);
+         auto p = read(0x0418, 3);
+         return {static_cast<int32_t>((uint32_t(p[0]) << 16) | p[1]),
+                 static_cast<int16_t>(p[2]), v[0], v[1], v[2]};
+-    }
+-public:
+-    Feedback feedback() { return read_position(read(0x0401,3)); }
+-    Words checked_status() {
+-        const auto v=read(0x0401,3);
+-        Feedback::check_drive(v[1],v[2]);
+-        return v;
+-    }
+-    std::optional<Feedback> observe(uint16_t &status) {
+-        const auto v=checked_status();
+-        status=v[0];
+-        try { return read_position(v); }
+-        catch (const RegisterTransportError &) { return std::nullopt; }
+     }
+     void inspect() {
+         std::string model;
+@@ -197,25 +162,19 @@
+     void check_mode() {
+         require(read(0x0100,2) == Words{1,0}, "drive not enabled in absolute position mode");
+     }
+-    void prepare(int target, int speed=minimum_motion_percent, int torque=minimum_motion_percent,
+-                 bool require_position=true) {
++    void prepare(int target, int speed=minimum_motion_percent, int torque=minimum_motion_percent) {
+         require(target == 0 || target == 9000, "invalid target");
+         require(speed >= minimum_motion_percent && speed <= 100, "speed must be 60..100 percent");
+         require(torque >= minimum_motion_percent && torque <= 100, "torque must be 60..100 percent");
+         check_mode();
+-        if (require_position) feedback().check();
+-        else checked_status();
++        feedback().check();
+         Words params{0, static_cast<uint16_t>(target), static_cast<uint16_t>(speed),
+                      static_cast<uint16_t>(torque), 60, 60};
+         Bytes frame{1,16,1,2,0,6,12};
+         for (auto w : params) append_word(frame,w);
+-        const auto reply = request(frame,8,true);
+-        if (!reply.empty())
+-            require(std::equal(reply.begin(),reply.begin()+6,frame.begin()), "target acknowledgement mismatch");
+-        const auto applied = read(0x0102,6);
+-        if (reply.empty() && applied!=params)
+-            throw RegisterTransportError(transaction_error(side,frame,0,"unacknowledged target failed readback"));
+-        require(applied == params, "target readback mismatch");
++        auto reply = request(frame,8);
++        require(std::equal(reply.begin(), reply.begin()+6, frame.begin()), "target acknowledgement mismatch");
++        require(read(0x0102,6) == params, "target readback mismatch");
+     }
+     void command(bool stop) {
+         Bytes frame{1,6,1,8,0,static_cast<uint8_t>(stop ? 3 : 1)};

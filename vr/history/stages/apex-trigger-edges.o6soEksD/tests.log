@@ -1,0 +1,14 @@
+Internal ctest changing into directory: /home/nvidia/apex-trigger-edges.o6soEksD/test-build
+Test project /home/nvidia/apex-trigger-edges.o6soEksD/test-build
+    Start 1: protocol
+    Start 2: manual
+1/4 Test #1: protocol .........................   Passed    0.01 sec
+    Start 3: ros_adapter
+2/4 Test #2: manual ...........................   Passed    0.01 sec
+    Start 4: trigger_without_position
+3/4 Test #4: trigger_without_position .........   Passed   29.29 sec
+4/4 Test #3: ros_adapter ......................   Passed   65.81 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =  65.82 sec

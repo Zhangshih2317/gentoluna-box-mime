@@ -1,0 +1,16 @@
+Internal ctest changing into directory: /home/nvidia/apex-wrist-recovery.hhe03VYK/test-build
+Test project /home/nvidia/apex-wrist-recovery.hhe03VYK/test-build
+    Start 1: protocol
+    Start 2: manual
+    Start 3: ros_adapter
+1/5 Test #2: manual ...........................   Passed    0.01 sec
+    Start 4: trigger_without_position
+2/5 Test #1: protocol .........................   Passed    0.01 sec
+    Start 5: wrist_recovery
+3/5 Test #4: trigger_without_position .........   Passed   20.69 sec
+4/5 Test #5: wrist_recovery ...................   Passed   49.72 sec
+5/5 Test #3: ros_adapter ......................   Passed   68.25 sec
+
+100% tests passed, 0 tests failed out of 5
+
+Total Test time (real) =  68.26 sec

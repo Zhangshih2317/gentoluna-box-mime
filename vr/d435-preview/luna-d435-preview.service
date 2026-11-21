@@ -1,0 +1,14 @@
+[Unit]
+Description=Luna standalone D435 preview
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/nvidia/d435-preview
+ExecStart=/home/nvidia/miniconda3/envs/robot/bin/python /home/nvidia/d435-preview/server.py --serial 348122070928 --port 8761
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=12
+
+[Install]
+WantedBy=default.target

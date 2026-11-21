@@ -1,0 +1,37 @@
+[
+  {
+    "name": "kernelmind-apex-tool_1.0.6.81g_humble_arm64.deb",
+    "url": "https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_Deb/releases/download/%E5%A4%A9%E5%87%86Orin_Gento%E4%B8%93%E7%94%A8%E9%81%A5%E6%93%8D%E7%B3%BB%E7%BB%9F1.0.6.81g/kernelmind-apex-tool_1.0.6.81g_humble_arm64.deb",
+    "sha256": "bd9253568509aa94fe6e6a465b9cfbd9da81b153402c7ffe31d20c9382721a28"
+  },
+  {
+    "name": "kernelmind-apex_1.0.6.81g_humble_arm64.deb",
+    "url": "https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_Deb/releases/download/%E5%A4%A9%E5%87%86Orin_Gento%E4%B8%93%E7%94%A8%E9%81%A5%E6%93%8D%E7%B3%BB%E7%BB%9F1.0.6.81g/kernelmind-apex_1.0.6.81g_humble_arm64.deb",
+    "sha256": "f6d8c4d08c3db56f32e9e0beb19f72787cb7cde0eab42bb9e4f517ca0619d476"
+  },
+  {
+    "name": "Apex-UI_v1.1.7.1.exe",
+    "url": "https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_Web_Deb/releases/download/v1.1.7.1/Apex-UI_v1.1.7.1.exe",
+    "sha256": "ac6c67229762e5774a62b3bcf19837cbd195863d13a40e2d77b3aa554079c123"
+  },
+  {
+    "name": "Apex-Teleop-Setup-1.0.33.exe",
+    "url": "https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_Web_Deb/releases/download/%E9%81%A5%E6%93%8D%E7%B3%BB%E7%BB%9F%E9%80%9A%E7%94%A8%E9%81%A5%E6%93%8D%E4%B8%8A%E4%BD%8D%E6%9C%BAv1.0.33/Apex-Teleop-Setup-1.0.33.exe",
+    "sha256": "b1a8bd040fab76e2815b5d77b4449386afc8300b9f02b2dfd100fb080809c664"
+  },
+  {
+    "name": "Apex_Teleop_1.0.7_pxr.apk",
+    "url": "https://github.com/Gento-Teleoperation-Apex/KernelMind_Apex_VR_Apk/releases/download/%E9%81%A5%E6%93%8D%E5%A4%B4%E6%98%BEapk_v1.0.7/Apex_Teleop_1.0.7_pxr.apk",
+    "sha256": "7f9d87301435b1de90a610d2bc46e803e542c4725e8f484015e6f13708f2176d"
+  },
+  {
+    "name": "platform-tools_r37.0.1-win.zip",
+    "url": "https://dl.google.com/android/repository/platform-tools_r37.0.1-win.zip",
+    "sha256": "45f4d63113e895ebde0c90f194099a4676b6ac653bd28d54314a9e022bbc1a99"
+  },
+  {
+    "name": "gnirehtet-rust-win64-v2.5.1.zip",
+    "url": "https://github.com/Genymobile/gnirehtet/releases/download/v2.5.1/gnirehtet-rust-win64-v2.5.1.zip",
+    "sha256": "7f5b1063e7895182aa60def1437e50363c3758144088dcd079037bb7c3c46a1c"
+  }
+]

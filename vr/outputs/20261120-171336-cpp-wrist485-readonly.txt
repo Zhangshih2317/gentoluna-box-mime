@@ -1,0 +1,8 @@
+[ 50%] Building CXX object CMakeFiles/inspect_wrist.dir/inspect_wrist.cpp.o
+[100%] Linking CXX executable inspect_wrist
+[100%] Built target inspect_wrist
+PASS ARM0/485A CTAG2F90D position=0 speed=0 status=21 fault=0 alarm=0
+
+FAIL ARM1/485A invalid RTU reply
+
+exit=1

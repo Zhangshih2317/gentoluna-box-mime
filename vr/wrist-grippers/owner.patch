@@ -1,0 +1,57 @@
+diff --git a/src/marvin_robot.h b/src/marvin_robot.h
+--- a/src/marvin_robot.h
++++ b/src/marvin_robot.h
+@@ -30,3 +30,3 @@
+-    bool init(const std::string &robot_ip);
++    bool init(const std::string &robot_ip, bool use_can = true);
+     int GetControllerVersion() const;
+ 
+diff --git a/src/marvin_robot.cpp b/src/marvin_robot.cpp
+--- a/src/marvin_robot.cpp
++++ b/src/marvin_robot.cpp
+@@ -42,3 +42,3 @@
+-    bool MarvinRobot::init(const std::string &robot_ip)
++    bool MarvinRobot::init(const std::string &robot_ip, bool use_can)
+     {
+         std::vector<int> ip_parts = parse_ip(robot_ip);
+@@ -81,3 +81,3 @@
+-            init_can("vcan0", "vcan1");
++            if (use_can) init_can("vcan0", "vcan1");
+             return true;
+         }
+diff --git a/src/marvin_robot_node.cpp b/src/marvin_robot_node.cpp
+--- a/src/marvin_robot_node.cpp
++++ b/src/marvin_robot_node.cpp
+@@ -20,3 +20,4 @@
+ #include "marvin_robot.h"
++#include "wrist_adapter.hpp"
+ #include "marvin_msgs/msg/jointcmd_arm.hpp"
+ #include "marvin_msgs/msg/jointcmd_body.hpp"
+@@ -121,4 +122,9 @@
+         std::string robot_ip = this->get_parameter("robot_ip").as_string();
+-        if (marvin_robot_->init(robot_ip))
++        auto wrist_mode = this->declare_parameter<std::string>("wrist_485_mode", "off");
++        if (wrist_mode != "off" && wrist_mode != "inspect" && wrist_mode != "vr")
++            throw std::runtime_error("Invalid wrist_485_mode");
++        if (wrist_mode != "off" && this->get_parameter("robot_type").as_string() != "Gento_Luna")
++            throw std::runtime_error("CTAG wrist configuration requires Gento_Luna");
++        if (marvin_robot_->init(robot_ip, wrist_mode == "off"))
+         {
+             RCLCPP_INFO(this->get_logger(), "Robot successfully connected.");
+@@ -212,3 +218,5 @@
++        if (wrist_mode != "off" && marvin_robot_->is_connected())
++            wrist_ = std::make_unique<wrist::Adapter>(*this, wrist_mode == "vr");
+         rclcpp::on_shutdown(std::bind(&MarvinRobotNode::Shutdown, this));
+         RCLCPP_INFO(this->get_logger(), "Marvin Robot Node initialized.");
+     }
+@@ -664,4 +672,5 @@
+     void Shutdown()
+     {
++        if (wrist_) wrist_->stop();
+         if (marvin_robot_->is_connected())
+         {
+@@ -684,3 +693,4 @@
+     MarvinRobot* marvin_robot_;
++    std::unique_ptr<wrist::Adapter> wrist_;
+     rclcpp::TimerBase::SharedPtr timer_, timer2_;
+     rclcpp::TimerBase::SharedPtr robot_info_timer_;

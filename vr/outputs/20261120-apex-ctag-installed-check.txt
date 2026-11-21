@@ -1,0 +1,11 @@
+MainPID=4187483
+ActiveState=active
+DropInPaths=/etc/systemd/system/apex-tool.service.d/70-luna-ctag.conf
+	libGentoSDK.so => /usr/local/lib/luna-apex-wrist/sdk/libGentoSDK.so (0x0000ffff833f0000)
+ARM0/485A position=0 speed=0 fault=0 alarm=0
+ARM1/485A position=0 speed=0 fault=0 alarm=0
+Feedback samples L/R 3/3, factory CAN poll isolated=1
+ [INFO] [1795170094.373980096] [apex_ctag_wrist]: Apex CTAG Tool attached (inspect)
+[INFO] [1795170096.487374560] [apex_ctag_wrist]: CTAG ARM0/485A passed read-only preflight
+[INFO] [1795170101.543220928] [apex_ctag_wrist]: CTAG ARM1/485A passed read-only preflight
+

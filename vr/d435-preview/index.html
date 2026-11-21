@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Luna D435</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f5f6;color:#18252b;font:15px system-ui,sans-serif;letter-spacing:0}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:18px 24px;background:white;border-bottom:1px solid #cbd3d7}
+h1{font-size:22px;margin:0}#status{color:#52636b;flex:1}button,a{font:inherit}button{padding:8px 16px;border:1px solid #9aaeb5;border-radius:4px;background:white;cursor:pointer}button:disabled{opacity:.45;cursor:default}
+#start{background:#176e57;color:white;border-color:#176e57}main{padding:24px;max-width:1500px;margin:auto}
+.views{display:grid;grid-template-columns:1fr 1fr;gap:24px}h2{font-size:16px;font-weight:600;margin:0 0 10px}
+.frame{position:relative;background:#18252b;aspect-ratio:4/3;overflow:hidden}.frame img{display:block;width:100%;height:100%;object-fit:contain}
+.frame.off img{visibility:hidden}.frame.off::after{content:attr(data-message);position:absolute;inset:0;display:grid;place-items:center;color:#c9d2d5}
+.caption{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;color:#52636b}a{color:#176e57}#error{color:#aa263c;overflow-wrap:anywhere}footer{margin-top:24px;color:#52636b}
+@media(max-width:760px){.views{grid-template-columns:1fr}main{padding:16px}header{padding:16px}#status{min-width:150px}}
+</style>
+<header><h1>Luna D435</h1><span id="status">连接中</span><button id="start">启动相机</button><button id="stop">停止相机</button></header>
+<main><p id="error" role="alert"></p><div class="views">
+<section><h2>彩色</h2><div class="frame off" data-message="等待画面"><img id="color" alt="D435 彩色实时画面"></div><div class="caption"><span>640 × 480</span><a href="/color.jpg" download="color.jpg">下载当前图像</a></div></section>
+<section><h2>对齐深度</h2><div class="frame off" data-message="等待画面"><img id="depth" alt="D435 对齐深度实时画面"></div><div class="caption"><span>显示范围 0–4 m</span><a href="/depth.png" download="depth.png">下载原始深度 PNG</a></div></section>
+</div><footer id="details"></footer></main>
+<script>
+const $=id=>document.getElementById(id);let streaming=false,busy=false;
+function showStreams(active,message){
+  for(const kind of ['color','depth']){
+    const img=$(kind);img.parentElement.classList.toggle('off',!active);img.parentElement.dataset.message=message;
+    if(active&&!streaming)img.src='/'+kind+'.mjpg?t='+Date.now();
+    if(!active&&streaming)img.removeAttribute('src');
+  }streaming=active;
+}
+async function refresh(){
+  try{
+    const r=await fetch('/api/status',{cache:'no-store'});if(!r.ok)throw Error('状态读取失败');
+    const s=await r.json(),fresh=s.state==='running'&&s.frame_age_seconds<3;
+    const label={running:'采集中',starting:'启动中',stopped:'已停止',error:'采集失败'}[s.state]||s.state;
+    $('status').textContent=fresh?`${label} · ${s.fps} FPS`:label;
+    $('error').textContent=s.error||'';
+    $('details').textContent=`D435 · ${s.serial} · 帧 ${s.sequence} · 深度单位 ${s.depth_scale_m??'--'} m`;
+    $('start').disabled=busy||s.state==='running'||s.state==='starting';
+    $('stop').disabled=busy||s.state==='stopped'||s.state==='error';
+    showStreams(fresh,label);
+  }catch(e){$('status').textContent='连接中断';$('error').textContent=e.message;showStreams(false,'连接中断')}
+}
+for(const action of ['start','stop'])$(action).onclick=async()=>{
+  busy=true;$(action).disabled=true;
+  try{const r=await fetch('/api/'+action,{method:'POST',headers:{'X-Camera-Control':'1'}});if(!r.ok)throw Error('操作失败');}
+  catch(e){$('error').textContent=e.message}finally{busy=false;await refresh()}
+};
+refresh();setInterval(refresh,1000);
+</script>
+</html>
